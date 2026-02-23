@@ -6,23 +6,23 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** When a user uploads a CALM architecture JSON, CALMGuard must analyze it with AI agents and produce a real-time compliance dashboard showing architecture visualization, compliance scores, risk findings, and generated CI/CD pipeline configs — all streaming live as agents work.
 
-**Current focus:** Phase 3: API Routes & Dashboard Core
+**Current focus:** Phase 4: Compliance Visualization
 
 ## Current Position
 
-Phase: 3 of 6 (API Routes & Dashboard Core)
-Plan: 6 of 6 in current phase
-Status: In Progress
-Last activity: 2026-02-23 — Completed plan 03-03: Dashboard Shell Live Sidebar + Analyze Header (2 min, 2 tasks, 5 files)
+Phase: 3 of 6 (API Routes & Dashboard Core) — COMPLETE
+Plan: 6 of 6 in current phase — COMPLETE
+Status: Phase 3 Complete — Moving to Phase 4
+Last activity: 2026-02-23 — Completed plan 03-06: Dashboard Integration — AgentFeed Layout + Architecture Tab + Overview Wiring (3 min, 2 tasks, 3 files)
 
-Progress: [█████░░░░░] 50.0% (14/28 plans)
+Progress: [█████░░░░░] 57.1% (16/28 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
-- Average duration: 5 minutes
-- Total execution time: 1.23 hours
+- Total plans completed: 16
+- Average duration: 4 minutes
+- Total execution time: ~1.3 hours
 
 **By Phase:**
 
@@ -33,16 +33,17 @@ Progress: [█████░░░░░] 50.0% (14/28 plans)
 | 03-api-routes-dashboard-core | 6 (of 6) | ~16 min | 3 min |
 
 **Recent Completions:**
-1. 03-01 Shared API Schemas & Upgraded Event Emitter - (prev session)
-2. 03-02 SSE Hook & Store Selectors - 3 min (2 tasks, 2 files)
-3. 03-04 Dashboard Layout & Navigation (prev session)
-4. 03-05 Architecture Graph — React Flow + dagre - 4 min (2 tasks, 11 files)
-5. 03-04 Agent Activity Feed - 2 min (2 tasks, 3 files)
+1. 03-03 Dashboard Shell Live Sidebar + Analyze Header - 2 min (2 tasks, 5 files)
+2. 03-04 Agent Activity Feed - 2 min (2 tasks, 3 files)
+3. 03-05 Architecture Graph — React Flow + dagre - 4 min (2 tasks, 11 files)
+4. 03-06 Dashboard Integration — AgentFeed Layout + Architecture Tab + Overview Wiring - 3 min (2 tasks, 3 files)
+5. Phase 3 COMPLETE — all 6/6 plans done
 
 *Updated after each plan completion*
 | Phase 03-api-routes-dashboard-core P01 | 6 | 2 tasks | 7 files |
 | Phase 03-api-routes-dashboard-core P04 | 2 | 2 tasks | 3 files |
 | Phase 03-api-routes-dashboard-core P03 | 2 | 2 tasks | 5 files |
+| Phase 03-api-routes-dashboard-core P06 | 3 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,9 @@ Recent decisions affecting current work:
 - [Phase 03-api-routes-dashboard-core]: Icon map as plain Record<string, LucideIcon> for AgentFeedEvent — avoids dynamic import complexity for the 5 known agent icons
 - [Phase 03-api-routes-dashboard-core]: Severity badge only on finding events — consistent with CALM compliance reporting intent
 - [Phase 03-api-routes-dashboard-core]: Individual Zustand selectors in Sidebar to prevent unnecessary re-renders
+- [Phase 03-06]: AgentFeed placed in DashboardLayout right column (w-80) rather than per-page — always visible during all tab navigation
+- [Phase 03-06]: Completion banner uses emerald-500/10 bg + emerald-500/30 border — subtle non-intrusive per locked decision (no modal/overlay)
+- [Phase 03-06]: Overview grid reduced to 3 panels — AgentFeed moved to layout right column frees the 4th grid slot
 
 ### Pending Todos
 
@@ -104,9 +108,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-23 (plan execution)
-Stopped at: Completed 03-04-PLAN.md
+Stopped at: Completed 03-06-PLAN.md — Phase 3 Complete
 Resume file: None
 
 ---
 
-*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) In Progress (5/6 plans)*
+*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) Complete (6/6 plans)*
