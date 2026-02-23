@@ -6,23 +6,23 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** When a user uploads a CALM architecture JSON, CALMGuard must analyze it with AI agents and produce a real-time compliance dashboard showing architecture visualization, compliance scores, risk findings, and generated CI/CD pipeline configs — all streaming live as agents work.
 
-**Current focus:** Phase 2: Multi-Agent Infrastructure
+**Current focus:** Phase 3: API Routes & Dashboard Core
 
 ## Current Position
 
-Phase: 2 of 6 (Multi-Agent Infrastructure)
-Plan: 5 of 5 in current phase
-Status: Phase Complete
-Last activity: 2026-02-16 — Completed plan 02-05: Agent Orchestration & Store Integration (2 min, 2 tasks, 2 files)
+Phase: 3 of 6 (API Routes & Dashboard Core)
+Plan: 2 of 6 in current phase
+Status: In Progress
+Last activity: 2026-02-23 — Completed plan 03-02: SSE Hook & Store Selectors (3 min, 2 tasks, 2 files)
 
-Progress: [█████░░░░░] 32.1% (9/28 plans)
+Progress: [████░░░░░░] 35.7% (10/28 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 6 minutes
-- Total execution time: 1.12 hours
+- Total execution time: 1.17 hours
 
 **By Phase:**
 
@@ -30,12 +30,13 @@ Progress: [█████░░░░░] 32.1% (9/28 plans)
 |-------|-------|------------|----------|
 | 01-foundation-calm-parser | 4 | 43 min | 11 min |
 | 02-multi-agent-infrastructure | 5 | 17 min | 3 min |
+| 03-api-routes-dashboard-core | 2 | 3 min | 3 min |
 
 **Recent Completions:**
-1. 02-02 Agent Configuration & Compliance Knowledge - 7 min (2 tasks, 9 files)
-2. 02-03 Agent Registry & Skill Loader - 1 min (2 tasks, 2 files)
-3. 02-04 Core AI Agent Implementations - 4 min (2 tasks, 4 files)
-4. 02-05 Agent Orchestration & Store Integration - 2 min (2 tasks, 2 files)
+1. 02-04 Core AI Agent Implementations - 4 min (2 tasks, 4 files)
+2. 02-05 Agent Orchestration & Store Integration - 2 min (2 tasks, 2 files)
+3. 03-01 Shared API Schemas & Upgraded Event Emitter - (prev session)
+4. 03-02 SSE Hook & Store Selectors - 3 min (2 tasks, 2 files)
 
 *Updated after each plan completion*
 
@@ -70,6 +71,9 @@ Recent decisions affecting current work:
 - [Phase 02]: Use retry logic with exponential backoff for all agent generateObject calls to handle transient LLM failures
 - [Phase 02]: Promise.allSettled for parallel agent execution ensures graceful degradation
 - [Phase 02]: Skip Risk Scorer if Architecture or Compliance failed - avoids misleading scores from incomplete data
+- [Phase 03-02]: Accept calmData as startStream() parameter not from store — avoids stale closure issues
+- [Phase 03-02]: Derived selectors as standalone functions outside Zustand store — keeps store lean, avoids duplicate state
+- [Phase 03-02]: AbortError and HTTP errors excluded from fetch SSE retry — only network failures trigger reconnect
 
 ### Pending Todos
 
@@ -85,10 +89,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-16 (plan execution)
-Stopped at: Completed 02-05-PLAN.md
+Last session: 2026-02-23 (plan execution)
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
 
 ---
 
-*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans)*
+*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) In Progress (2/6 plans)*
