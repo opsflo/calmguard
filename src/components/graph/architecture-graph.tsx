@@ -49,7 +49,11 @@ const edgeTypes = {
  *
  * Uses dagre LR auto-layout — nodes are not manually draggable (auto-layout only).
  */
-export function ArchitectureGraph() {
+interface ArchitectureGraphProps {
+  compact?: boolean;
+}
+
+export function ArchitectureGraph({ compact = false }: ArchitectureGraphProps) {
   const analysisInput = useAnalysisStore((state) => state.analysisInput);
   const analysisResult = useAnalysisStore((state) => state.analysisResult);
   const status = useAnalysisStore((state) => state.status);
@@ -92,7 +96,8 @@ export function ArchitectureGraph() {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         fitView
-        fitViewOptions={{ padding: 0.2 }}
+        fitViewOptions={{ padding: 0.4 }}
+        maxZoom={1.2}
         colorMode="dark"
         proOptions={{ hideAttribution: true }}
         nodesDraggable={false}
@@ -100,23 +105,27 @@ export function ArchitectureGraph() {
         elementsSelectable={true}
       >
         <Background color="#334155" gap={16} />
-        <Controls className="!bg-slate-800 !border-slate-700 !rounded-lg" />
-        <MiniMap
-          nodeColor={(node) => {
-            const complianceStatus = (node.data as { complianceStatus?: string })?.complianceStatus;
-            switch (complianceStatus) {
-              case 'compliant':
-                return '#10b981'; // emerald-500
-              case 'partial':
-                return '#f59e0b'; // amber-500
-              case 'non-compliant':
-                return '#ef4444'; // red-500
-              default:
-                return '#475569'; // slate-600
-            }
-          }}
-          className="!bg-slate-900 !border-slate-700 !rounded-lg"
-        />
+        {!compact && (
+          <Controls className="!bg-slate-800 !border-slate-700 !rounded-lg" />
+        )}
+        {!compact && (
+          <MiniMap
+            nodeColor={(node) => {
+              const complianceStatus = (node.data as { complianceStatus?: string })?.complianceStatus;
+              switch (complianceStatus) {
+                case 'compliant':
+                  return '#10b981'; // emerald-500
+                case 'partial':
+                  return '#f59e0b'; // amber-500
+                case 'non-compliant':
+                  return '#ef4444'; // red-500
+                default:
+                  return '#475569'; // slate-600
+              }
+            }}
+            className="!bg-slate-900 !border-slate-700 !rounded-lg"
+          />
+        )}
       </ReactFlow>
     </div>
   );

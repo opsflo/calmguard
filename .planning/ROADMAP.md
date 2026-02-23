@@ -92,15 +92,16 @@ Plans:
   12. Graph uses dagre auto-layout (hierarchical left-to-right) with animated edges during analysis
   13. API contracts between frontend and backend are clearly defined with Zod schemas in shared location
 
-**Plans**: 6 plans
+**Plans**: 7 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — API routes (SSE /api/analyze, /api/calm/parse, /api/pipeline) + shared Zod schemas + globalThis event emitter (Wave 1)
-- [ ] 03-02-PLAN.md — useAgentStream fetch-based SSE hook + derived agent status selectors in Zustand store (Wave 1)
-- [ ] 03-03-PLAN.md — Dashboard shell: sidebar with live agent dots, header with architecture selector + Analyze button, layout with feed column (Wave 2)
-- [ ] 03-04-PLAN.md — Agent activity feed: event rows with animations, severity badges, auto-scroll, thinking dots (Wave 2)
-- [ ] 03-05-PLAN.md — React Flow architecture graph: custom nodes by CALM type, protocol edges, dagre layout, trust boundaries, compliance coloring (Wave 1)
-- [ ] 03-06-PLAN.md — Integration: wire AgentFeed into layout, create Architecture tab, update Overview page, completion banner (Wave 3)
+- [x] 03-01-PLAN.md — API routes (SSE /api/analyze, /api/calm/parse, /api/pipeline) + shared Zod schemas + globalThis event emitter (Wave 1)
+- [x] 03-02-PLAN.md — useAgentStream fetch-based SSE hook + derived agent status selectors in Zustand store (Wave 1)
+- [x] 03-03-PLAN.md — Dashboard shell: sidebar with live agent dots, header with architecture selector + Analyze button, layout with feed column (Wave 2)
+- [x] 03-04-PLAN.md — Agent activity feed: event rows with animations, severity badges, auto-scroll, thinking dots (Wave 2)
+- [x] 03-05-PLAN.md — React Flow architecture graph: custom nodes by CALM type, protocol edges, dagre layout, trust boundaries, compliance coloring (Wave 1)
+- [x] 03-06-PLAN.md — Integration: wire AgentFeed into layout, create Architecture tab, update Overview page, completion banner (Wave 3)
+- [ ] 03-07-PLAN.md — UAT gap closure: fix overview graph height, architecture graph spacing, agent feed full-height (Wave 1, gap closure)
 
 ### Phase 4: Pipeline Generation & Compliance Display
 **Goal**: Compliance score gauge, risk heat map, control matrix, findings table, and pipeline preview all display with real-time updates as agents complete.
@@ -204,7 +205,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Foundation & CALM Parser | 4/4 | Complete | 2026-02-16 |
 | 2. Multi-Agent Infrastructure | 0/5 | Not started | - |
-| 3. API Routes & Dashboard Core | 0/6 | Planned | - |
+| 3. API Routes & Dashboard Core | 6/7 | UAT gap closure | - |
 | 4. Pipeline Generation & Compliance Display | 0/4 | Not started | - |
 | 5. Testing & DevSecOps Dogfooding | 0/5 | Not started | - |
 | 6. Polish, Demo Mode & Deployment | 0/4 | Not started | - |
@@ -212,5 +213,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 ---
 
 *Roadmap created: 2026-02-15*
-*Total phases: 6 | Total plans: 28 (estimated)*
+*Total phases: 6 | Total plans: 29 (estimated)*
 *Ready for: `/gsd:plan-phase 1`*

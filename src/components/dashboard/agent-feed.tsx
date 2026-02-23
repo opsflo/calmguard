@@ -62,7 +62,7 @@ export function AgentFeed() {
   const hasEvents = agentEvents.length > 0;
 
   return (
-    <Card className="bg-slate-800 border-slate-700 flex flex-col">
+    <Card className="bg-slate-800 border-slate-700 flex flex-col h-full">
       {/* Card header */}
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-3">
@@ -85,8 +85,8 @@ export function AgentFeed() {
       </CardHeader>
 
       {/* Card body */}
-      <CardContent className="flex-1 p-0">
-        <ScrollArea className="h-[400px]">
+      <CardContent className="flex-1 p-0 min-h-0">
+        <ScrollArea className="h-full">
           {!hasEvents && isAnalyzing && <EmptyStateAnalyzing />}
           {!hasEvents && !isAnalyzing && <EmptyStateIdle />}
 

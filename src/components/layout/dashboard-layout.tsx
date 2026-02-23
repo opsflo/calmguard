@@ -28,7 +28,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
 
           {/* Right column — Agent Feed (always visible) */}
-          <div className="w-80 border-l border-slate-800 flex-shrink-0 overflow-hidden">
+          <div className="w-80 border-l border-slate-800 flex-shrink-0 overflow-hidden h-full">
             <AgentFeed />
           </div>
         </main>

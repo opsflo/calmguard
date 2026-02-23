@@ -67,9 +67,9 @@ export default function DashboardPage() {
         <ComplianceCardSkeleton />
 
         {/* Top Right: Architecture Graph — real component from Phase 3-05 */}
-        <Card className="bg-slate-800 border-slate-700 overflow-hidden">
-          <div className="h-[300px]">
-            <ArchitectureGraph />
+        <Card className="bg-slate-800 border-slate-700">
+          <div className="h-[500px]">
+            <ArchitectureGraph compact />
           </div>
         </Card>
 

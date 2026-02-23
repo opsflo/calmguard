@@ -1,8 +1,8 @@
 import dagre from '@dagrejs/dagre';
 import { Position, type Node, type Edge } from '@xyflow/react';
 
-const NODE_WIDTH = 180;
-const NODE_HEIGHT = 72;
+const NODE_WIDTH = 200;
+const NODE_HEIGHT = 80;
 const BOUNDARY_PADDING = 40;
 
 /**
@@ -23,7 +23,7 @@ export function getLayoutedElements(
 ): { nodes: Node[]; edges: Edge[] } {
   const graph = new dagre.graphlib.Graph();
   graph.setDefaultEdgeLabel(() => ({}));
-  graph.setGraph({ rankdir: direction, ranksep: 80, nodesep: 40 });
+  graph.setGraph({ rankdir: direction, ranksep: 180, nodesep: 80 });
 
   // Separate trust boundary parents from child nodes
   const parentNodes = nodes.filter((n) => n.type === 'trustBoundary');
