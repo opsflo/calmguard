@@ -39,6 +39,7 @@ Progress: [█████░░░░░] 46.4% (13/28 plans)
 4. 03-05 Architecture Graph — React Flow + dagre - 4 min (2 tasks, 11 files)
 
 *Updated after each plan completion*
+| Phase 03-api-routes-dashboard-core P01 | 6 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,9 @@ Recent decisions affecting current work:
 - [Phase 03-05]: Auto-layout only (nodesDraggable=false) — dagre positions are authoritative, graph is read-only visualization
 - [Phase 03-05]: Trust boundary parent nodes excluded from dagre graph — their bounds computed from children's final positions + padding
 - [Phase 03-05]: Risk level maps to compliance border color: low=compliant (emerald), medium=partial (amber), high/critical=non-compliant (red)
+- [Phase 03]: Deferred LLM provider validation to runtime - build-time compatible fail-fast
+- [Phase 03]: Used z.union instead of z.discriminatedUnion for sseEventSchema - 'error' type shared between agent events and terminal events
+- [Phase 03]: globalThis singleton pattern for AgentEventEmitter - survives Next.js hot reloads
 
 ### Pending Todos
 
@@ -94,7 +98,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-23 (plan execution)
-Stopped at: Completed 03-05-PLAN.md
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
 
 ---
