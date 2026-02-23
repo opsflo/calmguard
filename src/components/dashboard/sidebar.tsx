@@ -11,6 +11,12 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import {
+  useAnalysisStore,
+  getAgentStatus,
+  AGENT_NAMES,
+  AGENT_DISPLAY_NAMES,
+} from '@/store/analysis-store';
 
 interface NavItem {
   label: string;
@@ -26,18 +32,6 @@ const navItems: NavItem[] = [
   { label: 'Findings', href: '/dashboard/findings', icon: AlertTriangle },
 ];
 
-interface AgentStatus {
-  name: string;
-  status: 'idle' | 'running' | 'complete' | 'error';
-}
-
-const agents: AgentStatus[] = [
-  { name: 'Architecture Analyzer', status: 'idle' },
-  { name: 'Compliance Mapper', status: 'idle' },
-  { name: 'Pipeline Generator', status: 'idle' },
-  { name: 'Risk Scorer', status: 'idle' },
-];
-
 const statusColors = {
   idle: 'bg-slate-600',
   running: 'bg-blue-500 animate-pulse',
@@ -47,6 +41,8 @@ const statusColors = {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const agentEvents = useAnalysisStore((state) => state.agentEvents);
+  const activeAgents = useAnalysisStore((state) => state.activeAgents);
 
   return (
     <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col">
@@ -89,20 +85,15 @@ export function Sidebar() {
             Agent Status
           </h3>
           <div className="space-y-2">
-            {agents.map((agent) => (
-              <div
-                key={agent.name}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm"
-              >
-                <div
-                  className={cn(
-                    'h-2 w-2 rounded-full',
-                    statusColors[agent.status]
-                  )}
-                />
-                <span className="text-slate-400 text-xs">{agent.name}</span>
-              </div>
-            ))}
+            {AGENT_NAMES.map((name) => {
+              const status = getAgentStatus(agentEvents, activeAgents, name);
+              return (
+                <div key={name} className="flex items-center gap-2 px-3 py-1.5 text-sm">
+                  <div className={cn('h-2 w-2 rounded-full', statusColors[status])} />
+                  <span className="text-slate-400 text-xs">{AGENT_DISPLAY_NAMES[name]}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </nav>
