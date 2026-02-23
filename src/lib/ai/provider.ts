@@ -31,24 +31,35 @@ if (process.env.XAI_API_KEY) {
   providers.xai = xai;
 }
 
-// Immediate validation - fail fast if no providers configured
-if (Object.keys(providers).length === 0) {
-  throw new Error(
-    'No LLM provider API keys configured. Set at least one of: GOOGLE_GENERATIVE_AI_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, XAI_API_KEY'
-  );
-}
-
 /**
  * Multi-provider registry
  * Resolves model strings like "google:gemini-2.5-flash" to actual provider models
+ *
+ * NOTE: Registry may have zero providers at build time (no API keys in CI).
+ * Validation is deferred to first use in getDefaultModel/getModelForAgent.
  */
 export const registry = createProviderRegistry(providers);
+
+/**
+ * Validate that at least one LLM provider is configured.
+ * Called by getDefaultModel/getModelForAgent at runtime — not at module initialization
+ * to allow Next.js to build without API keys (build-time static analysis).
+ */
+function assertProviderConfigured(): void {
+  if (Object.keys(providers).length === 0) {
+    throw new Error(
+      'No LLM provider API keys configured. Set at least one of: GOOGLE_GENERATIVE_AI_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, XAI_API_KEY'
+    );
+  }
+}
 
 /**
  * Get default model with fallback chain
  * Priority: Google Gemini → Anthropic Claude → OpenAI GPT-4o → xAI Grok
  */
 export function getDefaultModel() {
+  assertProviderConfigured();
+
   if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
     return registry.languageModel('google:gemini-2.0-flash-exp');
   }
@@ -75,6 +86,7 @@ export function getDefaultModel() {
  * @returns Language model instance from registry
  */
 export function getModelForAgent(config: AgentConfig) {
+  assertProviderConfigured();
   const modelString = `${config.spec.model.provider}:${config.spec.model.model}` as `${string}:${string}`;
   return registry.languageModel(modelString);
 }

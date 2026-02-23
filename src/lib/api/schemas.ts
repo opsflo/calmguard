@@ -60,13 +60,16 @@ export const sseErrorEventSchema = z.object({
 });
 
 /**
- * Discriminated union of all possible SSE events
- * Clients should discriminate on the `type` field
+ * Union of all possible SSE events.
+ * Cannot use z.discriminatedUnion because agentEventTypeSchema includes 'error'
+ * which conflicts with sseErrorEventSchema's z.literal('error') terminal type.
+ * Clients should check parsed.type to discriminate: 'done' → SseDoneEvent,
+ * 'error' with no agent → SseErrorEvent, otherwise → SseAgentEvent.
  */
-export const sseEventSchema = z.discriminatedUnion('type', [
-  sseAgentEventSchema,
+export const sseEventSchema = z.union([
   sseDoneEventSchema,
   sseErrorEventSchema,
+  sseAgentEventSchema,
 ]);
 
 export type SseAgentEvent = z.infer<typeof sseAgentEventSchema>;
