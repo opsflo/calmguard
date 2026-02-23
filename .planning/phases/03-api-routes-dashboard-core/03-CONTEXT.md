@@ -46,6 +46,7 @@ Wire up backend API routes (SSE streaming for agent events, CALM parsing, pipeli
 - User wants to use the ui-ux-pro-max skill for generating dashboard components — include sample prompts in planning for downstream reference
 - Feed should feel like a live log pane (right column, always visible, scrolling)
 - Dashboard should work as an impressive hackathon demo — design choices should prioritize visual impact on 1920x1080
+- Sample ui-ux-pro-max prompt for inspiration: "Design a professional investment platform landing page with dark mode, portfolio analytics preview, market data widgets, educational resources, and account signup. Focus on trust and data."
 
 </specifics>
 
