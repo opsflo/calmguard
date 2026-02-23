@@ -21,4 +21,18 @@
   --color-input: 217.2 32.6% 17.5%;
   --color-ring: 212.7 26.8% 83.9%;
   --radius: 0.5rem;
+
+  /* Agent feed slide-in animation */
+  --animate-slide-in-right: slide-in-right 0.3s ease-out forwards;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
