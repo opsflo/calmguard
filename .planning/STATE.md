@@ -11,11 +11,11 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 3 of 6 (API Routes & Dashboard Core)
-Plan: 5 of 6 in current phase
+Plan: 6 of 6 in current phase
 Status: In Progress
-Last activity: 2026-02-23 — Completed plan 03-05: Architecture Graph — React Flow + dagre (4 min, 2 tasks, 11 files)
+Last activity: 2026-02-23 — Completed plan 03-03: Dashboard Shell Live Sidebar + Analyze Header (2 min, 2 tasks, 5 files)
 
-Progress: [█████░░░░░] 46.4% (13/28 plans)
+Progress: [█████░░░░░] 50.0% (14/28 plans)
 
 ## Performance Metrics
 
@@ -30,16 +30,19 @@ Progress: [█████░░░░░] 46.4% (13/28 plans)
 |-------|-------|------------|----------|
 | 01-foundation-calm-parser | 4 | 43 min | 11 min |
 | 02-multi-agent-infrastructure | 5 | 17 min | 3 min |
-| 03-api-routes-dashboard-core | 5 (of 6) | ~14 min | 3 min |
+| 03-api-routes-dashboard-core | 6 (of 6) | ~16 min | 3 min |
 
 **Recent Completions:**
 1. 03-01 Shared API Schemas & Upgraded Event Emitter - (prev session)
 2. 03-02 SSE Hook & Store Selectors - 3 min (2 tasks, 2 files)
 3. 03-04 Dashboard Layout & Navigation (prev session)
 4. 03-05 Architecture Graph — React Flow + dagre - 4 min (2 tasks, 11 files)
+5. 03-04 Agent Activity Feed - 2 min (2 tasks, 3 files)
 
 *Updated after each plan completion*
 | Phase 03-api-routes-dashboard-core P01 | 6 | 2 tasks | 7 files |
+| Phase 03-api-routes-dashboard-core P04 | 2 | 2 tasks | 3 files |
+| Phase 03-api-routes-dashboard-core P03 | 2 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -82,6 +85,9 @@ Recent decisions affecting current work:
 - [Phase 03]: Deferred LLM provider validation to runtime - build-time compatible fail-fast
 - [Phase 03]: Used z.union instead of z.discriminatedUnion for sseEventSchema - 'error' type shared between agent events and terminal events
 - [Phase 03]: globalThis singleton pattern for AgentEventEmitter - survives Next.js hot reloads
+- [Phase 03-api-routes-dashboard-core]: Icon map as plain Record<string, LucideIcon> for AgentFeedEvent — avoids dynamic import complexity for the 5 known agent icons
+- [Phase 03-api-routes-dashboard-core]: Severity badge only on finding events — consistent with CALM compliance reporting intent
+- [Phase 03-api-routes-dashboard-core]: Individual Zustand selectors in Sidebar to prevent unnecessary re-renders
 
 ### Pending Todos
 
@@ -98,7 +104,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-23 (plan execution)
-Stopped at: Completed 03-01-PLAN.md
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None
 
 ---
