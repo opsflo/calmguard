@@ -6,6 +6,13 @@ import type { AgentEvent } from '@/lib/agents/types';
  * Edge Runtime compatible event emitter for agent SSE streaming.
  * Uses simple listener pattern instead of Node.js EventEmitter to work in Vercel serverless.
  */
+
+// eslint-disable-next-line no-var
+declare global {
+  // eslint-disable-next-line no-var
+  var __agentEventEmitter: AgentEventEmitter | undefined;
+}
+
 class AgentEventEmitter {
   private listeners: Set<(event: AgentEvent) => void> = new Set();
 
@@ -45,9 +52,12 @@ class AgentEventEmitter {
 
 /**
  * Global singleton event emitter
- * All agents use this to emit progress events during execution
+ * All agents use this to emit progress events during execution.
+ * Uses globalThis pattern to survive Next.js webpack hot reloads in dev mode.
  */
-export const agentEventEmitter = new AgentEventEmitter();
+export const agentEventEmitter: AgentEventEmitter =
+  globalThis.__agentEventEmitter ??
+  (globalThis.__agentEventEmitter = new AgentEventEmitter());
 
 /**
  * Helper to emit agent event with auto-timestamping
