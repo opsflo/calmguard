@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { Sidebar } from '@/components/dashboard/sidebar';
 import { Header } from '@/components/dashboard/header';
+import { AgentFeed } from '@/components/dashboard/agent-feed';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -19,12 +20,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Header */}
         <Header />
 
-        {/* Page Content — flex row to accommodate right-column feed panel */}
+        {/* Page Content — flex row: main content + permanent right-column feed */}
         <main className="flex-1 flex overflow-hidden">
+          {/* Main content — scrollable */}
           <div className="flex-1 overflow-auto">
             {children}
           </div>
-          {/* Right column for agent feed — rendered by dashboard pages (Plan 03-05) */}
+
+          {/* Right column — Agent Feed (always visible) */}
+          <div className="w-80 border-l border-slate-800 flex-shrink-0 overflow-hidden">
+            <AgentFeed />
+          </div>
         </main>
       </div>
     </div>
