@@ -5,14 +5,11 @@ import { ComplianceCardSkeleton } from '@/components/dashboard/compliance-card-s
 import { ArchitectureGraphSkeleton } from '@/components/dashboard/architecture-graph-skeleton';
 import { AgentFeedSkeleton } from '@/components/dashboard/agent-feed-skeleton';
 import { PipelinePreviewSkeleton } from '@/components/dashboard/pipeline-preview-skeleton';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 
 export default function DashboardPage() {
   const { analysisInput } = useAnalysisStore();
 
-  // If no architecture loaded, show empty state
+  // If no architecture loaded, show empty state with call-to-action
   if (!analysisInput) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -21,17 +18,8 @@ export default function DashboardPage() {
             No Architecture Loaded
           </h2>
           <p className="text-sm text-slate-500 max-w-md">
-            Please select a demo architecture or upload a CALM JSON file to get started.
+            Select an architecture and click Analyze to begin your compliance analysis.
           </p>
-          <Link href="/">
-            <Button
-              variant="outline"
-              className="mt-4 bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-slate-200"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Button>
-          </Link>
         </div>
       </div>
     );

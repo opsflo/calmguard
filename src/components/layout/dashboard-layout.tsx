@@ -19,9 +19,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Header */}
         <Header />
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto">
-          {children}
+        {/* Page Content — flex row to accommodate right-column feed panel */}
+        <main className="flex-1 flex overflow-hidden">
+          <div className="flex-1 overflow-auto">
+            {children}
+          </div>
+          {/* Right column for agent feed — rendered by dashboard pages (Plan 03-05) */}
         </main>
       </div>
     </div>
