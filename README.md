@@ -2,14 +2,16 @@
 
 # Innovate.DTCC: Industry-Powered AI Hackathon Supported by FINOS
 
-## Project Name
-
+## Project Name : CALMGuard 
 
 ### Project Details
+You describe your architecture in a standard format, and CALMGuard tells you where your security/compliance gaps are and generates the CI/CD pipelines to fix them.
 
 
 ### Team Information
 
+  * Gourav J. Shah 
+  * Anoop Mehendale 
 
 ## Using DCO to sign your commits
 
