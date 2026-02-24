@@ -296,7 +296,6 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
               ) : (
                 <div
                   className={`text-xs font-mono overflow-auto ${codeMaxH} [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:bg-transparent [&_code]:leading-relaxed`}
-                  // eslint-disable-next-line react/no-danger
                   dangerouslySetInnerHTML={{ __html: highlightedHtml[tab] ?? '' }}
                 />
               )}

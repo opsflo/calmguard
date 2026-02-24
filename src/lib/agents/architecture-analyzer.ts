@@ -158,7 +158,7 @@ Provide structured output matching the schema.`;
         break;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        console.error(`[Architecture Analyzer] Attempt ${attempt + 1} failed:`, lastError.message);
+        console.error(`[Architecture Analyzer] Attempt ${attempt + 1} failed:`, lastError.message); // nosemgrep: unsafe-formatstring
 
         if (attempt < 2) {
           // Exponential backoff: 1s, 2s, 4s

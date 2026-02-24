@@ -229,14 +229,8 @@ function generate(): string {
     path.join(PROJECT_ROOT, 'src', 'lib', 'agents', 'types.ts'),
     'utf-8',
   );
-  const calmTypesSource = fs.readFileSync(
-    path.join(PROJECT_ROOT, 'src', 'lib', 'calm', 'types.ts'),
-    'utf-8',
-  );
-
   // Extract key schemas
   const agentEventFields = extractZodFields(agentTypesSource, 'agentEventSchema');
-  const agentIdentityFields = extractZodFields(agentTypesSource, 'agentIdentitySchema');
 
   // Define endpoints
   const endpoints: Endpoint[] = [

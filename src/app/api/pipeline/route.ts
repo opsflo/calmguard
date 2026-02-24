@@ -8,7 +8,6 @@ export const dynamic = 'force-dynamic';
  * Written by POST /api/analyze after agent orchestration completes.
  */
 declare global {
-  // eslint-disable-next-line no-var
   var __lastPipelineResult: PipelineConfig | null | undefined;
 }
 

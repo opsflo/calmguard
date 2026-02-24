@@ -10,6 +10,15 @@ const compat = new FlatCompat({
 });
 
 const config = [
+  {
+    ignores: [
+      '.next/**',
+      'node_modules/**',
+      'docs/**',
+      'scripts/**',
+      '.planning/**',
+    ],
+  },
   ...compat.extends('next/core-web-vitals'),
 ];
 

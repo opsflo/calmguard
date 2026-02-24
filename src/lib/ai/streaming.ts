@@ -7,9 +7,7 @@ import type { AgentEvent } from '@/lib/agents/types';
  * Uses simple listener pattern instead of Node.js EventEmitter to work in Vercel serverless.
  */
 
-// eslint-disable-next-line no-var
 declare global {
-  // eslint-disable-next-line no-var
   var __agentEventEmitter: AgentEventEmitter | undefined;
 }
 

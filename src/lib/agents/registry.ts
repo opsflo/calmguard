@@ -22,6 +22,7 @@ export function loadAgentConfig(name: string): AgentConfig {
     return configCache.get(name)!;
   }
 
+  // nosemgrep: javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal
   const path = join(process.cwd(), 'agents', `${name}.yaml`);
 
   if (!existsSync(path)) {

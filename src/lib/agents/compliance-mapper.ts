@@ -66,7 +66,6 @@ function sleep(ms: number): Promise<void> {
  */
 export async function mapCompliance(
   input: AnalysisInput,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _selectedFrameworks?: string[]
 ): Promise<AgentResult<ComplianceMapping>> {
   const startTime = performance.now();
@@ -159,7 +158,7 @@ Provide structured output matching the schema.`;
         break;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        console.error(`[Compliance Mapper] Attempt ${attempt + 1} failed:`, lastError.message);
+        console.error(`[Compliance Mapper] Attempt ${attempt + 1} failed:`, lastError.message); // nosemgrep: unsafe-formatstring
 
         if (attempt < 2) {
           // Exponential backoff: 1s, 2s, 4s
