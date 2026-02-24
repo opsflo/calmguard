@@ -11,10 +11,10 @@ See: .planning/PROJECT.md (updated 2026-02-24)
 ## Current Position
 
 Phase: 7 — GitOps PR Generation
-Status: In progress — 07-01 tasks 1-2 complete, paused at human-verify checkpoint
-Last activity: 2026-02-24 — Plan 07-01 partial execution (Tasks 1+2 of 3)
+Status: In progress — 07-01 complete, ready for 07-02
+Last activity: 2026-02-24 — Plan 07-01 fully complete (Tasks 1-2 + post-checkpoint design change)
 
-Progress: [░░░░░░░░░░] 0% (0/3 plans fully executed — 07-01 at checkpoint)
+Progress: [###░░░░░░░] 33% (1/3 plans complete)
 
 ## Accumulated Context
 
@@ -23,9 +23,11 @@ Progress: [░░░░░░░░░░] 0% (0/3 plans fully executed — 07-0
 All v1.1 decisions logged in PROJECT.md Key Decisions table. All marked ✓ Good.
 
 v1.2 decisions (resolved during 07-01 execution):
-- GITHUB_TOKEN server-side only — client uses status gate endpoint for conditional UI
+- GITHUB_TOKEN server-side only — client uses dual status gate endpoint (enabled + authEnabled flags)
+- GitHub tab is always visible — public repos work without auth; GITHUB_TOKEN only needed for PR generation (Plans 02/03)
 - PRRecord interface in github/types.ts (not store) to prevent circular imports with Plans 02/03
 - Pre-filled demo: finos-labs/dtcch-2026-opsflow-llc / examples/payment-gateway.calm.json
+- gitHubAuthEnabled added to Zustand store for downstream PR button gating without re-fetching
 
 ### Pending Todos
 
@@ -33,13 +35,19 @@ None.
 
 ### Blockers/Concerns
 
-None — awaiting human verification of GitHub tab UI before Plan 07-02.
+None — Plan 07-01 complete, ready for Plan 07-02.
 
 ## Session Continuity
 
-Last session: 2026-02-24 (Plan 07-01 execution)
-Stopped at: checkpoint:human-verify — Tasks 1+2 complete, awaiting UI verification
-Resume file: .planning/phases/07-gitops-pr-generation/07-01-PLAN.md (Task 3 checkpoint)
+Last session: 2026-02-24 (Plan 07-01 completion with post-checkpoint design change)
+Stopped at: Completed 07-01-PLAN.md — ready to start 07-02
+Resume file: .planning/phases/07-gitops-pr-generation/07-02-PLAN.md
+
+## Performance Metrics
+
+| Phase | Plan | Duration | Tasks | Files |
+|-------|------|----------|-------|-------|
+| 07-gitops-pr-generation | 01 | 15min | 3 | 10 |
 
 ---
 
