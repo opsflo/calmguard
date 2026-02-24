@@ -8,6 +8,7 @@ import { ComplianceCard } from '@/components/dashboard/compliance-card';
 import { PipelinePreview } from '@/components/dashboard/pipeline-preview';
 import { ArchitectureGraph } from '@/components/graph/architecture-graph';
 import { ExportReportModal } from '@/components/dashboard/export-report-modal';
+import { GitOpsCard } from '@/components/dashboard/gitops-card';
 import { generateMarkdownReport } from '@/lib/report/generate-report';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ export default function DashboardPage() {
   const status = useAnalysisStore((state) => state.status);
   const demoMode = useAnalysisStore((state) => state.demoMode);
   const setDemoMode = useAnalysisStore((state) => state.setDemoMode);
+  const githubRepo = useAnalysisStore((state) => state.githubRepo);
   const { startStream } = useAgentStream();
 
   // Export report modal state
@@ -223,6 +225,13 @@ export default function DashboardPage() {
 
         {/* Bottom Right slot: Agent feed moved to permanent right column in layout */}
       </div>
+
+      {/* GitOps Actions — only shown when analyzing from GitHub repo */}
+      {isComplete && githubRepo && (
+        <div className="mt-4">
+          <GitOpsCard />
+        </div>
+      )}
 
       {/* Export Report Modal — lazy, only rendered when open */}
       {isComplete && analysisResult && (
