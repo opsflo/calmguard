@@ -47,9 +47,11 @@ const edgeTypes = {
 } as const;
 
 /** Dwell time on each node before moving to the next (ms) */
-const TOUR_DWELL_MS = 3000;
+const TOUR_DWELL_MS = 4000;
 /** Zoom level when focused on a single node */
 const TOUR_ZOOM = 1.0;
+/** Stop touring after this many full loops */
+const TOUR_MAX_LOOPS = 2;
 
 /**
  * TouringCamera — pans/zooms to each node in sequence while analysis runs.
@@ -67,12 +69,21 @@ function TouringCamera({ nodes, isAnalyzing }: { nodes: Node[]; isAnalyzing: boo
 
   const visitNext = useCallback(() => {
     if (tourableNodes.length === 0) return;
+
+    // Stop after max loops — zoom back out and hold
+    const maxVisits = tourableNodes.length * TOUR_MAX_LOOPS;
+    if (indexRef.current >= maxVisits) {
+      if (timerRef.current) clearInterval(timerRef.current);
+      fitView({ padding: 0.4, duration: 800 });
+      return;
+    }
+
     const node = tourableNodes[indexRef.current % tourableNodes.length];
     const x = (node.position?.x ?? 0) + ((node.measured?.width ?? 200) / 2);
     const y = (node.position?.y ?? 0) + ((node.measured?.height ?? 100) / 2);
     setCenter(x, y, { zoom: TOUR_ZOOM, duration: 1200 });
     indexRef.current += 1;
-  }, [tourableNodes, setCenter]);
+  }, [tourableNodes, setCenter, fitView]);
 
   useEffect(() => {
     if (!isAnalyzing || tourableNodes.length === 0) {
