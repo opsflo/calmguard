@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DEMO_ARCHITECTURES } from '../../../examples';
 import { parseCalm } from '@/lib/calm/parser';
@@ -34,9 +34,9 @@ export function ArchitectureSelector() {
   const selectedFrameworks = useAnalysisStore((state) => state.selectedFrameworks);
   const toggleFramework = useAnalysisStore((state) => state.toggleFramework);
 
-  const [githubEnabled, setGithubEnabled] = useState(false);
+  const setGitHubAuthEnabled = useAnalysisStore((state) => state.setGitHubAuthEnabled);
 
-  // Check on mount whether GITHUB_TOKEN is configured server-side
+  // Check on mount whether GITHUB_TOKEN is configured (for PR generation)
   useEffect(() => {
     fetch('/api/github/status')
       .then((res) => res.json())
@@ -44,17 +44,16 @@ export function ArchitectureSelector() {
         if (
           typeof data === 'object' &&
           data !== null &&
-          'enabled' in data &&
-          typeof (data as { enabled: unknown }).enabled === 'boolean'
+          'authEnabled' in data &&
+          typeof (data as { authEnabled: unknown }).authEnabled === 'boolean'
         ) {
-          setGithubEnabled((data as { enabled: boolean }).enabled);
+          setGitHubAuthEnabled((data as { authEnabled: boolean }).authEnabled);
         }
       })
       .catch(() => {
-        // If the status check fails, silently default to GitHub tab hidden
-        setGithubEnabled(false);
+        setGitHubAuthEnabled(false);
       });
-  }, []);
+  }, [setGitHubAuthEnabled]);
 
   const handleDemoSelection = (demoId: string) => {
     const demo = DEMO_ARCHITECTURES.find((d) => d.id === demoId);
@@ -112,14 +111,12 @@ export function ArchitectureSelector() {
           >
             Upload File
           </TabsTrigger>
-          {githubEnabled && (
-            <TabsTrigger
-              value="github"
-              className="flex-1 data-[state=active]:bg-slate-700 data-[state=active]:text-slate-100 text-slate-400 transition-colors"
-            >
-              From GitHub
-            </TabsTrigger>
-          )}
+          <TabsTrigger
+            value="github"
+            className="flex-1 data-[state=active]:bg-slate-700 data-[state=active]:text-slate-100 text-slate-400 transition-colors"
+          >
+            From GitHub
+          </TabsTrigger>
         </TabsList>
 
         {/* Upload File tab */}
@@ -195,12 +192,10 @@ export function ArchitectureSelector() {
           </div>
         </TabsContent>
 
-        {/* From GitHub tab — only rendered when githubEnabled */}
-        {githubEnabled && (
-          <TabsContent value="github" className="mt-4">
-            <GitHubInput />
-          </TabsContent>
-        )}
+        {/* From GitHub tab — always available (public repos work without auth) */}
+        <TabsContent value="github" className="mt-4">
+          <GitHubInput />
+        </TabsContent>
       </Tabs>
     </div>
   );

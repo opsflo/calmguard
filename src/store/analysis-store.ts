@@ -26,6 +26,7 @@ interface AnalysisState {
   error: ParseError['error'] | null;
 
   // GitOps state — tracks GitHub source repo and PR generation
+  gitHubAuthEnabled: boolean;
   githubRepo: {
     owner: string;
     repo: string;
@@ -48,6 +49,7 @@ interface AnalysisState {
   setSelectedFrameworks: (frameworks: string[]) => void;
   toggleFramework: (framework: string) => void;
   setDemoMode: (v: boolean) => void;
+  setGitHubAuthEnabled: (enabled: boolean) => void;
   setGitHubRepo: (repo: {
     owner: string;
     repo: string;
@@ -72,6 +74,7 @@ const initialState = {
   status: 'idle' as AnalysisStatus,
   error: null,
   // GitOps state
+  gitHubAuthEnabled: false,
   githubRepo: null as {
     owner: string;
     repo: string;
@@ -170,6 +173,8 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
     }),
 
   setDemoMode: (v) => set({ demoMode: v }),
+
+  setGitHubAuthEnabled: (enabled) => set({ gitHubAuthEnabled: enabled }),
 
   setGitHubRepo: (repo) => set({ githubRepo: repo }),
 

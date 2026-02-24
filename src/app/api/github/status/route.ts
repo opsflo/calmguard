@@ -5,11 +5,15 @@ export const dynamic = 'force-dynamic';
 /**
  * GET /api/github/status
  *
- * Returns whether GitHub integration is configured (i.e., GITHUB_TOKEN is set).
- * Called by the ArchitectureSelector on mount to conditionally show the "From GitHub" tab.
+ * Returns GitHub integration status.
+ * - enabled: always true (public repos work without auth)
+ * - authEnabled: whether GITHUB_TOKEN is set (needed for PR creation)
  *
- * Response: { enabled: boolean }
+ * Response: { enabled: boolean, authEnabled: boolean }
  */
 export async function GET(): Promise<Response> {
-  return NextResponse.json({ enabled: !!process.env.GITHUB_TOKEN });
+  return NextResponse.json({
+    enabled: true,
+    authEnabled: !!process.env.GITHUB_TOKEN,
+  });
 }
