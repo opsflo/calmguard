@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import type { PRRecord } from '@/lib/github/types';
 
+type SetPRFn = (pr: Partial<PRRecord>) => void;
+
 // ---------------------------------------------------------------------------
 // PRSection sub-component
 // ---------------------------------------------------------------------------
@@ -140,8 +142,59 @@ export function GitOpsCard() {
   const pipelinePR = useAnalysisStore((s) => s.pipelinePR);
   const remediationPR = useAnalysisStore((s) => s.remediationPR);
   const setPipelinePR = useAnalysisStore((s) => s.setPipelinePR);
+  const setRemediationPR = useAnalysisStore((s) => s.setRemediationPR);
 
   if (!githubRepo) return null;
+
+  /**
+   * Shared SSE stream reader for PR generation flows.
+   * Reads an SSE response body and updates PR state via the provided setter.
+   */
+  const readPRStream = async (
+    res: Response,
+    setPR: SetPRFn,
+  ) => {
+    const reader = res.body!.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const frames = buffer.split('\n\n');
+      buffer = frames.pop() ?? '';
+
+      for (const frame of frames) {
+        const trimmed = frame.trim();
+        if (!trimmed.startsWith('data: ')) continue;
+        const data = JSON.parse(trimmed.slice(6)) as {
+          type: string;
+          step?: string;
+          prUrl?: string;
+          prNumber?: number;
+          branchName?: string;
+          fileCount?: number;
+          message?: string;
+        };
+
+        if (data.type === 'step') {
+          setPR({ step: data.step });
+        } else if (data.type === 'done') {
+          setPR({
+            status: 'open',
+            prUrl: data.prUrl,
+            prNumber: data.prNumber,
+            branchName: data.branchName,
+            fileCount: data.fileCount,
+            step: undefined,
+          });
+        } else if (data.type === 'error') {
+          setPR({ status: 'error', error: data.message, step: undefined });
+        }
+      }
+    }
+  };
 
   const handleGeneratePipelinePR = async () => {
     setPipelinePR({ status: 'generating', step: 'Starting...' });
@@ -160,51 +213,39 @@ export function GitOpsCard() {
         }),
       });
 
-      // Read SSE stream for step updates
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const frames = buffer.split('\n\n');
-        buffer = frames.pop() ?? '';
-
-        for (const frame of frames) {
-          const trimmed = frame.trim();
-          if (!trimmed.startsWith('data: ')) continue;
-          const data = JSON.parse(trimmed.slice(6)) as {
-            type: string;
-            step?: string;
-            prUrl?: string;
-            prNumber?: number;
-            branchName?: string;
-            fileCount?: number;
-            message?: string;
-          };
-
-          if (data.type === 'step') {
-            setPipelinePR({ step: data.step });
-          } else if (data.type === 'done') {
-            setPipelinePR({
-              status: 'open',
-              prUrl: data.prUrl,
-              prNumber: data.prNumber,
-              branchName: data.branchName,
-              fileCount: data.fileCount,
-              step: undefined,
-            });
-          } else if (data.type === 'error') {
-            setPipelinePR({ status: 'error', error: data.message, step: undefined });
-          }
-        }
-      }
+      await readPRStream(res, setPipelinePR);
     } catch (error) {
       setPipelinePR({
         status: 'error',
         error: error instanceof Error ? error.message : 'Failed to generate PR',
+        step: undefined,
+      });
+    }
+  };
+
+  const handleGenerateRemediationPR = async () => {
+    if (!githubRepo) return;
+    setRemediationPR({ status: 'generating', step: 'Starting...' });
+
+    try {
+      const res = await fetch('/api/github/create-pr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'remediation',
+          owner: githubRepo.owner,
+          repo: githubRepo.repo,
+          filePath: githubRepo.filePath,
+          fileSha: githubRepo.fileSha,
+          defaultBranch: githubRepo.defaultBranch,
+        }),
+      });
+
+      await readPRStream(res, setRemediationPR);
+    } catch (error) {
+      setRemediationPR({
+        status: 'error',
+        error: error instanceof Error ? error.message : 'Failed to generate remediation PR',
         step: undefined,
       });
     }
@@ -230,12 +271,12 @@ export function GitOpsCard() {
             onGenerate={handleGeneratePipelinePR}
           />
 
-          {/* Remediation PR — disabled until Plan 03 */}
+          {/* Remediation PR */}
           <PRSection
             record={remediationPR}
             label="Compliance Remediation"
             description="Missing controls added, weak protocols upgraded"
-            onGenerate={undefined}
+            onGenerate={handleGenerateRemediationPR}
           />
         </div>
       </div>

@@ -1,10 +1,15 @@
 import { z } from 'zod';
 import '@/lib/github/globals';
+import { githubFetch } from '@/lib/github/client';
 import { getHeadSha, createBranch, commitMultipleFiles, createPR } from '@/lib/github/operations';
 import type { PipelineConfig } from '@/lib/agents/pipeline-generator';
+import { remediateCalm } from '@/lib/agents/calm-remediator';
 
 // Prevent Next.js from caching this route
 export const dynamic = 'force-dynamic';
+
+// Enable Vercel Fluid Compute 300-second timeout for long-running agent calls
+export const maxDuration = 300;
 
 /**
  * Request body schema for PR creation
@@ -161,15 +166,7 @@ export async function POST(req: Request): Promise<Response> {
 
   const { type, owner, repo, filePath, fileSha, defaultBranch } = bodyResult.data;
 
-  // 2. Remediation not yet implemented (Plan 03)
-  if (type === 'remediation') {
-    return Response.json(
-      { error: 'Remediation PR not yet implemented' },
-      { status: 501 },
-    );
-  }
-
-  // 3. Require GITHUB_TOKEN for write operations
+  // 2. Require GITHUB_TOKEN for write operations
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
     return Response.json(
@@ -180,7 +177,7 @@ export async function POST(req: Request): Promise<Response> {
     );
   }
 
-  // 4. Stream pipeline PR creation steps as SSE
+  // 3. Stream PR creation steps as SSE
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream({
@@ -190,76 +187,218 @@ export async function POST(req: Request): Promise<Response> {
       };
 
       try {
-        // Step 1: Get HEAD SHA
-        emit({ type: 'step', step: 'Getting HEAD SHA...' });
-        const headSha = await getHeadSha(owner, repo, defaultBranch, token).catch((err: unknown) => {
-          const msg = err instanceof Error ? err.message : String(err);
-          // Check for common HTTP errors in the message
-          if (msg.includes('(401)') || msg.includes('(403)')) {
-            throw new Error(mapGitHubError(403, msg));
-          }
-          if (msg.includes('(404)')) {
-            throw new Error(mapGitHubError(404, msg));
-          }
-          throw new Error(msg);
-        });
+        if (type === 'pipeline') {
+          // ----------------------------------------------------------------
+          // Pipeline PR: multi-file commit (GitHub Actions, SAST, IaC)
+          // ----------------------------------------------------------------
 
-        // Step 2: Create branch
-        const branchName = `calmguard/pipeline-${Date.now()}`;
-        emit({ type: 'step', step: 'Creating branch...' });
-        await createBranch(owner, repo, branchName, headSha, token).catch((err: unknown) => {
-          const msg = err instanceof Error ? err.message : String(err);
-          if (msg.includes('(422)')) {
-            throw new Error(mapGitHubError(422, msg));
+          // Step 1: Get HEAD SHA
+          emit({ type: 'step', step: 'Getting HEAD SHA...' });
+          const headSha = await getHeadSha(owner, repo, defaultBranch, token).catch((err: unknown) => {
+            const msg = err instanceof Error ? err.message : String(err);
+            if (msg.includes('(401)') || msg.includes('(403)')) {
+              throw new Error(mapGitHubError(403, msg));
+            }
+            if (msg.includes('(404)')) {
+              throw new Error(mapGitHubError(404, msg));
+            }
+            throw new Error(msg);
+          });
+
+          // Step 2: Create branch
+          const pipelineBranchName = `calmguard/pipeline-${Date.now()}`;
+          emit({ type: 'step', step: 'Creating branch...' });
+          await createBranch(owner, repo, pipelineBranchName, headSha, token).catch((err: unknown) => {
+            const msg = err instanceof Error ? err.message : String(err);
+            if (msg.includes('(422)')) {
+              throw new Error(mapGitHubError(422, msg));
+            }
+            throw new Error(msg);
+          });
+
+          // Step 3: Commit pipeline artifacts
+          emit({ type: 'step', step: 'Committing pipeline artifacts...' });
+
+          const pipeline = globalThis.__lastPipelineResult;
+          if (!pipeline) {
+            throw new Error(
+              'Pipeline analysis results not available. Run analysis first.',
+            );
           }
-          throw new Error(msg);
-        });
 
-        // Step 3: Commit pipeline artifacts
-        emit({ type: 'step', step: 'Committing pipeline artifacts...' });
-
-        const pipeline = globalThis.__lastPipelineResult;
-        if (!pipeline) {
-          throw new Error(
-            'Pipeline analysis results not available. Run analysis first.',
+          const files = buildPipelineFiles(pipeline);
+          await commitMultipleFiles(
+            owner,
+            repo,
+            pipelineBranchName,
+            files,
+            'chore: add CALMGuard compliance pipeline artifacts',
+            headSha,
+            token,
           );
+
+          // Step 4: Open pull request
+          emit({ type: 'step', step: 'Opening pull request...' });
+          const prBody = buildPipelinePRBody(pipeline, files);
+          const { html_url: pipelinePrUrl, number: pipelinePrNumber } = await createPR(
+            owner,
+            repo,
+            pipelineBranchName,
+            defaultBranch,
+            'chore: add CALMGuard compliance pipeline',
+            prBody,
+            token,
+          );
+
+          // Emit done — client uses this to update PR card state
+          emit({
+            type: 'done',
+            prUrl: pipelinePrUrl,
+            prNumber: pipelinePrNumber,
+            branchName: pipelineBranchName,
+            fileCount: files.length,
+            filePath,
+            fileSha,
+          });
+        } else {
+          // ----------------------------------------------------------------
+          // Remediation PR: single-file commit via Contents API (PUT)
+          // ----------------------------------------------------------------
+
+          // Step 1: Run CALM remediation agent
+          emit({ type: 'step', step: 'Running CALM remediation agent...' });
+
+          const analysisResult = globalThis.__lastAnalysisResult;
+          const calmDocument = globalThis.__lastCalmDocument;
+
+          if (!analysisResult || !calmDocument) {
+            throw new Error('Analysis results not available. Run analysis first.');
+          }
+
+          const { compliance, risk } = analysisResult;
+          if (!compliance || !risk) {
+            throw new Error('Compliance or risk analysis failed. Cannot remediate.');
+          }
+
+          const remediationResult = await remediateCalm(calmDocument, compliance, risk);
+          if (!remediationResult.success || !remediationResult.data) {
+            throw new Error(remediationResult.error ?? 'Remediation agent failed with unknown error.');
+          }
+
+          const { remediatedCalm, changes, summary } = remediationResult.data;
+
+          // Step 2: Get HEAD SHA
+          emit({ type: 'step', step: 'Getting HEAD SHA...' });
+          const headSha = await getHeadSha(owner, repo, defaultBranch, token).catch((err: unknown) => {
+            const msg = err instanceof Error ? err.message : String(err);
+            if (msg.includes('(401)') || msg.includes('(403)')) {
+              throw new Error(mapGitHubError(403, msg));
+            }
+            if (msg.includes('(404)')) {
+              throw new Error(mapGitHubError(404, msg));
+            }
+            throw new Error(msg);
+          });
+
+          // Step 3: Create branch
+          const remediationBranchName = `calmguard/remediation-${Date.now()}`;
+          emit({ type: 'step', step: 'Creating branch...' });
+          await createBranch(owner, repo, remediationBranchName, headSha, token).catch((err: unknown) => {
+            const msg = err instanceof Error ? err.message : String(err);
+            if (msg.includes('(422)')) {
+              throw new Error(mapGitHubError(422, msg));
+            }
+            throw new Error(msg);
+          });
+
+          // Step 4: Commit remediated CALM file via GitHub Contents API (PUT)
+          // Using PUT /repos/{owner}/{repo}/contents/{path} for single-file commit
+          emit({ type: 'step', step: 'Committing remediated CALM file...' });
+
+          const remediatedContent = Buffer.from(
+            JSON.stringify(remediatedCalm, null, 2),
+          ).toString('base64');
+
+          const contentResponse = await githubFetch(
+            `/repos/${owner}/${repo}/contents/${filePath}`,
+            {
+              method: 'PUT',
+              token,
+              body: JSON.stringify({
+                message: 'fix: apply CALMGuard compliance remediation',
+                content: remediatedContent,
+                branch: remediationBranchName,
+                sha: fileSha, // CRITICAL: required because file already exists
+              }),
+            },
+          );
+
+          if (!contentResponse.ok) {
+            const errorText = await contentResponse.text();
+            throw new Error(mapGitHubError(contentResponse.status, errorText));
+          }
+
+          // Step 5: Open pull request with per-change explanations
+          emit({ type: 'step', step: 'Opening pull request...' });
+
+          const protocolUpgradeCount = changes.filter((c) => c.changeType === 'protocol-upgrade').length;
+          const controlAddedCount = changes.filter((c) => c.changeType === 'control-added').length;
+
+          const changesList = changes
+            .map(
+              (change, i) =>
+                [
+                  `#### ${i + 1}. ${change.description}`,
+                  `- **Type:** ${change.changeType === 'protocol-upgrade' ? 'Protocol Upgrade' : 'Control Added'}`,
+                  `- **Element:** \`${change.nodeOrRelationshipId}\``,
+                  `- **Before:** ${change.before}`,
+                  `- **After:** ${change.after}`,
+                  `- **Rationale:** ${change.rationale}`,
+                ].join('\n')
+            )
+            .join('\n\n');
+
+          const remediationPrBody = [
+            '## CALMGuard Compliance Remediation',
+            '',
+            'Generated by [CALMGuard](https://github.com/finos-labs/dtcch-2026-opsflow-llc) compliance analysis.',
+            '',
+            '### Summary',
+            summary,
+            '',
+            '### Changes Made',
+            '',
+            changesList,
+            '',
+            '---',
+            '',
+            '### Remediation Statistics',
+            `- Total changes: ${changes.length}`,
+            `- Protocol upgrades: ${protocolUpgradeCount}`,
+            `- Controls added: ${controlAddedCount}`,
+            '',
+            '---',
+            '*Generated by CALMGuard CALM-native compliance platform*',
+          ].join('\n');
+
+          const { html_url: remediationPrUrl, number: remediationPrNumber } = await createPR(
+            owner,
+            repo,
+            remediationBranchName,
+            defaultBranch,
+            'fix: apply CALMGuard compliance remediation',
+            remediationPrBody,
+            token,
+          );
+
+          emit({
+            type: 'done',
+            prUrl: remediationPrUrl,
+            prNumber: remediationPrNumber,
+            branchName: remediationBranchName,
+            fileCount: 1,
+          });
         }
-
-        const files = buildPipelineFiles(pipeline);
-        await commitMultipleFiles(
-          owner,
-          repo,
-          branchName,
-          files,
-          'chore: add CALMGuard compliance pipeline artifacts',
-          headSha,
-          token,
-        );
-
-        // Step 4: Open pull request
-        emit({ type: 'step', step: 'Opening pull request...' });
-        const prBody = buildPipelinePRBody(pipeline, files);
-        const { html_url: prUrl, number: prNumber } = await createPR(
-          owner,
-          repo,
-          branchName,
-          defaultBranch,
-          'chore: add CALMGuard compliance pipeline',
-          prBody,
-          token,
-        );
-
-        // Emit done — client uses this to update PR card state
-        emit({
-          type: 'done',
-          prUrl,
-          prNumber,
-          branchName,
-          fileCount: files.length,
-          // filePath and fileSha are included for completeness; unused by pipeline PR
-          filePath,
-          fileSha,
-        });
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         emit({ type: 'error', message });
