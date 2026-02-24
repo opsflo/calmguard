@@ -124,13 +124,13 @@ Plans:
   11. Error handling with toast notifications for API errors, agent error display in feed, and retry button
   12. Graceful degradation if individual agent fails (show partial results with warning)
 
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
-- [ ] 04-01: Build compliance score gauge with SVG animation, per-framework breakdown bars, and counting effect
-- [ ] 04-02: Build risk heat map (nodes x domains grid) and control matrix table with sorting/filtering
-- [ ] 04-03: Build findings table with severity badges and pipeline preview with syntax highlighting, copy, and download
-- [ ] 04-04: Implement framework selector on landing page and error handling with toast notifications, agent error display, and retry logic
+- [ ] 04-04-PLAN.md — Install shared packages (sonner, tabs, checkbox, tooltip, shiki), framework selector data flow, toast notifications, error handling, retry button (Wave 1)
+- [ ] 04-01-PLAN.md — Compliance score SVG gauge with count-up animation and per-framework breakdown bars (Wave 2)
+- [ ] 04-02-PLAN.md — Risk heat map (nodes x frameworks grid) and control matrix table with sorting/filtering (Wave 2)
+- [ ] 04-03-PLAN.md — Findings table with expandable rows and pipeline preview with syntax highlighting, copy, download (Wave 3)
 
 ### Phase 5: Testing & DevSecOps Dogfooding
 **Goal**: Comprehensive test suite with TDD coverage, CI/CD pipeline with SAST and dependency scanning, security documentation, and Docusaurus documentation site built and updated.
