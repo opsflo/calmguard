@@ -66,10 +66,13 @@ interface HeatMapCellProps {
   framework: string;
   cellStatus: CellStatus;
   riskFactors: string[];
+  /** Row index for staggered cascade animation delay */
+  rowIndex: number;
 }
 
-function HeatMapCell({ nodeName, framework, cellStatus, riskFactors }: HeatMapCellProps) {
+function HeatMapCell({ nodeName, framework, cellStatus, riskFactors, rowIndex }: HeatMapCellProps) {
   const findingSummary = riskFactors.length > 0 ? riskFactors[0] : null;
+  const staggerDelay = `${rowIndex * 80}ms`;
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -77,10 +80,11 @@ function HeatMapCell({ nodeName, framework, cellStatus, riskFactors }: HeatMapCe
         <TooltipTrigger asChild>
           <div
             className={cn(
-              'h-8 rounded border cursor-pointer',
+              'h-8 rounded border cursor-pointer animate-fade-in',
               cellColors[cellStatus],
               'transition-colors duration-700 ease-in-out',
             )}
+            style={{ animationDelay: staggerDelay, transitionDelay: staggerDelay }}
           />
         </TooltipTrigger>
         <TooltipContent className="bg-slate-800 border-slate-700 text-slate-200 max-w-xs">
@@ -202,8 +206,8 @@ export function RiskHeatMap() {
               </div>
             ))}
 
-            {/* Data rows */}
-            {nodeRiskMap.map((node) => {
+            {/* Data rows — rowIndex drives staggered cascade animation */}
+            {nodeRiskMap.map((node, rowIndex) => {
               const cellStatus = deriveCellStatus(node.riskLevel, node.complianceGaps);
 
               return (
@@ -222,6 +226,7 @@ export function RiskHeatMap() {
                       framework={fw}
                       cellStatus={cellStatus}
                       riskFactors={node.riskFactors}
+                      rowIndex={rowIndex}
                     />
                   ))}
                 </>

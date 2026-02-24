@@ -89,6 +89,8 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
 
   const [activeTab, setActiveTab] = useState('github');
   const [highlightedHtml, setHighlightedHtml] = useState<Record<string, string>>({});
+  const [highlightedLines, setHighlightedLines] = useState<Record<string, string[]>>({});
+  const [visibleLineCount, setVisibleLineCount] = useState<Record<string, number>>({});
   const [copied, setCopied] = useState(false);
 
   // Pre-compute highlighted HTML for all 3 tabs when pipelineConfig arrives
@@ -96,6 +98,20 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
     if (!pipelineConfig) return;
 
     let cancelled = false;
+
+    /**
+     * Split shiki-highlighted HTML into individual line spans.
+     * Shiki wraps each line in <span class="line">...</span>.
+     * We extract these spans to reveal them one-by-one for the typewriter effect.
+     */
+    function splitIntoLines(html: string): string[] {
+      const matches = html.match(/<span class="line"[^>]*>.*?<\/span>/gs);
+      if (matches && matches.length > 0) {
+        return matches;
+      }
+      // Fallback: split on newline boundaries for plain-text fallback
+      return [html];
+    }
 
     async function highlight() {
       try {
@@ -122,10 +138,19 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
         ]);
 
         if (!cancelled) {
-          setHighlightedHtml({ github: ghHtml, security: secHtml, infra: infraHtml });
+          const htmlMap = { github: ghHtml, security: secHtml, infra: infraHtml };
+          const linesMap: Record<string, string[]> = {
+            github: splitIntoLines(ghHtml),
+            security: splitIntoLines(secHtml),
+            infra: splitIntoLines(infraHtml),
+          };
+          setHighlightedHtml(htmlMap);
+          setHighlightedLines(linesMap);
+          // Start visible count at 0 for all tabs — typewriter will increment
+          setVisibleLineCount({ github: 0, security: 0, infra: 0 });
         }
       } catch (err) {
-        // Shiki failed — fall back to plain text rendering
+        // Shiki failed — fall back to plain text rendering (show full content immediately)
         console.error('Shiki highlighting failed:', err);
         if (!cancelled) {
           const wrapPlain = (code: string) =>
@@ -135,19 +160,62 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
             .map((t: { name: string; config: string }) => `# ${t.name}\n${t.config}`)
             .join('\n---\n');
 
-          setHighlightedHtml({
+          const htmlMap = {
             github: wrapPlain(pipelineConfig!.githubActions.yaml || '# No content'),
             security: wrapPlain(secContent || '# No content'),
             infra: wrapPlain(pipelineConfig!.infrastructureAsCode.config || '# No content'),
-          });
+          };
+          setHighlightedHtml(htmlMap);
+          setHighlightedLines({});
+          // Fallback: show full content immediately (no typewriter for plain text)
+          setVisibleLineCount({});
         }
       }
     }
 
-    void highlight();
+    void (async () => { await highlight(); })();
 
     return () => { cancelled = true; };
   }, [pipelineConfig]);
+
+  // Typewriter reveal effect — runs whenever visibleLineCount is reset (new content or tab switch)
+  useEffect(() => {
+    // In compact mode, skip typewriter — show full content immediately
+    if (compact) return;
+
+    const lines = highlightedLines[activeTab];
+    if (!lines || lines.length === 0) return;
+
+    const currentCount = visibleLineCount[activeTab] ?? 0;
+
+    // Already fully revealed for this tab
+    if (currentCount >= lines.length) return;
+
+    // Start revealing line-by-line at 30ms per line
+    const intervalId = setInterval(() => {
+      setVisibleLineCount((prev) => {
+        const prevCount = prev[activeTab] ?? 0;
+        if (prevCount >= lines.length) {
+          clearInterval(intervalId);
+          return prev;
+        }
+        return { ...prev, [activeTab]: prevCount + 1 };
+      });
+    }, 30);
+
+    return () => clearInterval(intervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, highlightedLines, compact]);
+
+  // Reset and restart typewriter when switching tabs
+  useEffect(() => {
+    if (compact) return;
+    const lines = highlightedLines[activeTab];
+    if (!lines || lines.length === 0) return;
+    // Reset count to 0 on tab switch to trigger the typewriter effect
+    setVisibleLineCount((prev) => ({ ...prev, [activeTab]: 0 }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   // Copy to clipboard handler
   const handleCopy = async () => {
@@ -223,6 +291,30 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
 
   const isHighlighting = Object.keys(highlightedHtml).length === 0;
 
+  /**
+   * Build renderable HTML for a tab, applying the typewriter line count.
+   * In compact mode or when no line data exists, shows full content immediately.
+   */
+  function getTabHtml(tab: string): string {
+    const fullHtml = highlightedHtml[tab] ?? '';
+    const lines = highlightedLines[tab];
+
+    // Compact mode or no line data — show full content immediately
+    if (compact || !lines || lines.length === 0) return fullHtml;
+
+    const count = visibleLineCount[tab] ?? 0;
+
+    // Extract outer wrapper tags from shiki output (pre + code open/close)
+    const preMatch = fullHtml.match(/^([\s\S]*?<code[^>]*>)([\s\S]*?)(<\/code>[\s\S]*?)$/);
+    if (preMatch) {
+      const [, openTags, , closeTags] = preMatch;
+      return `${openTags}${lines.slice(0, count).join('\n')}${closeTags}`;
+    }
+
+    // Fallback
+    return lines.slice(0, count).join('\n');
+  }
+
   return (
     <Card className="bg-slate-800 border-slate-700">
       <div className="p-6">
@@ -296,7 +388,7 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
               ) : (
                 <div
                   className={`text-xs font-mono overflow-auto ${codeMaxH} [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:bg-transparent [&_code]:leading-relaxed`}
-                  dangerouslySetInnerHTML={{ __html: highlightedHtml[tab] ?? '' }}
+                  dangerouslySetInnerHTML={{ __html: getTabHtml(tab) }}
                 />
               )}
             </TabsContent>
