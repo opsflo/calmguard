@@ -10,7 +10,11 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
-    "license-check": "license-checker --failOn 'GPL-2.0;GPL-3.0;AGPL-3.0'"
+    "license-check": "license-checker --failOn 'GPL-2.0;GPL-3.0;AGPL-3.0'",
+    "prepare": "husky",
+    "docs:dev": "cd docs && pnpm start",
+    "docs:build": "cd docs && pnpm build",
+    "docs:api": "tsx scripts/generate-api-docs.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.44",
@@ -43,6 +47,11 @@
     "zod": "^3.24.1",
     "zustand": "^5.0.3"
   },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix --max-warnings=0"
+    ]
+  },
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
@@ -50,8 +59,10 @@
     "@vitejs/plugin-react": "^5.1.4",
     "eslint": "^9.18.0",
     "eslint-config-next": "^15.5.0",
+    "husky": "^9.1.7",
     "jsdom": "^28.1.0",
     "license-checker": "^25.0.1",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.4.49",
     "tailwindcss": "^4.1.0",
     "tsx": "^4.21.0",
