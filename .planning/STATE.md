@@ -6,21 +6,21 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** When a user uploads a CALM architecture JSON, CALMGuard must analyze it with AI agents and produce a real-time compliance dashboard showing architecture visualization, compliance scores, risk findings, and generated CI/CD pipeline configs — all streaming live as agents work.
 
-**Current focus:** Phase 4: Compliance Visualization
+**Current focus:** Phase 5: Testing, DevSecOps, Dogfooding
 
 ## Current Position
 
-Phase: 4 of 6 (Pipeline Generation & Compliance Display) — IN PROGRESS
-Plan: 6 of 6 in current phase — COMPLETE
-Status: Phase 4 Plan 03 Complete — Moving to Phase 4 Plan 05
-Last activity: 2026-02-24 — Completed plan 04-03: Findings Table + Pipeline Preview + Dashboard Pages (4 min, 2 tasks, 5 files)
+Phase: 5 of 6 (Testing, DevSecOps, Dogfooding) — IN PROGRESS
+Plan: 4 of 5 in current phase — COMPLETE
+Status: Phase 5 Plan 04 Complete — Moving to Phase 5 Plan 05
+Last activity: 2026-02-24 — Completed plan 05-04: SECURITY.md threat model, Husky pre-commit hooks, CONTRIBUTING.md (4 min, 2 tasks, 5 files)
 
-Progress: [████████░░] 75.0% (21/28 plans)
+Progress: [█████████░] 89.7% (26/29 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
+- Total plans completed: 21
 - Average duration: 5 minutes
 - Total execution time: ~1.5 hours
 
@@ -30,13 +30,13 @@ Progress: [████████░░] 75.0% (21/28 plans)
 |-------|-------|------------|----------|
 | 01-foundation-calm-parser | 4 | 43 min | 11 min |
 | 02-multi-agent-infrastructure | 5 | 17 min | 3 min |
-| 03-api-routes-dashboard-core | 6 (of 6) | ~16 min | 3 min |
+| 03-api-routes-dashboard-core | 7 (of 7) | ~17 min | 2 min |
 | 04-pipeline-generation-compliance-display | 4 (so far) | ~23 min | 6 min |
 
 **Recent Completions:**
-1. 04-04 Shared UI Packages + Framework Selector + Toast Notifications - 12 min (2 tasks, 15 files)
-2. 04-01 Compliance Score Gauge + SVG Animation + Dashboard Wiring - 8 min (2 tasks, 2 files)
-3. 04-02 Risk Heat Map + Control Matrix + Compliance Page - 3 min (2 tasks, 3 files)
+1. 05-04 SECURITY.md threat model + Husky pre-commit hooks + CONTRIBUTING.md - 4 min (2 tasks, 5 files)
+2. 05-03 GitHub Actions CI/CD workflow - (2 tasks)
+3. 05-01 Vitest test infrastructure - (2 tasks)
 4. 04-03 Findings Table + Pipeline Preview + Dashboard Pages - 4 min (2 tasks, 5 files)
 
 *Updated after each plan completion*
@@ -48,6 +48,7 @@ Progress: [████████░░] 75.0% (21/28 plans)
 | Phase 04-pipeline-generation-compliance-display P01 | 8 | 2 tasks | 2 files |
 | Phase 04-pipeline-generation-compliance-display P02 | 3 | 2 tasks | 3 files |
 | Phase 04-pipeline-generation-compliance-display P03 | 4 | 2 tasks | 5 files |
+| Phase 05 P04 | 4 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,9 @@ Recent decisions affecting current work:
 - [Phase 04-03]: highlightedHtml stored as local useState not Zustand — ephemeral display data, not part of analysis result
 - [Phase 04-03]: compact prop pattern for PipelinePreview — same component with different height/feature constraints for overview grid (compact=true) vs pipeline page (compact=false)
 - [Phase 04-03]: SEVERITY_ORDER record maps severity strings to integers for deterministic sort — critical(0) first
+- [Phase 05-04]: Use FlatCompat to bridge eslint-config-next (legacy extends) to ESLint v9 flat config — project had no eslint config; next lint was deprecated in Next.js 15/16
+- [Phase 05-04]: Use eslint --fix --max-warnings=0 in lint-staged (not next lint) — next lint is interactive and deprecated in Next.js 15/16
+- [Phase 05-04]: Create CONTRIBUTING.md at project root separate from .github/CONTRIBUTING.md — project-specific guidance vs hackathon template
 
 ### Pending Todos
 
@@ -128,9 +132,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24 (plan execution)
-Stopped at: Completed 04-03-PLAN.md — Findings Table, Pipeline Preview, /dashboard/findings, /dashboard/pipeline pages
+Stopped at: Completed 05-04-PLAN.md — SECURITY.md threat model, Husky pre-commit hooks, CONTRIBUTING.md, eslint.config.mjs
 Resume file: None
 
 ---
 
-*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) Complete (6/6 plans) - Phase 4: 04-04, 04-01, 04-02, 04-03 done — 04-05, 04-06 remain*
+*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) Complete (7/7 plans, gap closure done) - Phase 4 Complete (4/4 plans) - Phase 5 next*
