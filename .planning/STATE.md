@@ -52,6 +52,7 @@ Progress: [█████████░] 89.7% (26/29 plans)
 | Phase 05-testing-devsecops-dogfooding P03 | 5 | 2 tasks | 4 files |
 | Phase 05-testing-devsecops-dogfooding P01 | 6 | 2 tasks | 5 files |
 | Phase 05 P05 | 11 | 2 tasks | 27 files |
+| Phase 05 P02 | 4 | 1 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -128,6 +129,8 @@ Recent decisions affecting current work:
 - [Phase 05]: routeBasePath: / + slug: / on intro.md — Docusaurus docs ARE the site root for clean hackathon URLs
 - [Phase 05]: Regex-based Zod schema extraction in generate-api-docs.ts — avoids full TypeScript AST complexity
 - [Phase 05]: MDX curly brace escaping in API docs generator — HTML-encode braces to prevent acorn parse errors
+- [Phase 05]: vi.importActual for partial agent mocking: orchestrator.ts imports Zod schemas at module level to build analysisResultSchema — mocking with {} breaks .nullable(); vi.importActual spreads real module preserving schemas while replacing only the function under test
+- [Phase 05]: TEST-05 (dashboard component tests) deferred to post-hackathon: async server components and Zustand hooks not testable in jsdom without complex setup
 
 ### Pending Todos
 
@@ -144,7 +147,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24 (plan execution)
-Stopped at: Completed 05-05-PLAN.md — Docusaurus 3 documentation site with 10 pages, Mermaid diagrams, auto-generated API reference
+Stopped at: Completed 05-02-PLAN.md — API route contract tests, SSE streaming tests, orchestrator flow tests (22 tests total, 930ms runtime)
 Resume file: None
 
 ---
