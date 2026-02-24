@@ -6,16 +6,16 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Core value:** When a user uploads a CALM architecture JSON, CALMGuard must analyze it with AI agents and produce a real-time compliance dashboard showing architecture visualization, compliance scores, risk findings, and generated CI/CD pipeline configs — all streaming live as agents work.
 
-**Current focus:** Phase 5: Testing, DevSecOps, Dogfooding
+**Current focus:** Phase 6: Polish, Demo Mode & Deployment
 
 ## Current Position
 
-Phase: 5 of 6 (Testing, DevSecOps, Dogfooding) — IN PROGRESS
-Plan: 4 of 5 in current phase — COMPLETE
-Status: Phase 5 Plan 04 Complete — Moving to Phase 5 Plan 05
-Last activity: 2026-02-24 — Completed plan 05-04: SECURITY.md threat model, Husky pre-commit hooks, CONTRIBUTING.md (4 min, 2 tasks, 5 files)
+Phase: 6 of 6 (Polish, Demo Mode & Deployment) — IN PROGRESS
+Plan: 1 of 3 in current phase — COMPLETE
+Status: Phase 6 Plan 01 Complete — Moving to Phase 6 Plan 02
+Last activity: 2026-02-24 — Completed plan 06-01: CALM upload zone (drag-and-drop), calm-cli validator, /api/calm/validate route, maxDuration=300 (6 min, 2 tasks, 7 files)
 
-Progress: [█████████░] 89.7% (26/29 plans)
+Progress: [██████████] 93.1% (27/29 plans)
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [█████████░] 89.7% (26/29 plans)
 | Phase 05-testing-devsecops-dogfooding P01 | 6 | 2 tasks | 5 files |
 | Phase 05 P05 | 11 | 2 tasks | 27 files |
 | Phase 05 P02 | 4 | 1 tasks | 3 files |
+| Phase 06 P01 | 6 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -131,6 +132,9 @@ Recent decisions affecting current work:
 - [Phase 05]: MDX curly brace escaping in API docs generator — HTML-encode braces to prevent acorn parse errors
 - [Phase 05]: vi.importActual for partial agent mocking: orchestrator.ts imports Zod schemas at module level to build analysisResultSchema — mocking with {} breaks .nullable(); vi.importActual spreads real module preserving schemas while replacing only the function under test
 - [Phase 05]: TEST-05 (dashboard component tests) deferred to post-hackathon: async server components and Zustand hooks not testable in jsdom without complex setup
+- [Phase 06]: serverExternalPackages for @finos/calm-cli: prevents webpack from bundling the Node.js CLI tool called via subprocess
+- [Phase 06]: CalmUploadZone in both architecture-selector and sidebar: landing page upload + always-accessible dashboard upload
+- [Phase 06]: maxDuration=300 on analyze route: enables Vercel Fluid Compute 300s SSE streaming in production
 
 ### Pending Todos
 
