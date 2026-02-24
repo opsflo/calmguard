@@ -92,7 +92,7 @@ export default function Home() {
                 Get Started
               </h2>
               <p className="text-sm text-slate-400">
-                Choose a demo architecture or upload your own CALM JSON file
+                Choose a demo architecture, upload a CALM JSON file, or analyze from a GitHub repo
               </p>
             </div>
             <ArchitectureSelector />
