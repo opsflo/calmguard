@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Pause, Play } from 'lucide-react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -77,16 +78,20 @@ function TouringCamera({
   nodes,
   edges,
   isAnalyzing,
+  paused,
   onFocusChange,
 }: {
   nodes: Node[];
   edges: Edge[];
   isAnalyzing: boolean;
+  paused: boolean;
   onFocusChange: (info: FocusedNodeInfo | null) => void;
 }) {
   const { setCenter, fitView } = useReactFlow();
   const indexRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
 
   const tourableNodes = useMemo(
     () => nodes.filter((n) => n.type !== 'trustBoundary'),
@@ -119,6 +124,7 @@ function TouringCamera({
 
   const visitNext = useCallback(() => {
     if (tourableNodes.length === 0) return;
+    if (pausedRef.current) return;
 
     const maxVisits = tourableNodes.length * TOUR_MAX_LOOPS;
     if (indexRef.current >= maxVisits) {
@@ -215,6 +221,7 @@ function ArchitectureGraphInner({ compact = false }: ArchitectureGraphProps) {
   const analysisResult = useAnalysisStore((state) => state.analysisResult);
   const status = useAnalysisStore((state) => state.status);
   const [focusedNode, setFocusedNode] = useState<FocusedNodeInfo | null>(null);
+  const [tourPaused, setTourPaused] = useState(false);
 
   const isAnalyzing = status === 'analyzing';
 
@@ -250,6 +257,7 @@ function ArchitectureGraphInner({ compact = false }: ArchitectureGraphProps) {
           nodes={nodes}
           edges={edges}
           isAnalyzing={isAnalyzing}
+          paused={tourPaused}
           onFocusChange={setFocusedNode}
         />
         <Background color="#334155" gap={16} />
@@ -276,6 +284,15 @@ function ArchitectureGraphInner({ compact = false }: ArchitectureGraphProps) {
         )}
       </ReactFlow>
       <NodeInfoOverlay info={focusedNode} />
+      {isAnalyzing && focusedNode && (
+        <button
+          onClick={() => setTourPaused((p) => !p)}
+          className="absolute bottom-4 right-4 z-10 p-2 bg-slate-900/90 backdrop-blur-sm border border-slate-700 rounded-lg shadow-lg text-slate-300 hover:text-slate-100 hover:border-slate-500 transition-colors"
+          title={tourPaused ? 'Resume tour' : 'Pause tour'}
+        >
+          {tourPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
+        </button>
+      )}
     </>
   );
 }
