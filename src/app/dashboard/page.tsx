@@ -1,24 +1,37 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { CheckCircle2, AlertTriangle, RotateCcw } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { CheckCircle2, AlertTriangle, RotateCcw, Download } from 'lucide-react';
 import { useAnalysisStore } from '@/store/analysis-store';
 import { useAgentStream } from '@/hooks/use-agent-stream';
 import { ComplianceCard } from '@/components/dashboard/compliance-card';
 import { PipelinePreview } from '@/components/dashboard/pipeline-preview';
 import { ArchitectureGraph } from '@/components/graph/architecture-graph';
+import { ExportReportModal } from '@/components/dashboard/export-report-modal';
+import { generateMarkdownReport } from '@/lib/report/generate-report';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+
+/** Convert 0-100 score to a Tailwind text color class */
+function getScoreColorClass(score: number): string {
+  if (score >= 80) return 'text-emerald-400';
+  if (score >= 60) return 'text-amber-400';
+  return 'text-red-400';
+}
 
 export default function DashboardPage() {
   const analysisInput = useAnalysisStore((state) => state.analysisInput);
   const analysisResult = useAnalysisStore((state) => state.analysisResult);
   const rawCalmData = useAnalysisStore((state) => state.rawCalmData);
+  const selectedDemoId = useAnalysisStore((state) => state.selectedDemoId);
   const selectedFrameworks = useAnalysisStore((state) => state.selectedFrameworks);
   const status = useAnalysisStore((state) => state.status);
   const demoMode = useAnalysisStore((state) => state.demoMode);
   const setDemoMode = useAnalysisStore((state) => state.setDemoMode);
   const { startStream } = useAgentStream();
+
+  // Export report modal state
+  const [showReport, setShowReport] = useState(false);
 
   // Guard against double-fire on React StrictMode double-invoke
   const hasStartedRef = useRef(false);
@@ -54,6 +67,22 @@ export default function DashboardPage() {
 
   const isComplete = status === 'complete' && analysisResult !== null;
   const isParsed = status === 'parsed';
+  const overallScore = analysisResult?.risk?.overallScore ?? null;
+  const totalFindings = analysisResult?.risk?.topFindings?.length ?? 0;
+  const durationSec = analysisResult ? (analysisResult.duration / 1000).toFixed(1) : '0';
+  const agentCount = analysisResult ? analysisResult.completedAgents.length : 0;
+
+  // Build report content (only when modal is open — lazy evaluation via useMemo-like pattern)
+  const reportMarkdown = isComplete && analysisResult
+    ? generateMarkdownReport(
+        analysisResult,
+        analysisInput,
+        selectedDemoId ?? 'Custom Architecture',
+        new Date().toISOString().split('T')[0] ?? '',
+      )
+    : '';
+
+  const reportFilename = `calmguard-report-${selectedDemoId ?? 'analysis'}-${Date.now().toString()}.md`;
 
   return (
     <div className="p-6">
@@ -74,8 +103,8 @@ export default function DashboardPage() {
               analysisResult.failedAgents.length > 0 ? 'text-amber-400' : 'text-emerald-400'
             }`}>
               {analysisResult.failedAgents.length > 0
-                ? `Partial analysis — ${analysisResult.completedAgents.length}/${analysisResult.completedAgents.length + analysisResult.failedAgents.length} agents succeeded in ${(analysisResult.duration / 1000).toFixed(1)}s`
-                : `Analysis complete — ${analysisResult.completedAgents.length} agents finished in ${(analysisResult.duration / 1000).toFixed(1)}s`
+                ? `Partial analysis — ${analysisResult.completedAgents.length}/${analysisResult.completedAgents.length + analysisResult.failedAgents.length} agents succeeded in ${durationSec}s`
+                : `Analysis complete — ${analysisResult.completedAgents.length} agents finished in ${durationSec}s`
               }
             </span>
             {rawCalmData && (
@@ -93,13 +122,58 @@ export default function DashboardPage() {
 
           {/* Partial results warning — only when agents failed */}
           {analysisResult.failedAgents.length > 0 && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3 mb-4 flex items-center gap-3">
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3 mb-2 flex items-center gap-3">
               <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0" />
               <span className="text-sm text-amber-400">
                 Partial results: {analysisResult.failedAgents.join(', ')} failed. Some panels may show incomplete data.
               </span>
             </div>
           )}
+
+          {/* Completion summary card — slides in on analysis complete */}
+          <div className="animate-slide-up bg-slate-800/90 border border-slate-700 rounded-xl px-6 py-5 mb-4 backdrop-blur-sm">
+            <div className="flex items-center justify-between gap-6">
+              {/* Overall score — large, prominent */}
+              <div className="flex items-baseline gap-2">
+                {overallScore !== null ? (
+                  <>
+                    <span className={`text-3xl font-bold ${getScoreColorClass(overallScore)}`}>
+                      {overallScore}
+                    </span>
+                    <span className="text-sm text-slate-400 font-medium">/100</span>
+                  </>
+                ) : (
+                  <span className="text-xl font-semibold text-slate-400">Score N/A</span>
+                )}
+                <span className="text-xs text-slate-500 ml-1">overall score</span>
+              </div>
+
+              {/* Key stats row */}
+              <div className="flex items-center gap-6 text-sm text-slate-400 divide-x divide-slate-700">
+                <div className="flex flex-col items-center">
+                  <span className="text-slate-200 font-semibold">{agentCount}/4</span>
+                  <span className="text-xs text-slate-500">agents</span>
+                </div>
+                <div className="flex flex-col items-center pl-6">
+                  <span className="text-slate-200 font-semibold">{durationSec}s</span>
+                  <span className="text-xs text-slate-500">duration</span>
+                </div>
+                <div className="flex flex-col items-center pl-6">
+                  <span className="text-slate-200 font-semibold">{totalFindings}</span>
+                  <span className="text-xs text-slate-500">findings</span>
+                </div>
+              </div>
+
+              {/* Export Report CTA */}
+              <Button
+                onClick={() => setShowReport(true)}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 shrink-0"
+              >
+                <Download className="h-4 w-4" />
+                Export Report
+              </Button>
+            </div>
+          </div>
         </>
       )}
 
@@ -146,6 +220,16 @@ export default function DashboardPage() {
 
         {/* Bottom Right slot: Agent feed moved to permanent right column in layout */}
       </div>
+
+      {/* Export Report Modal — lazy, only rendered when open */}
+      {isComplete && analysisResult && (
+        <ExportReportModal
+          open={showReport}
+          onClose={() => setShowReport(false)}
+          markdown={reportMarkdown}
+          filename={reportFilename}
+        />
+      )}
     </div>
   );
 }

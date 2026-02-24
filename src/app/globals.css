@@ -27,6 +27,9 @@
 
   /* ANIM-04: Heat map staggered fade-in */
   --animate-fade-in: fade-in 0.5s ease-out forwards;
+
+  /* ANIM-05: Completion summary card slide-up */
+  --animate-slide-up: slide-up 0.4s ease-out forwards;
 }
 
 /* ANIM-03: Agent feed slide-in — verified complete */
@@ -79,4 +82,20 @@
 
 .animate-gauge-pulse {
   animation: gauge-pulse 2s infinite ease-in-out;
+}
+
+/* ANIM-05: Completion summary card — slides up and fades in */
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out forwards;
 }
