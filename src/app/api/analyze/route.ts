@@ -4,21 +4,13 @@ import { extractAnalysisInput } from '@/lib/calm/extractor';
 import { agentEventEmitter } from '@/lib/ai/streaming';
 import { runAnalysis } from '@/lib/agents/orchestrator';
 import { analyzeRequestSchema } from '@/lib/api/schemas';
-import type { PipelineConfig } from '@/lib/agents/pipeline-generator';
+import '@/lib/github/globals';
 
 // Prevent Next.js from caching this route — required for SSE
 export const dynamic = 'force-dynamic';
 
 // Enable Vercel Fluid Compute 300-second timeout for SSE streaming in production
 export const maxDuration = 300;
-
-/**
- * Global store for the most recent pipeline result.
- * GET /api/pipeline reads from this.
- */
-declare global {
-  var __lastPipelineResult: PipelineConfig | null | undefined;
-}
 
 /**
  * POST /api/analyze
