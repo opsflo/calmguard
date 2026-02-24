@@ -4,6 +4,7 @@ import type { AnalysisInput } from '@/lib/calm/extractor';
 import type { ParseError } from '@/lib/calm/parser';
 import type { AnalysisResult } from '@/lib/agents/orchestrator';
 import type { AgentEvent } from '@/lib/agents/types';
+import type { PRRecord } from '@/lib/github/types';
 
 type AnalysisStatus = 'idle' | 'loading' | 'parsed' | 'analyzing' | 'complete' | 'error';
 
@@ -24,6 +25,17 @@ interface AnalysisState {
   status: AnalysisStatus;
   error: ParseError['error'] | null;
 
+  // GitOps state — tracks GitHub source repo and PR generation
+  githubRepo: {
+    owner: string;
+    repo: string;
+    filePath: string;
+    fileSha: string;
+    defaultBranch: string;
+  } | null;
+  pipelinePR: PRRecord;
+  remediationPR: PRRecord;
+
   // Actions
   setSelectedDemo: (demoId: string) => void;
   setCalmData: (data: CalmDocument, input: AnalysisInput) => void;
@@ -36,6 +48,15 @@ interface AnalysisState {
   setSelectedFrameworks: (frameworks: string[]) => void;
   toggleFramework: (framework: string) => void;
   setDemoMode: (v: boolean) => void;
+  setGitHubRepo: (repo: {
+    owner: string;
+    repo: string;
+    filePath: string;
+    fileSha: string;
+    defaultBranch: string;
+  }) => void;
+  setPipelinePR: (pr: Partial<PRRecord>) => void;
+  setRemediationPR: (pr: Partial<PRRecord>) => void;
   reset: () => void;
 }
 
@@ -50,6 +71,16 @@ const initialState = {
   demoMode: false,
   status: 'idle' as AnalysisStatus,
   error: null,
+  // GitOps state
+  githubRepo: null as {
+    owner: string;
+    repo: string;
+    filePath: string;
+    fileSha: string;
+    defaultBranch: string;
+  } | null,
+  pipelinePR: { type: 'pipeline' as const, status: 'idle' as const },
+  remediationPR: { type: 'remediation' as const, status: 'idle' as const },
 };
 
 export const useAnalysisStore = create<AnalysisState>((set) => ({
@@ -139,6 +170,18 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
     }),
 
   setDemoMode: (v) => set({ demoMode: v }),
+
+  setGitHubRepo: (repo) => set({ githubRepo: repo }),
+
+  setPipelinePR: (pr) =>
+    set((state) => ({
+      pipelinePR: { ...state.pipelinePR, ...pr },
+    })),
+
+  setRemediationPR: (pr) =>
+    set((state) => ({
+      remediationPR: { ...state.remediationPR, ...pr },
+    })),
 
   reset: () => set(initialState),
 }));
