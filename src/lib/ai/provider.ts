@@ -11,42 +11,56 @@ import type { AgentConfig } from '@/lib/agents/types';
  */
 
 /**
- * Build provider registry object conditionally based on available API keys
+ * Build provider registry lazily at runtime — NOT at module initialization.
+ * This ensures process.env is fully resolved (Turbopack, .env loading, etc.)
+ * before we check for API keys.
  */
-const providers: Record<string, any> = {};
+let _providers: Record<string, any> | null = null;
+let _registry: ReturnType<typeof createProviderRegistry> | null = null;
 
-if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-  providers.google = google;
-}
-
-if (process.env.ANTHROPIC_API_KEY) {
-  providers.anthropic = anthropic;
-}
-
-if (process.env.OPENAI_API_KEY) {
-  providers.openai = openai;
-}
-
-if (process.env.XAI_API_KEY) {
-  providers.xai = xai;
+function getProviders(): Record<string, any> {
+  if (!_providers) {
+    _providers = {};
+    if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      _providers.google = google;
+    }
+    if (process.env.ANTHROPIC_API_KEY) {
+      _providers.anthropic = anthropic;
+    }
+    if (process.env.OPENAI_API_KEY) {
+      _providers.openai = openai;
+    }
+    if (process.env.XAI_API_KEY) {
+      _providers.xai = xai;
+    }
+  }
+  return _providers;
 }
 
 /**
- * Multi-provider registry
+ * Multi-provider registry (lazy)
  * Resolves model strings like "google:gemini-2.5-flash" to actual provider models
- *
- * NOTE: Registry may have zero providers at build time (no API keys in CI).
- * Validation is deferred to first use in getDefaultModel/getModelForAgent.
  */
-export const registry = createProviderRegistry(providers);
+function getRegistry() {
+  if (!_registry) {
+    _registry = createProviderRegistry(getProviders());
+  }
+  return _registry;
+}
+
+/** Backwards-compatible export for any code referencing `registry` directly */
+export const registry = new Proxy({} as ReturnType<typeof createProviderRegistry>, {
+  get(_target, prop, receiver) {
+    return Reflect.get(getRegistry(), prop, receiver);
+  },
+});
 
 /**
  * Validate that at least one LLM provider is configured.
- * Called by getDefaultModel/getModelForAgent at runtime — not at module initialization
- * to allow Next.js to build without API keys (build-time static analysis).
+ * Called at runtime — not at module initialization.
  */
 function assertProviderConfigured(): void {
-  if (Object.keys(providers).length === 0) {
+  if (Object.keys(getProviders()).length === 0) {
     throw new Error(
       'No LLM provider API keys configured. Set at least one of: GOOGLE_GENERATIVE_AI_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, XAI_API_KEY'
     );

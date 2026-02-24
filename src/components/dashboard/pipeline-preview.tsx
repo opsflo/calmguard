@@ -23,16 +23,32 @@ interface PipelinePreviewProps {
 // Helper — derive raw content per tab
 // ---------------------------------------------------------------------------
 
+/**
+ * Normalize code content from LLM output.
+ * LLMs sometimes return YAML with literal escaped newlines (\\n), markdown
+ * fenced code block markers, or trailing whitespace that break rendering.
+ */
+function normalizeCode(raw: string): string {
+  let code = raw;
+  // Strip markdown fenced code block markers (```yaml ... ```)
+  code = code.replace(/^```[\w-]*\n?/gm, '').replace(/\n?```$/gm, '');
+  // Replace literal escaped newlines with real newlines
+  code = code.replace(/\\n/g, '\n');
+  // Collapse multiple blank lines into a single blank line
+  code = code.replace(/\n{3,}/g, '\n\n');
+  return code.trim();
+}
+
 function getRawContent(tab: string, pipelineConfig: PipelineConfig): string {
   switch (tab) {
     case 'github':
-      return pipelineConfig.githubActions.yaml;
+      return normalizeCode(pipelineConfig.githubActions.yaml);
     case 'security':
       return pipelineConfig.securityScanning.tools
-        .map((t) => `# ${t.name}\n${t.config}`)
+        .map((t) => `# ${t.name}\n${normalizeCode(t.config)}`)
         .join('\n---\n');
     case 'infra':
-      return pipelineConfig.infrastructureAsCode.config;
+      return normalizeCode(pipelineConfig.infrastructureAsCode.config);
     default:
       return '';
   }
@@ -127,20 +143,22 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
         const infraLang =
           pipelineConfig!.infrastructureAsCode.provider === 'terraform' ? 'hcl' : 'yaml';
 
+        const ghContent = normalizeCode(pipelineConfig!.githubActions.yaml) || '# No GitHub Actions YAML generated';
         const secContent = pipelineConfig!.securityScanning.tools
-          .map((t: { name: string; config: string }) => `# ${t.name}\n${t.config}`)
-          .join('\n---\n');
+          .map((t: { name: string; config: string }) => `# ${t.name}\n${normalizeCode(t.config)}`)
+          .join('\n---\n') || '# No security scanning config generated';
+        const infraContent = normalizeCode(pipelineConfig!.infrastructureAsCode.config) || '# No infrastructure config generated';
 
         const [ghHtml, secHtml, infraHtml] = await Promise.all([
-          codeToHtml(pipelineConfig!.githubActions.yaml || '# No GitHub Actions YAML generated', {
+          codeToHtml(ghContent, {
             lang: 'yaml',
             theme: 'github-dark',
           }),
-          codeToHtml(secContent || '# No security scanning config generated', {
+          codeToHtml(secContent, {
             lang: 'yaml',
             theme: 'github-dark',
           }),
-          codeToHtml(pipelineConfig!.infrastructureAsCode.config || '# No infrastructure config generated', {
+          codeToHtml(infraContent, {
             lang: infraLang,
             theme: 'github-dark',
           }),
@@ -165,14 +183,14 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
           const wrapPlain = (code: string) =>
             `<pre class="p-4 bg-transparent"><code class="leading-relaxed">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
 
-          const secContent = pipelineConfig!.securityScanning.tools
-            .map((t: { name: string; config: string }) => `# ${t.name}\n${t.config}`)
+          const secContentPlain = pipelineConfig!.securityScanning.tools
+            .map((t: { name: string; config: string }) => `# ${t.name}\n${normalizeCode(t.config)}`)
             .join('\n---\n');
 
           const htmlMap = {
-            github: wrapPlain(pipelineConfig!.githubActions.yaml || '# No content'),
-            security: wrapPlain(secContent || '# No content'),
-            infra: wrapPlain(pipelineConfig!.infrastructureAsCode.config || '# No content'),
+            github: wrapPlain(normalizeCode(pipelineConfig!.githubActions.yaml) || '# No content'),
+            security: wrapPlain(secContentPlain || '# No content'),
+            infra: wrapPlain(normalizeCode(pipelineConfig!.infrastructureAsCode.config) || '# No content'),
           };
           setHighlightedHtml(htmlMap);
           setHighlightedLines({});
@@ -404,7 +422,7 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
             </div>
           ) : (
             <div
-              className={`text-xs font-mono overflow-auto ${codeMaxH} [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:bg-transparent [&_code]:leading-relaxed`}
+              className={`text-xs font-mono overflow-auto ${codeMaxH} [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:bg-transparent [&_code]:leading-relaxed [&_code]:whitespace-pre-wrap`}
               dangerouslySetInnerHTML={{ __html: getTabHtml(tab) }}
             />
           )}
