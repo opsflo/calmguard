@@ -6,15 +6,15 @@ See: .planning/PROJECT.md (updated 2026-02-24)
 
 **Core value:** When a user uploads a CALM architecture JSON (or points to one in a GitHub repo), CALMGuard must analyze it with AI agents and produce a real-time compliance dashboard — and for repo-connected analyses, generate PRs with pipeline artifacts and compliance-remediated architecture files.
 
-**Current focus:** v1.2 — GitOps PR Generation
+**Current focus:** v1.2 — GitOps PR Generation (COMPLETE)
 
 ## Current Position
 
 Phase: 7 — GitOps PR Generation
-Status: In progress — 07-02 complete, ready for 07-03
-Last activity: 2026-02-24 — Plan 07-02 fully complete (2 tasks, pipeline PR generation end-to-end)
+Status: COMPLETE — all 3 plans done
+Last activity: 2026-02-24 — Plan 07-03 fully complete (2 tasks, CALM remediation agent + remediation PR end-to-end)
 
-Progress: [######░░░░] 66% (2/3 plans complete)
+Progress: [##########] 100% (3/3 plans complete)
 
 ## Accumulated Context
 
@@ -35,19 +35,24 @@ v1.2 decisions (resolved during 07-02 execution):
 - Branch name format: `calmguard/pipeline-{Date.now()}` — timestamp ensures uniqueness
 - Remediation PR section renders with onGenerate=undefined (not a function) — disables button cleanly without triggering error state
 
+v1.2 decisions (resolved during 07-03 execution):
+- GitHub Contents API PUT used for remediation (single file) vs blob+tree+commit for pipeline (multi-file)
+- readPRStream() helper extracted to DRY up duplicate SSE stream reading logic in GitOps card
+- CALM enum constraints included in agent prompt retry messages to prevent validation failures on retry
+- remediateCalm() called inside SSE stream (step 1) so progress is visible before GitHub ops
+
 ### Pending Todos
 
 None.
 
 ### Blockers/Concerns
 
-None — Plan 07-02 complete, ready for Plan 07-03.
+None — Phase 07 complete. v1.2 GitOps PR Generation milestone fully delivered.
 
 ## Session Continuity
 
-Last session: 2026-02-24 (Plan 07-02 completion — pipeline PR end-to-end)
-Stopped at: Completed 07-02-PLAN.md — ready to start 07-03
-Resume file: .planning/phases/07-gitops-pr-generation/07-03-PLAN.md
+Last session: 2026-02-24 (Plan 07-03 completion — CALM remediation PR end-to-end)
+Stopped at: Completed 07-03-PLAN.md — Phase 07 complete
 
 ## Performance Metrics
 
@@ -55,7 +60,8 @@ Resume file: .planning/phases/07-gitops-pr-generation/07-03-PLAN.md
 |-------|------|----------|-------|-------|
 | 07-gitops-pr-generation | 01 | 15min | 3 | 10 |
 | 07-gitops-pr-generation | 02 | 9min | 2 | 6 |
+| 07-gitops-pr-generation | 03 | 5min | 2 | 5 |
 
 ---
 
-*v1.2 GitOps PR Generation — milestone started 2026-02-24*
+*v1.2 GitOps PR Generation — milestone completed 2026-02-24*
