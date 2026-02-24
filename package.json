@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "license-check": "license-checker --failOn 'GPL-2.0;GPL-3.0;AGPL-3.0'"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.44",
@@ -44,11 +47,16 @@
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.1.4",
     "eslint": "^9.18.0",
     "eslint-config-next": "^15.5.0",
+    "jsdom": "^28.1.0",
+    "license-checker": "^25.0.1",
     "postcss": "^8.4.49",
     "tailwindcss": "^4.1.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.0.18"
   }
 }
