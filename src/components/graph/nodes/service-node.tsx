@@ -33,6 +33,7 @@ export function ServiceNode({ data }: NodeProps<ServiceNodeType>) {
   return (
     <div
       className={`bg-slate-800/90 backdrop-blur-sm border-2 ${borderColors[data.complianceStatus]} rounded-xl min-w-[160px] max-w-[200px] overflow-hidden shadow-lg ${glowColors[data.complianceStatus]} transition-shadow duration-500`}
+      style={{ transition: 'border-color 0.6s ease-out, box-shadow 0.6s ease-out' }}
     >
       <Handle type="target" position={Position.Left} className="!bg-blue-400 !w-2 !h-2 !border-slate-900 !border-2" />
       <div className="bg-gradient-to-r from-blue-900/60 to-blue-800/30 border-b border-blue-600/30 px-3 py-1.5 flex items-center gap-2">

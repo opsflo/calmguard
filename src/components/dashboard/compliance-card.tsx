@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
+import { OdometerScore } from '@/components/ui/odometer-score';
 import { useAnalysisStore } from '@/store/analysis-store';
 
 // ---------------------------------------------------------------------------
@@ -158,18 +159,15 @@ function ComplianceGauge({ displayScore, hasData }: GaugeProps) {
         style={{ transition: 'stroke-dashoffset 0.1s linear, stroke 0.3s ease' }}
       />
 
-      {/* Score number — centered, large bold */}
-      <text
-        x={CENTER}
-        y={CENTER - 6}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fontSize={28}
-        fontWeight="bold"
-        fill={color}
-      >
-        {displayScore}
-      </text>
+      {/* Score — OdometerScore embedded via foreignObject for CSS animation inside SVG */}
+      <foreignObject x={CENTER - 30} y={CENTER - 22} width={60} height={36}>
+        <div
+          style={{ color }}
+          className="flex items-center justify-center h-full text-2xl font-bold"
+        >
+          <OdometerScore score={displayScore} />
+        </div>
+      </foreignObject>
 
       {/* Subtitle */}
       <text
