@@ -2,17 +2,18 @@
 
 ## What This Is
 
-CALMGuard is a CALM-native continuous compliance DevSecOps platform that reads FINOS CALM (Common Architecture Language Model) architecture definitions and analyzes them with a 4-agent AI system to produce real-time compliance dashboards with architecture visualization, risk scores, findings, and generated CI/CD pipeline configs — all streaming live. Built for the DTCC/FINOS Innovate.DTCC AI Hackathon (Feb 23-27, 2026).
+CALMGuard is a CALM-native continuous compliance DevSecOps platform that reads FINOS CALM (Common Architecture Language Model) architecture definitions and analyzes them with a 4-agent AI system to produce real-time compliance dashboards with architecture visualization, risk scores, findings, and generated CI/CD pipeline configs — all streaming live. It can also connect to GitHub repos and generate PRs with pipeline artifacts and compliance-remediated CALM files. Built for the DTCC/FINOS Innovate.DTCC AI Hackathon (Feb 23-27, 2026).
 
 ## Core Value
 
-When a user uploads a CALM architecture JSON, CALMGuard must analyze it with AI agents and produce a real-time compliance dashboard showing architecture visualization, compliance scores, risk findings, and generated CI/CD pipeline configs — all streaming live as agents work.
+When a user uploads a CALM architecture JSON (or points to one in a GitHub repo), CALMGuard must analyze it with AI agents and produce a real-time compliance dashboard showing architecture visualization, compliance scores, risk findings, and generated CI/CD pipeline configs — all streaming live as agents work. For repo-connected analyses, it generates PRs with pipeline artifacts and compliance-remediated architecture files.
 
 ## Current State
 
 **Shipped:** v1.1 MVP (2026-02-24)
 **Codebase:** 82 TypeScript files, ~46,800 lines, Next.js 15 + Vercel AI SDK
 **Status:** Feature-complete for hackathon demo. Deployed to Vercel.
+**Current milestone:** v1.2 — GitOps PR Generation
 
 ## Requirements
 
@@ -41,7 +42,13 @@ When a user uploads a CALM architecture JSON, CALMGuard must analyze it with AI 
 
 ### Active
 
-(None — all v1 requirements shipped)
+- [ ] Accept GitHub repo URL + path to CALM file as input source — v1.2
+- [ ] Fetch CALM file from GitHub via API using PAT authentication — v1.2
+- [ ] Generate PR with pipeline artifacts (GitHub Actions, SAST configs, IaC) committed to repo — v1.2
+- [ ] Generate compliance-remediated CALM file with missing controls added and weak protocols upgraded — v1.2
+- [ ] Generate PR with modified CALM file + change description explaining each remediation — v1.2
+- [ ] Dashboard UI for repo input (URL + path fields) alongside existing file upload — v1.2
+- [ ] PR generation status and links displayed in dashboard after analysis — v1.2
 
 ### Out of Scope
 
@@ -50,24 +57,28 @@ When a user uploads a CALM architecture JSON, CALMGuard must analyze it with AI 
 - Persistent database — all analysis is ephemeral per session
 - Continuous monitoring / webhook-based triggers — on-demand analysis only
 - Production-grade auth/RBAC — hackathon demo, no authentication needed
+- GitHub OAuth/App flow — PAT via env var sufficient for hackathon
 
 ## Context
 
 - **Hackathon**: DTCC/FINOS Innovate.DTCC AI Hackathon, Feb 23-27, 2026. Track: IT Innovation (multi-agent development, DevSecOps, advanced security).
 - **Positioning**: "From Architecture-as-Code to Continuous Compliance — Automatically."
-- **Prior winner context**: 2025 Grand Prize winner was CIBC's "Automated Regulatory Change Management" — proves regulatory compliance automation wins. CALMGuard differentiates by being architecture-aware via CALM.
+- **v1.2 narrative**: "We don't just tell you what's wrong — we fix it, as a PR, ready for review." GitOps-safe compliance remediation.
+- **Prior winner context**: 2025 Grand Prize winner was CIBC's "Automated Regulatory Change Management" — proves regulatory compliance automation wins. CALMGuard differentiates by being architecture-aware via CALM AND now actionable via PRs.
 - **CALM ecosystem**: FINOS's flagship Architecture-as-Code initiative. Schema version 1.1.
 - **AOF inspiration**: Agent definitions use YAML format, SKILL.md files for domain knowledge injection, fleet orchestration pattern.
 - **LLM strategy**: Vercel AI SDK for multi-provider support. Gemini as default. Architecture supports Anthropic, OpenAI, Ollama, Grok as alternatives.
+- **GitHub integration**: PAT-based auth via GITHUB_TOKEN env var. Uses Octokit REST API for repo content fetching, branch creation, file commits, and PR creation.
 
 ## Constraints
 
-- **Solo developer**: One person building entire platform
-- **Timeline**: 7 days prep + 5 days hackathon execution
-- **Tech stack**: Next.js 15 (App Router), TypeScript strict, pnpm, Vercel AI SDK, shadcn/ui, React Flow, Zustand, Zod
+- **Two developers**: OpsFlow LLC team
+- **Timeline**: 3 days remaining (Feb 25-27, 2026)
+- **Tech stack**: Next.js 15 (App Router), TypeScript strict, pnpm, Vercel AI SDK, shadcn/ui, React Flow, Zustand, Zod, Octokit
 - **Deployment**: Vercel free tier, zero-config
 - **License**: Apache 2.0, must be open-sourceable and contribute to FINOS ecosystem
 - **Demo resolution**: Optimized for 1920x1080 presentation
+- **GitHub auth**: PAT via env var (GITHUB_TOKEN), no OAuth flow
 
 ## Key Decisions
 
@@ -83,6 +94,9 @@ When a user uploads a CALM architecture JSON, CALMGuard must analyze it with AI 
 | React Flow for architecture graph | Custom nodes per CALM type, dagre auto-layout, compliance coloring | ✓ Good |
 | @finos/calm-cli via subprocess | CLI has no programmatic API, subprocess with temp files works reliably | ✓ Good |
 | Vercel Fluid Compute 300s | maxDuration=300 enables long-running SSE streaming in production | ✓ Good |
+| GitHub PAT over OAuth | Simpler for hackathon, env var based, covers demo needs | — Pending |
+| Direct CALM modification over separate file | More impactful demo — PR diff shows actual protocol/control changes | — Pending |
+| Single phase for v1.2 | Tight timeline (3 days), focused scope, maximum demo impact | — Pending |
 
 ---
-*Last updated: 2026-02-24 after v1.1 milestone*
+*Last updated: 2026-02-24 after v1.2 milestone start*
