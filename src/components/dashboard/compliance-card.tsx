@@ -253,7 +253,16 @@ function FrameworkBars({ scores }: FrameworkBarsProps) {
 function AnalyzingGauge() {
   return (
     <svg width={128} height={128} viewBox="0 0 128 128" aria-label="Analysis in progress">
-      {/* Spinning arc background */}
+      <defs>
+        {/* Gradient for the pulsing ring */}
+        <linearGradient id="analyzing-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.6" />
+          <stop offset="50%" stopColor="#60a5fa" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.6" />
+        </linearGradient>
+      </defs>
+
+      {/* Background track */}
       <circle
         cx={CENTER}
         cy={CENTER}
@@ -263,20 +272,30 @@ function AnalyzingGauge() {
         strokeWidth={8}
         className="text-slate-700"
       />
-      {/* Animated spinning arc */}
+
+      {/* Pulsing full ring with gradient — breathes in and out */}
       <circle
         cx={CENTER}
         cy={CENTER}
         r={RADIUS}
         fill="none"
-        stroke="#3b82f6"
+        stroke="url(#analyzing-gradient)"
         strokeWidth={8}
-        strokeLinecap="round"
-        strokeDasharray={`${CIRCUMFERENCE * 0.25} ${CIRCUMFERENCE * 0.75}`}
-        transform={`rotate(-90 ${CENTER} ${CENTER})`}
-        className="animate-spin origin-center"
-        style={{ transformBox: 'fill-box', animationDuration: '2s' }}
+        className="animate-gauge-pulse"
       />
+
+      {/* Subtle inner glow ring */}
+      <circle
+        cx={CENTER}
+        cy={CENTER}
+        r={RADIUS - 12}
+        fill="none"
+        stroke="#3b82f6"
+        strokeWidth={1}
+        opacity={0.15}
+        className="animate-gauge-pulse"
+      />
+
       {/* Center text */}
       <text
         x={CENTER}
@@ -286,6 +305,7 @@ function AnalyzingGauge() {
         fontSize={11}
         fontWeight="600"
         fill="#60a5fa"
+        className="animate-gauge-pulse"
       >
         Analyzing
       </text>

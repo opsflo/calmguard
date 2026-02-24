@@ -49,3 +49,16 @@
 .animate-shimmer {
   animation: shimmer 1.5s infinite ease-in-out;
 }
+
+@keyframes gauge-pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-gauge-pulse {
+  animation: gauge-pulse 2s infinite ease-in-out;
+}
