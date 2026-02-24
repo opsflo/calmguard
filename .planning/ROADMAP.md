@@ -101,7 +101,7 @@ Plans:
 - [x] 03-04-PLAN.md — Agent activity feed: event rows with animations, severity badges, auto-scroll, thinking dots (Wave 2)
 - [x] 03-05-PLAN.md — React Flow architecture graph: custom nodes by CALM type, protocol edges, dagre layout, trust boundaries, compliance coloring (Wave 1)
 - [x] 03-06-PLAN.md — Integration: wire AgentFeed into layout, create Architecture tab, update Overview page, completion banner (Wave 3)
-- [ ] 03-07-PLAN.md — UAT gap closure: fix overview graph height, architecture graph spacing, agent feed full-height (Wave 1, gap closure)
+- [x] 03-07-PLAN.md — UAT gap closure: fix overview graph height, architecture graph spacing, agent feed full-height (Wave 1, gap closure)
 
 ### Phase 4: Pipeline Generation & Compliance Display
 **Goal**: Compliance score gauge, risk heat map, control matrix, findings table, and pipeline preview all display with real-time updates as agents complete.
@@ -156,14 +156,14 @@ Plans:
   14. API contract documentation is auto-generated or maintained alongside Zod schemas
   15. Documentation updated at each phase completion as part of workflow
 
-**Plans**: 4 plans
+**Plans**: 5 plans
 
 Plans:
-- [ ] 05-01: Write TDD test suite for CALM parsing, agent schemas, and API routes using Vitest
-- [ ] 05-02: Write integration tests for SSE streaming and component tests for dashboard interactions
-- [ ] 05-03: Set up GitHub Actions CI/CD with lint/typecheck/build/test, SAST (CodeQL/Semgrep), dependency scanning (npm audit/Trivy)
-- [ ] 05-04: Write SECURITY.md, configure pre-commit hooks, set up branch protection
-- [ ] 05-05: Build Docusaurus site with developer and user sections, API contract docs, and phase-level documentation updates
+- [ ] 05-01-PLAN.md — Vitest setup + CALM parser tests + Zod schema validation tests (~10 tests) (Wave 1)
+- [ ] 05-02-PLAN.md — API route contract tests + orchestrator flow test + SSE streaming tests (~5 tests) (Wave 2)
+- [ ] 05-03-PLAN.md — GitHub Actions CI/CD pipeline + CodeQL + Semgrep SAST + dependency audit (Wave 1)
+- [ ] 05-04-PLAN.md — SECURITY.md threat model + Husky pre-commit hooks + CONTRIBUTING.md branch protection (Wave 1)
+- [ ] 05-05-PLAN.md — Docusaurus 3 site with 10 pages (dev + user sections) + API docs generator script (Wave 1)
 
 ### Phase 6: Polish, Demo Mode & Deployment
 **Goal**: Production-ready application deployed to Vercel with guided demo mode, custom CALM upload, export report, animations polished, and ready for Feb 23-27 hackathon presentation.
@@ -205,7 +205,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Foundation & CALM Parser | 4/4 | Complete | 2026-02-16 |
 | 2. Multi-Agent Infrastructure | 0/5 | Not started | - |
-| 3. API Routes & Dashboard Core | 6/7 | UAT gap closure | - |
+| 3. API Routes & Dashboard Core | 7/7 | Complete | 2026-02-24 |
 | 4. Pipeline Generation & Compliance Display | 0/4 | Not started | - |
 | 5. Testing & DevSecOps Dogfooding | 0/5 | Not started | - |
 | 6. Polish, Demo Mode & Deployment | 0/4 | Not started | - |
