@@ -71,3 +71,6 @@ pnpm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# presentation research (private)
+/presentation/
+

@@ -137,16 +137,19 @@ graph TB
 
 ## Agent System
 
-CALMGuard runs a coordinated squad of four AI agents, defined as YAML configurations in [`agents/`](agents/):
+CALMGuard runs a coordinated squad of AI agents, defined as YAML configurations (`calmguard/v1` API) in [`agents/`](agents/):
 
-| Agent | Role | Output |
-|-------|------|--------|
-| **Architecture Analyzer** | Evaluates architecture quality, identifies patterns and anti-patterns | Architecture assessment with severity-scored findings |
-| **Compliance Mapper** | Maps CALM controls to regulatory frameworks | Control-to-framework mapping with gap analysis |
-| **Pipeline Generator** | Generates CI/CD and security scanning configs | GitHub Actions YAML, SAST/DAST configs, IaC |
-| **Risk Scorer** | Aggregates findings into overall risk score | Weighted risk scores with heat map data |
+| Agent | Icon | Role | Model | Output |
+|-------|------|------|-------|--------|
+| **Architecture Analyzer** | `network` | Extract structural insights — components, data flows, trust boundaries, security zones, protocol usage, deployment topology | Gemini 2.5-flash (temp 0.2) | Architecture analysis with severity-scored findings |
+| **Compliance Mapper** | `shield-check` | Map CALM controls to SOX, PCI-DSS, FINOS CCC, NIST-CSF. Assess compliance status, identify gaps, generate per-framework scores with auditor evidence | Gemini 2.5-flash (temp 0.2) | Framework mappings, gap analysis, remediation recommendations |
+| **Pipeline Generator** | `git-branch` | Generate production-ready GitHub Actions CI/CD, SAST/DAST scanning configs (Semgrep, CodeQL), Terraform IaC matching CALM deployment topology | Gemini 2.5-flash (temp 0.3) | GitHub Actions YAML, security tool configs, IaC templates |
+| **Risk Scorer** | `gauge` | Aggregate all Phase 1 results into weighted risk assessment — overall score (0-100), per-framework scores, node-level risk heat map, executive summary | Gemini 2.5-flash (temp 0.1) | Weighted risk scores, heat map data, prioritized findings |
+| **Orchestrator** | `brain` | Coordinate multi-agent lifecycle — parallel Phase 1 + sequential Phase 2, event streaming, result aggregation, graceful degradation | Gemini 2.5-flash (temp 0.1) | Aggregated analysis result |
 
-**Orchestration:** Phase 1 runs Analyzer + Mapper + Pipeline Gen in parallel. Phase 2 runs Risk Scorer on aggregated results.
+**Orchestration:** Phase 1 runs Analyzer + Mapper + Pipeline Gen in parallel (`Promise.allSettled`). Phase 2 runs Risk Scorer sequentially on aggregated results. All agents emit typed SSE events (`started`, `thinking`, `finding`, `completed`) streamed to the dashboard in real-time.
+
+**Skills injection:** The Compliance Mapper loads 90+ KB of framework knowledge from [`skills/`](skills/) (SOX.md, PCI-DSS.md, FINOS-CCC.md, NIST-CSF.md) into its prompt context for deep regulatory mapping.
 
 ## Compliance Frameworks
 
@@ -168,15 +171,34 @@ Two production-realistic CALM architectures are included in [`examples/`](exampl
 
 ## Documentation
 
-Full documentation is included in the [`docs/`](docs/) directory, built with [Docusaurus](https://docusaurus.io/):
+Full documentation is available in [`docs/`](docs/). Run locally with `pnpm docs:dev`, or browse directly on GitHub:
 
-- Getting Started guide
-- Architecture deep-dive
-- Agent system reference
-- API documentation
-- Compliance framework details
+### Getting Started
 
-Run locally with `pnpm docs:dev`.
+| Guide | Description |
+|-------|-------------|
+| [Introduction](docs/docs/intro.md) | What CALMGuard is, the problem it solves, and key capabilities |
+| [Getting Started](docs/docs/getting-started.md) | Setup, environment variables, running your first analysis |
+| [Uploading Architectures](docs/docs/uploading-architectures.md) | CALM file format, validation, using demo architectures |
+| [Reading Reports](docs/docs/reading-reports.md) | Dashboard walkthrough — interpreting compliance scores, heat maps, findings |
+
+### Architecture & Internals
+
+| Guide | Description |
+|-------|-------------|
+| [System Overview](docs/docs/architecture/system-overview.md) | Architecture diagram, data flow, SSE streaming, Zustand store |
+| [Agent System](docs/docs/architecture/agent-system.md) | Agent definitions, orchestration phases, YAML configs, skill injection |
+| [API Reference](docs/docs/api/reference.md) | HTTP endpoints — `POST /api/analyze`, `POST /api/calm/parse`, `GET /api/pipeline` |
+| [Compliance Frameworks](docs/docs/compliance/frameworks.md) | NIST CSF, PCI DSS, SOX, FINOS CCC — how they map to CALM controls |
+
+### Project
+
+| Guide | Description |
+|-------|-------------|
+| [Contributing](docs/docs/contributing.md) | Development setup, branch naming, commit conventions, CI requirements |
+| [Security](docs/docs/security.md) | Threat model, input validation, LLM output safety, responsible AI |
+| [SECURITY.md](SECURITY.md) | Full security policy with AI-specific threat analysis |
+| [CHANGELOG.md](CHANGELOG.md) | Release history and version details |
 
 ## Contributing
 
@@ -193,10 +215,10 @@ All commits must include a **DCO sign-off** (`git commit -s`).
 
 **OpsFlow LLC** — Built for DTCC/FINOS Innovate.DTCC AI Hackathon 2026
 
-| Name | Role |
-|------|------|
-| **Gourav J. Shah** | Lead Engineer |
-| **Anoop Mehendale** | Engineer |
+| Name | Role | Background |
+|------|------|------------|
+| [**Gourav J. Shah**](https://www.linkedin.com/in/gouravshah/) | Lead Engineer | DevOps domain expert with 19+ years hands-on expertise in cloud infrastructure, DevSecOps, container orchestration, and platform engineering. Creator of Agentic Ops Framework and KubeAgentiX. |
+| [**Anoop Mehendale**](https://www.linkedin.com/in/anoopmehendale/) | Engineer | Serial entrepreneur with a track record of building and scaling enterprise technology companies. |
 
 ## Hackathon Context
 
