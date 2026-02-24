@@ -111,17 +111,15 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
     let cancelled = false;
 
     /**
-     * Split shiki-highlighted HTML into individual line spans.
-     * Shiki wraps each line in <span class="line">...</span>.
-     * We extract these spans to reveal them one-by-one for the typewriter effect.
+     * Split shiki-highlighted HTML into individual line entries.
+     * Shiki separates each <span class="line">…</span> with newlines inside <code>.
+     * We split on those newlines so the typewriter can reveal line-by-line.
      */
     function splitIntoLines(html: string): string[] {
-      const matches = html.match(/<span class="line"[^>]*>.*?<\/span>/gs);
-      if (matches && matches.length > 0) {
-        return matches;
-      }
-      // Fallback: split on newline boundaries for plain-text fallback
-      return [html];
+      const codeMatch = html.match(/<code[^>]*>([\s\S]*?)<\/code>/);
+      if (!codeMatch) return [html];
+      const lines = codeMatch[1].split('\n').filter((l) => l.trim().length > 0);
+      return lines.length > 0 ? lines : [html];
     }
 
     async function highlight() {
