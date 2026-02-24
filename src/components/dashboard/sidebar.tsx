@@ -127,9 +127,10 @@ export function Sidebar() {
                   key={name}
                   className={cn(
                     'flex items-center gap-2.5 px-3 py-2 rounded-md transition-all duration-300',
-                    status === 'running' && 'bg-blue-500/10',
-                    status === 'complete' && 'bg-emerald-500/5',
-                    status === 'error' && 'bg-red-500/5'
+                    status === 'running' && 'bg-slate-700/60 border border-blue-400/30',
+                    status === 'complete' && 'bg-emerald-500/10 border border-emerald-500/20',
+                    status === 'error' && 'bg-red-500/10 border border-red-500/20',
+                    status === 'idle' && 'border border-transparent'
                   )}
                 >
                   {/* Bot avatar with status ring */}
@@ -151,10 +152,16 @@ export function Sidebar() {
 
                   {/* Name and role */}
                   <div className="min-w-0">
-                    <span className="text-xs font-medium text-slate-300 block truncate">
+                    <span className={cn(
+                      'text-xs font-medium block truncate transition-colors duration-300',
+                      status === 'running' ? 'text-slate-100' : 'text-slate-300'
+                    )}>
                       {persona?.botName ?? name}
                     </span>
-                    <span className="text-[10px] text-slate-500 block truncate">
+                    <span className={cn(
+                      'text-[10px] block truncate transition-colors duration-300',
+                      status === 'running' ? 'text-blue-300/70' : 'text-slate-500'
+                    )}>
                       {persona?.role ?? ''}
                     </span>
                   </div>

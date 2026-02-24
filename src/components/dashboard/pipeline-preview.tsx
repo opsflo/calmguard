@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Copy, Check, Download, AlertTriangle } from 'lucide-react';
+import { Copy, Check, Download, AlertTriangle, Maximize2, X } from 'lucide-react';
 import { codeToHtml } from 'shiki/bundle/web';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -92,6 +92,17 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
   const [highlightedLines, setHighlightedLines] = useState<Record<string, string[]>>({});
   const [visibleLineCount, setVisibleLineCount] = useState<Record<string, number>>({});
   const [copied, setCopied] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+
+  // Close fullscreen on Escape key
+  useEffect(() => {
+    if (!fullscreen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setFullscreen(false);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [fullscreen]);
 
   // Pre-compute highlighted HTML for all 3 tabs when pipelineConfig arrives
   useEffect(() => {
@@ -238,7 +249,7 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
   };
 
   // Code display max height
-  const codeMaxH = compact ? 'max-h-[200px]' : 'max-h-96';
+  const codeMaxH = fullscreen ? 'max-h-[calc(100vh-12rem)]' : compact ? 'max-h-[200px]' : 'max-h-96';
 
   // Empty state — no analysis run yet
   if (status === 'idle' || status === 'parsed' || status === 'loading') {
@@ -315,85 +326,130 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
     return lines.slice(0, count).join('\n');
   }
 
+  const actionButtons = (
+    <div className="flex items-center gap-1">
+      {/* Copy button */}
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={() => void handleCopy()}
+        className="h-7 w-7 p-0 text-slate-400 hover:text-slate-200"
+        title="Copy to clipboard"
+      >
+        {copied ? (
+          <Check className="h-4 w-4 text-emerald-400" />
+        ) : (
+          <Copy className="h-4 w-4" />
+        )}
+      </Button>
+
+      {/* Download button — hidden in compact mode */}
+      {!compact && (
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={handleDownload}
+          className="h-7 w-7 p-0 text-slate-400 hover:text-slate-200"
+          title="Download file"
+        >
+          <Download className="h-4 w-4" />
+        </Button>
+      )}
+
+      {/* Fullscreen toggle */}
+      {!compact && (
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => setFullscreen((f) => !f)}
+          className="h-7 w-7 p-0 text-slate-400 hover:text-slate-200"
+          title={fullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+        >
+          {fullscreen ? <X className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+        </Button>
+      )}
+    </div>
+  );
+
+  const tabContent = (
+    <Tabs
+      value={activeTab}
+      onValueChange={setActiveTab}
+      className="w-full"
+    >
+      <TabsList className="bg-slate-900 border border-slate-700 h-8 p-0.5 mb-3">
+        <TabsTrigger
+          value="github"
+          className="h-7 px-3 text-xs text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-slate-100 rounded"
+        >
+          GitHub Actions
+        </TabsTrigger>
+        <TabsTrigger
+          value="security"
+          className="h-7 px-3 text-xs text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-slate-100 rounded"
+        >
+          Security Scanning
+        </TabsTrigger>
+        <TabsTrigger
+          value="infra"
+          className="h-7 px-3 text-xs text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-slate-100 rounded"
+        >
+          Infrastructure
+        </TabsTrigger>
+      </TabsList>
+
+      {(['github', 'security', 'infra'] as const).map((tab) => (
+        <TabsContent key={tab} value={tab} className="mt-0">
+          {isHighlighting ? (
+            <div className="bg-slate-900 rounded-lg">
+              <CodeSkeleton />
+            </div>
+          ) : (
+            <div
+              className={`text-xs font-mono overflow-auto ${codeMaxH} [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:bg-transparent [&_code]:leading-relaxed`}
+              dangerouslySetInnerHTML={{ __html: getTabHtml(tab) }}
+            />
+          )}
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+
+  // Fullscreen overlay
+  if (fullscreen) {
+    return (
+      <>
+        {/* Placeholder card so layout doesn't collapse */}
+        <Card className="bg-slate-800 border-slate-700">
+          <div className="p-6 flex items-center justify-center h-24">
+            <p className="text-sm text-slate-500">Pipeline Preview — viewing fullscreen</p>
+          </div>
+        </Card>
+
+        {/* Fullscreen overlay */}
+        <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-sm flex flex-col">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+            <h3 className="text-base font-medium text-slate-200">Pipeline Preview</h3>
+            {actionButtons}
+          </div>
+          <div className="flex-1 overflow-hidden px-6 py-4">
+            {tabContent}
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <Card className="bg-slate-800 border-slate-700">
       <div className="p-6">
         {/* Header: title + action buttons */}
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-slate-400">Pipeline Preview</h3>
-          <div className="flex items-center gap-1">
-            {/* Copy button */}
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => void handleCopy()}
-              className="h-7 w-7 p-0 text-slate-400 hover:text-slate-200"
-              title="Copy to clipboard"
-            >
-              {copied ? (
-                <Check className="h-4 w-4 text-emerald-400" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </Button>
-
-            {/* Download button — hidden in compact mode */}
-            {!compact && (
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={handleDownload}
-                className="h-7 w-7 p-0 text-slate-400 hover:text-slate-200"
-                title="Download file"
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
+          {actionButtons}
         </div>
 
-        {/* Tabs */}
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="w-full"
-        >
-          <TabsList className="bg-slate-900 border border-slate-700 h-8 p-0.5 mb-3">
-            <TabsTrigger
-              value="github"
-              className="h-7 px-3 text-xs text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-slate-100 rounded"
-            >
-              GitHub Actions
-            </TabsTrigger>
-            <TabsTrigger
-              value="security"
-              className="h-7 px-3 text-xs text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-slate-100 rounded"
-            >
-              Security Scanning
-            </TabsTrigger>
-            <TabsTrigger
-              value="infra"
-              className="h-7 px-3 text-xs text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-slate-100 rounded"
-            >
-              Infrastructure
-            </TabsTrigger>
-          </TabsList>
-
-          {(['github', 'security', 'infra'] as const).map((tab) => (
-            <TabsContent key={tab} value={tab} className="mt-0">
-              {isHighlighting ? (
-                <div className="bg-slate-900 rounded-lg">
-                  <CodeSkeleton />
-                </div>
-              ) : (
-                <div
-                  className={`text-xs font-mono overflow-auto ${codeMaxH} [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:bg-transparent [&_code]:leading-relaxed`}
-                  dangerouslySetInnerHTML={{ __html: getTabHtml(tab) }}
-                />
-              )}
-            </TabsContent>
-          ))}
-        </Tabs>
+        {tabContent}
       </div>
     </Card>
   );
