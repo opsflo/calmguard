@@ -23,6 +23,7 @@ import {
   AGENT_NAMES,
   AGENT_BOT_PERSONAS,
 } from '@/store/analysis-store';
+import { CalmUploadZone } from '@/components/calm/calm-upload-zone';
 
 const BOT_ICON_MAP: Record<string, LucideIcon> = {
   'scan-eye': ScanEye,
@@ -96,6 +97,16 @@ export function Sidebar() {
               </Link>
             );
           })}
+        </div>
+
+        <Separator className="my-4 bg-slate-800" />
+
+        {/* Upload CALM file — always accessible from dashboard */}
+        <div className="px-3 py-2">
+          <h3 className="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            Upload
+          </h3>
+          <CalmUploadZone />
         </div>
 
         <Separator className="my-4 bg-slate-800" />

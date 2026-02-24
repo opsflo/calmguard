@@ -14,8 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, ArrowRight, Upload } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { CalmUploadZone } from '@/components/calm/calm-upload-zone';
 
 const FRAMEWORKS = [
   { value: 'SOX', label: 'SOX' },
@@ -141,21 +142,10 @@ export function ArchitectureSelector() {
         )}
       </Button>
 
-      {/* File Upload Placeholder */}
-      <div className="relative">
-        <div className="border-2 border-dashed border-slate-700 rounded-lg p-8 text-center bg-slate-900/50 hover:border-slate-600 transition-colors">
-          <Upload className="mx-auto h-12 w-12 text-slate-600 mb-3" />
-          <p className="text-slate-400 mb-2">Drop CALM JSON here</p>
-          <p className="text-xs text-slate-500">
-            Or click to browse your files
-          </p>
-          <Badge
-            variant="secondary"
-            className="mt-3 bg-slate-800 text-slate-400 text-xs"
-          >
-            Coming soon
-          </Badge>
-        </div>
+      {/* File Upload */}
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-slate-300">Or upload your own CALM file</p>
+        <CalmUploadZone />
       </div>
     </div>
   );
