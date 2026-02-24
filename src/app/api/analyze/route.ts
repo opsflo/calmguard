@@ -87,8 +87,10 @@ export async function POST(req: NextRequest): Promise<Response> {
         // Run the full 4-agent orchestration — events stream as they happen
         const result = await runAnalysis(analysisInput, selectedFrameworks, demoMode);
 
-        // Store pipeline result for GET /api/pipeline
+        // Store pipeline result and full analysis state for PR generation routes
         globalThis.__lastPipelineResult = result.pipeline;
+        globalThis.__lastAnalysisResult = result;
+        globalThis.__lastCalmDocument = parseResult.data;
 
         // Send terminal done event
         const doneEvent = JSON.stringify({ type: 'done', result });
