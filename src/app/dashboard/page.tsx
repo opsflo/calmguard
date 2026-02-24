@@ -44,7 +44,10 @@ export default function DashboardPage() {
         void startStream(rawCalmData, selectedFrameworks, true);
         setDemoMode(false); // Reset after triggering so re-renders don't re-fire
       }, 800);
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        hasStartedRef.current = false; // Reset on cleanup for StrictMode remount
+      };
     }
     return undefined;
   }, [demoMode, rawCalmData, status, startStream, selectedFrameworks, setDemoMode]);

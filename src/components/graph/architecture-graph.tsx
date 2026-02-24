@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -53,7 +53,7 @@ interface ArchitectureGraphProps {
   compact?: boolean;
 }
 
-export function ArchitectureGraph({ compact = false }: ArchitectureGraphProps) {
+export const ArchitectureGraph = memo(function ArchitectureGraph({ compact = false }: ArchitectureGraphProps) {
   const analysisInput = useAnalysisStore((state) => state.analysisInput);
   const analysisResult = useAnalysisStore((state) => state.analysisResult);
   const status = useAnalysisStore((state) => state.status);
@@ -129,4 +129,4 @@ export function ArchitectureGraph({ compact = false }: ArchitectureGraphProps) {
       </ReactFlow>
     </div>
   );
-}
+});

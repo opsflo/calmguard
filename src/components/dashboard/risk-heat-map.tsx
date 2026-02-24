@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { useAnalysisStore } from '@/store/analysis-store';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
@@ -103,7 +104,7 @@ function HeatMapCell({ nodeName, framework, cellStatus, riskFactors, rowIndex }:
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export function RiskHeatMap() {
+export const RiskHeatMap = memo(function RiskHeatMap() {
   const analysisResult = useAnalysisStore((state) => state.analysisResult);
   const status = useAnalysisStore((state) => state.status);
 
@@ -250,4 +251,4 @@ export function RiskHeatMap() {
       </div>
     </Card>
   );
-}
+});
