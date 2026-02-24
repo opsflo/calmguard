@@ -50,6 +50,7 @@ Progress: [█████████░] 89.7% (26/29 plans)
 | Phase 04-pipeline-generation-compliance-display P03 | 4 | 2 tasks | 5 files |
 | Phase 05 P04 | 4 | 2 tasks | 5 files |
 | Phase 05-testing-devsecops-dogfooding P03 | 5 | 2 tasks | 4 files |
+| Phase 05-testing-devsecops-dogfooding P01 | 6 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -120,6 +121,9 @@ Recent decisions affecting current work:
 - [Phase 05-testing-devsecops-dogfooding]: Block on errors only in CI: pnpm audit --audit-level=high and semgrep --error — warnings informational
 - [Phase 05-testing-devsecops-dogfooding]: Both CodeQL AND Semgrep in parallel workflows — semantic + pattern SAST dual coverage
 - [Phase 05-testing-devsecops-dogfooding]: License audit blocks on GPL-2.0/3.0/AGPL-3.0 via license-checker — copyleft compliance signal for financial services
+- [Phase 05-testing-devsecops-dogfooding]: Vitest 4 compatibility: removed poolOptions.forks in favor of default flat config
+- [Phase 05-testing-devsecops-dogfooding]: verbose reporter with summary:false: shows all test names for demo visibility without noise
+- [Phase 05-testing-devsecops-dogfooding]: Fixture factory functions (makeNode, makeMinimalDoc): typed inline fixtures over large JSON blobs
 
 ### Pending Todos
 
@@ -136,7 +140,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24 (plan execution)
-Stopped at: Completed 05-04-PLAN.md — SECURITY.md threat model, Husky pre-commit hooks, CONTRIBUTING.md, eslint.config.mjs
+Stopped at: Completed 05-01-PLAN.md — Vitest test infrastructure + 12 CALM parser/schema unit tests passing in 647ms
 Resume file: None
 
 ---
