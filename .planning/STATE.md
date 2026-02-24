@@ -10,18 +10,22 @@ See: .planning/PROJECT.md (updated 2026-02-24)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Status: Defining requirements
-Last activity: 2026-02-24 — Milestone v1.2 started
+Phase: 7 — GitOps PR Generation
+Status: In progress — 07-01 tasks 1-2 complete, paused at human-verify checkpoint
+Last activity: 2026-02-24 — Plan 07-01 partial execution (Tasks 1+2 of 3)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [░░░░░░░░░░] 0% (0/3 plans fully executed — 07-01 at checkpoint)
 
 ## Accumulated Context
 
 ### Decisions
 
 All v1.1 decisions logged in PROJECT.md Key Decisions table. All marked ✓ Good.
-v1.2 decisions: GitHub PAT auth, direct CALM modification, single phase — all Pending.
+
+v1.2 decisions (resolved during 07-01 execution):
+- GITHUB_TOKEN server-side only — client uses status gate endpoint for conditional UI
+- PRRecord interface in github/types.ts (not store) to prevent circular imports with Plans 02/03
+- Pre-filled demo: finos-labs/dtcch-2026-opsflow-llc / examples/payment-gateway.calm.json
 
 ### Pending Todos
 
@@ -29,13 +33,13 @@ None.
 
 ### Blockers/Concerns
 
-None.
+None — awaiting human verification of GitHub tab UI before Plan 07-02.
 
 ## Session Continuity
 
-Last session: 2026-02-24 (v1.2 milestone start)
-Stopped at: Requirements definition
-Resume file: None
+Last session: 2026-02-24 (Plan 07-01 execution)
+Stopped at: checkpoint:human-verify — Tasks 1+2 complete, awaiting UI verification
+Resume file: .planning/phases/07-gitops-pr-generation/07-01-PLAN.md (Task 3 checkpoint)
 
 ---
 
