@@ -34,9 +34,10 @@ export type AnalysisResult = z.infer<typeof analysisResultSchema>;
  * Uses Promise.allSettled for graceful degradation - one agent failure doesn't cancel others.
  *
  * @param input - CALM analysis input
+ * @param selectedFrameworks - Optional list of compliance frameworks to analyze (e.g. ['SOX', 'PCI-DSS'])
  * @returns AnalysisResult with all agent outputs (null for failed agents)
  */
-export async function runAnalysis(input: AnalysisInput): Promise<AnalysisResult> {
+export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: string[]): Promise<AnalysisResult> {
   const startTime = performance.now();
 
   try {
@@ -80,7 +81,7 @@ export async function runAnalysis(input: AnalysisInput): Promise<AnalysisResult>
 
     const phase1Results = await Promise.allSettled([
       analyzeArchitecture(input),
-      mapCompliance(input),
+      mapCompliance(input, selectedFrameworks),
       generatePipeline(input),
     ]);
 
@@ -165,7 +166,7 @@ export async function runAnalysis(input: AnalysisInput): Promise<AnalysisResult>
             summary: 'Pipeline data unavailable',
           },
           originalInput: input,
-        });
+        }, selectedFrameworks);
 
         if (riskResult.success && riskResult.data) {
           risk = riskResult.data;

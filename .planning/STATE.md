@@ -10,19 +10,19 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 ## Current Position
 
-Phase: 3 of 6 (API Routes & Dashboard Core) — COMPLETE
+Phase: 4 of 6 (Pipeline Generation & Compliance Display) — IN PROGRESS
 Plan: 6 of 6 in current phase — COMPLETE
-Status: Phase 3 Complete — Moving to Phase 4
-Last activity: 2026-02-23 — Completed plan 03-06: Dashboard Integration — AgentFeed Layout + Architecture Tab + Overview Wiring (3 min, 2 tasks, 3 files)
+Status: Phase 4 Plan 03 Complete — Moving to Phase 4 Plan 05
+Last activity: 2026-02-24 — Completed plan 04-03: Findings Table + Pipeline Preview + Dashboard Pages (4 min, 2 tasks, 5 files)
 
-Progress: [█████░░░░░] 57.1% (16/28 plans)
+Progress: [████████░░] 75.0% (21/28 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
-- Average duration: 4 minutes
-- Total execution time: ~1.3 hours
+- Total plans completed: 20
+- Average duration: 5 minutes
+- Total execution time: ~1.5 hours
 
 **By Phase:**
 
@@ -31,19 +31,23 @@ Progress: [█████░░░░░] 57.1% (16/28 plans)
 | 01-foundation-calm-parser | 4 | 43 min | 11 min |
 | 02-multi-agent-infrastructure | 5 | 17 min | 3 min |
 | 03-api-routes-dashboard-core | 6 (of 6) | ~16 min | 3 min |
+| 04-pipeline-generation-compliance-display | 4 (so far) | ~23 min | 6 min |
 
 **Recent Completions:**
-1. 03-03 Dashboard Shell Live Sidebar + Analyze Header - 2 min (2 tasks, 5 files)
-2. 03-04 Agent Activity Feed - 2 min (2 tasks, 3 files)
-3. 03-05 Architecture Graph — React Flow + dagre - 4 min (2 tasks, 11 files)
-4. 03-06 Dashboard Integration — AgentFeed Layout + Architecture Tab + Overview Wiring - 3 min (2 tasks, 3 files)
-5. Phase 3 COMPLETE — all 6/6 plans done
+1. 04-04 Shared UI Packages + Framework Selector + Toast Notifications - 12 min (2 tasks, 15 files)
+2. 04-01 Compliance Score Gauge + SVG Animation + Dashboard Wiring - 8 min (2 tasks, 2 files)
+3. 04-02 Risk Heat Map + Control Matrix + Compliance Page - 3 min (2 tasks, 3 files)
+4. 04-03 Findings Table + Pipeline Preview + Dashboard Pages - 4 min (2 tasks, 5 files)
 
 *Updated after each plan completion*
 | Phase 03-api-routes-dashboard-core P01 | 6 | 2 tasks | 7 files |
 | Phase 03-api-routes-dashboard-core P04 | 2 | 2 tasks | 3 files |
 | Phase 03-api-routes-dashboard-core P03 | 2 | 2 tasks | 5 files |
 | Phase 03-api-routes-dashboard-core P06 | 3 | 2 tasks | 3 files |
+| Phase 04-pipeline-generation-compliance-display P04 | 12 | 2 tasks | 15 files |
+| Phase 04-pipeline-generation-compliance-display P01 | 8 | 2 tasks | 2 files |
+| Phase 04-pipeline-generation-compliance-display P02 | 3 | 2 tasks | 3 files |
+| Phase 04-pipeline-generation-compliance-display P03 | 4 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -92,6 +96,22 @@ Recent decisions affecting current work:
 - [Phase 03-06]: AgentFeed placed in DashboardLayout right column (w-80) rather than per-page — always visible during all tab navigation
 - [Phase 03-06]: Completion banner uses emerald-500/10 bg + emerald-500/30 border — subtle non-intrusive per locked decision (no modal/overlay)
 - [Phase 03-06]: Overview grid reduced to 3 panels — AgentFeed moved to layout right column frees the 4th grid slot
+- [Phase 04-04]: Framework enum values use 'CCC' internally (Zod schema) but display as 'FINOS-CCC' — decoupled via FRAMEWORKS const array with value+label fields
+- [Phase 04-04]: selectedFrameworks not reset in startAnalysis or reset — user selection persists across analyses
+- [Phase 04-04]: mapCompliance and scoreRisk accept _selectedFrameworks as unused parameter — threading infrastructure established, filtering logic deferred to future plan
+- [Phase 04-04]: Toast errors fire on all 3 SSE failure paths: HTTP error, null response.body, max retries exhausted
+- [Phase 04-04]: Completion banner conditionally amber (partial failure) or emerald (success) with Retry button always visible when rawCalmData available
+- [Phase 04-01]: SVG text elements used for score display instead of HTML overlay — avoids z-index complexity inside SVG viewBox
+- [Phase 04-01]: getBarColorClass returns Tailwind class string not inline style — consistent with project Tailwind-only styling convention
+- [Phase 04-01]: useCountUp cleanup cancels RAF on both unmount and targetScore change — prevents stale animation on re-analysis
+- [Phase 04-02]: Cell status is node-level (same across all frameworks) — complianceGaps in nodeRiskMap has no per-framework breakdown; acceptable for hackathon visualization
+- [Phase 04-02]: ControlMatrixInner split from ControlMatrix — outer component does null guards and early returns, inner uses hooks freely (avoids conditional hook violations)
+- [Phase 04-02]: Row key includes array index (framework-controlId-idx) — handles duplicate controlIds across different frameworks
+- [Phase 04-02]: Select filter uses defaultValue='all' (uncontrolled) not value — avoids controlled/uncontrolled React mismatch warning
+- [Phase 04-03]: shiki import from 'shiki/bundle/web' not 'shiki' — web bundle avoids loading all 1000+ grammars; only yaml and hcl needed
+- [Phase 04-03]: highlightedHtml stored as local useState not Zustand — ephemeral display data, not part of analysis result
+- [Phase 04-03]: compact prop pattern for PipelinePreview — same component with different height/feature constraints for overview grid (compact=true) vs pipeline page (compact=false)
+- [Phase 04-03]: SEVERITY_ORDER record maps severity strings to integers for deterministic sort — critical(0) first
 
 ### Pending Todos
 
@@ -107,10 +127,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-23 (plan execution)
-Stopped at: Completed 03-06-PLAN.md — Phase 3 Complete
+Last session: 2026-02-24 (plan execution)
+Stopped at: Completed 04-03-PLAN.md — Findings Table, Pipeline Preview, /dashboard/findings, /dashboard/pipeline pages
 Resume file: None
 
 ---
 
-*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) Complete (6/6 plans)*
+*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) Complete (6/6 plans) - Phase 4: 04-04, 04-01, 04-02, 04-03 done — 04-05, 04-06 remain*

@@ -13,6 +13,7 @@ import { pipelineConfigSchema } from '@/lib/agents/pipeline-generator';
  */
 export const analyzeRequestSchema = z.object({
   calm: z.unknown(),
+  frameworks: z.array(z.enum(['SOX', 'PCI-DSS', 'CCC', 'NIST-CSF'])).optional(),
 });
 
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;

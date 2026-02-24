@@ -15,6 +15,7 @@ interface AnalysisState {
   analysisResult: AnalysisResult | null;
   agentEvents: AgentEvent[];
   activeAgents: string[];
+  selectedFrameworks: string[];
 
   // Status
   status: AnalysisStatus;
@@ -29,6 +30,8 @@ interface AnalysisState {
   addAgentEvent: (event: AgentEvent) => void;
   startAnalysis: () => void;
   clearAgentEvents: () => void;
+  setSelectedFrameworks: (frameworks: string[]) => void;
+  toggleFramework: (framework: string) => void;
   reset: () => void;
 }
 
@@ -39,6 +42,7 @@ const initialState = {
   analysisResult: null,
   agentEvents: [] as AgentEvent[],
   activeAgents: [] as string[],
+  selectedFrameworks: ['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC'] as string[],
   status: 'idle' as AnalysisStatus,
   error: null,
 };
@@ -110,6 +114,23 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
     set({
       agentEvents: [],
       activeAgents: [],
+    }),
+
+  setSelectedFrameworks: (frameworks) =>
+    set({ selectedFrameworks: frameworks }),
+
+  toggleFramework: (framework) =>
+    set((state) => {
+      // Prevent removing the last framework
+      if (state.selectedFrameworks.length === 1 && state.selectedFrameworks.includes(framework)) {
+        return state;
+      }
+      const isSelected = state.selectedFrameworks.includes(framework);
+      return {
+        selectedFrameworks: isSelected
+          ? state.selectedFrameworks.filter((f) => f !== framework)
+          : [...state.selectedFrameworks, framework],
+      };
     }),
 
   reset: () => set(initialState),

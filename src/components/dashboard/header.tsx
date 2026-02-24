@@ -20,6 +20,7 @@ export function Header() {
   const analysisInput = useAnalysisStore((state) => state.analysisInput);
   const status = useAnalysisStore((state) => state.status);
   const selectedDemoId = useAnalysisStore((state) => state.selectedDemoId);
+  const selectedFrameworks = useAnalysisStore((state) => state.selectedFrameworks);
   const setCalmData = useAnalysisStore((state) => state.setCalmData);
   const setSelectedDemo = useAnalysisStore((state) => state.setSelectedDemo);
   const setError = useAnalysisStore((state) => state.setError);
@@ -49,7 +50,7 @@ export function Header() {
 
   const handleAnalyze = () => {
     if (rawCalmData) {
-      void startStream(rawCalmData);
+      void startStream(rawCalmData, selectedFrameworks);
     }
   };
 

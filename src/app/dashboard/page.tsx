@@ -1,16 +1,21 @@
 'use client';
 
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, RotateCcw } from 'lucide-react';
 import { useAnalysisStore } from '@/store/analysis-store';
-import { ComplianceCardSkeleton } from '@/components/dashboard/compliance-card-skeleton';
-import { PipelinePreviewSkeleton } from '@/components/dashboard/pipeline-preview-skeleton';
+import { useAgentStream } from '@/hooks/use-agent-stream';
+import { ComplianceCard } from '@/components/dashboard/compliance-card';
+import { PipelinePreview } from '@/components/dashboard/pipeline-preview';
 import { ArchitectureGraph } from '@/components/graph/architecture-graph';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {
   const analysisInput = useAnalysisStore((state) => state.analysisInput);
   const analysisResult = useAnalysisStore((state) => state.analysisResult);
+  const rawCalmData = useAnalysisStore((state) => state.rawCalmData);
+  const selectedFrameworks = useAnalysisStore((state) => state.selectedFrameworks);
   const status = useAnalysisStore((state) => state.status);
+  const { startStream } = useAgentStream();
 
   // If no architecture loaded, show centered empty state with call-to-action
   if (!analysisInput) {
@@ -35,13 +40,48 @@ export default function DashboardPage() {
     <div className="p-6">
       {/* Completion banner — subtle, non-intrusive, per locked decision */}
       {isComplete && (
-        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-3 mb-4 flex items-center gap-3">
-          <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
-          <span className="text-sm text-emerald-400">
-            Analysis complete — {analysisResult.completedAgents.length} agents finished
-            in {(analysisResult.duration / 1000).toFixed(1)}s
-          </span>
-        </div>
+        <>
+          <div className={`border rounded-lg px-4 py-3 mb-2 flex items-center gap-3 ${
+            analysisResult.failedAgents.length > 0
+              ? 'bg-amber-500/10 border-amber-500/30'
+              : 'bg-emerald-500/10 border-emerald-500/30'
+          }`}>
+            {analysisResult.failedAgents.length > 0 ? (
+              <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0" />
+            ) : (
+              <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
+            )}
+            <span className={`text-sm flex-1 ${
+              analysisResult.failedAgents.length > 0 ? 'text-amber-400' : 'text-emerald-400'
+            }`}>
+              {analysisResult.failedAgents.length > 0
+                ? `Partial analysis — ${analysisResult.completedAgents.length}/${analysisResult.completedAgents.length + analysisResult.failedAgents.length} agents succeeded in ${(analysisResult.duration / 1000).toFixed(1)}s`
+                : `Analysis complete — ${analysisResult.completedAgents.length} agents finished in ${(analysisResult.duration / 1000).toFixed(1)}s`
+              }
+            </span>
+            {rawCalmData && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="ml-auto border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-slate-100 flex-shrink-0"
+                onClick={() => void startStream(rawCalmData, selectedFrameworks)}
+              >
+                <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+                Retry Analysis
+              </Button>
+            )}
+          </div>
+
+          {/* Partial results warning — only when agents failed */}
+          {analysisResult.failedAgents.length > 0 && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3 mb-4 flex items-center gap-3">
+              <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0" />
+              <span className="text-sm text-amber-400">
+                Partial results: {analysisResult.failedAgents.join(', ')} failed. Some panels may show incomplete data.
+              </span>
+            </div>
+          )}
+        </>
       )}
 
       {/* Pre-analysis prompt — shown when architecture is loaded but analysis hasn't started */}
@@ -63,8 +103,8 @@ export default function DashboardPage() {
 
       {/* Dashboard Grid — 2-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Top Left: Compliance Score — placeholder for Phase 4 */}
-        <ComplianceCardSkeleton />
+        {/* Top Left: Compliance Score — real component wired to risk data */}
+        <ComplianceCard />
 
         {/* Top Right: Architecture Graph — real component from Phase 3-05 */}
         <Card className="bg-slate-800 border-slate-700">
@@ -73,8 +113,8 @@ export default function DashboardPage() {
           </div>
         </Card>
 
-        {/* Bottom Left: Pipeline Preview — placeholder for Phase 4 */}
-        <PipelinePreviewSkeleton />
+        {/* Bottom Left: Pipeline Preview — compact mode for overview grid */}
+        <PipelinePreview compact />
 
         {/* Bottom Right slot: Agent feed moved to permanent right column in layout */}
       </div>

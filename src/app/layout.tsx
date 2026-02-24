@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,6 +23,17 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              classNames: {
+                toast: 'bg-slate-800 border-slate-700 text-slate-100',
+                error: 'border-red-500/50',
+                warning: 'border-amber-500/50',
+              },
+            }}
+            duration={5000}
+          />
         </ThemeProvider>
       </body>
     </html>

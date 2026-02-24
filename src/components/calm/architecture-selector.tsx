@@ -15,10 +15,20 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Loader2, ArrowRight, Upload } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+
+const FRAMEWORKS = [
+  { value: 'SOX', label: 'SOX' },
+  { value: 'PCI-DSS', label: 'PCI-DSS' },
+  { value: 'NIST-CSF', label: 'NIST-CSF' },
+  { value: 'CCC', label: 'FINOS-CCC' },
+] as const;
 
 export function ArchitectureSelector() {
   const router = useRouter();
   const { status, setCalmData, setStatus, setError } = useAnalysisStore();
+  const selectedFrameworks = useAnalysisStore((state) => state.selectedFrameworks);
+  const toggleFramework = useAnalysisStore((state) => state.toggleFramework);
 
   const handleDemoSelection = (demoId: string) => {
     const demo = DEMO_ARCHITECTURES.find((d) => d.id === demoId);
@@ -89,6 +99,24 @@ export function ArchitectureSelector() {
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Compliance Framework Selector */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-slate-300">Compliance Frameworks</label>
+        <div className="flex items-center gap-4">
+          {FRAMEWORKS.map((fw) => (
+            <label key={fw.value} className="flex items-center gap-1.5 cursor-pointer">
+              <Checkbox
+                checked={selectedFrameworks.includes(fw.value)}
+                onCheckedChange={() => toggleFramework(fw.value)}
+                disabled={selectedFrameworks.length === 1 && selectedFrameworks.includes(fw.value)}
+                className="border-slate-600 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+              />
+              <span className="text-sm text-slate-300">{fw.label}</span>
+            </label>
+          ))}
+        </div>
       </div>
 
       {/* Start Analysis Button */}

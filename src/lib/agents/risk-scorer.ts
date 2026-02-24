@@ -75,7 +75,9 @@ function sleep(ms: number): Promise<void> {
  * @returns AgentResult with RiskAssessment data
  */
 export async function scoreRisk(
-  input: RiskScorerInput
+  input: RiskScorerInput,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _selectedFrameworks?: string[]
 ): Promise<AgentResult<RiskAssessment>> {
   const startTime = performance.now();
   const agentName = 'risk-scorer';

@@ -65,7 +65,9 @@ function sleep(ms: number): Promise<void> {
  * @returns AgentResult with ComplianceMapping data
  */
 export async function mapCompliance(
-  input: AnalysisInput
+  input: AnalysisInput,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _selectedFrameworks?: string[]
 ): Promise<AgentResult<ComplianceMapping>> {
   const startTime = performance.now();
   const agentName = 'compliance-mapper';

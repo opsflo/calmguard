@@ -65,13 +65,16 @@ export async function POST(req: NextRequest): Promise<Response> {
     );
   }
 
-  // 3. Extract structured analysis input from CALM document
+  // 3. Extract selected frameworks from request body
+  const selectedFrameworks = bodyResult.data.frameworks;
+
+  // 4. Extract structured analysis input from CALM document
   const analysisInput = extractAnalysisInput(parseResult.data);
 
-  // 4. Create SSE encoder
+  // 5. Create SSE encoder
   const encoder = new TextEncoder();
 
-  // 5. Build the ReadableStream — agents run inside start() so the Response
+  // 6. Build the ReadableStream — agents run inside start() so the Response
   //    is returned synchronously and streaming begins immediately
   const stream = new ReadableStream({
     async start(controller) {
@@ -87,7 +90,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
       try {
         // Run the full 4-agent orchestration — events stream as they happen
-        const result = await runAnalysis(analysisInput);
+        const result = await runAnalysis(analysisInput, selectedFrameworks);
 
         // Store pipeline result for GET /api/pipeline
         globalThis.__lastPipelineResult = result.pipeline;
@@ -114,7 +117,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     },
   });
 
-  // 6. Return SSE response — headers required for proper streaming
+  // 7. Return SSE response — headers required for proper streaming
   return new Response(stream, {
     headers: {
       'Content-Type': 'text/event-stream; charset=utf-8',

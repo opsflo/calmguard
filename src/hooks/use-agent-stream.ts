@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { useAnalysisStore } from '@/store/analysis-store';
 
 /**
@@ -35,7 +36,7 @@ export function useAgentStream() {
     useAnalysisStore();
 
   const startStream = useCallback(
-    async (calmData: unknown): Promise<void> => {
+    async (calmData: unknown, selectedFrameworks?: string[]): Promise<void> => {
       // Create a new abort controller for this stream session
       const controller = new AbortController();
       abortRef.current = controller;
@@ -48,18 +49,18 @@ export function useAgentStream() {
         const response = await fetch('/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ calm: calmData }),
+          body: JSON.stringify({ calm: calmData, frameworks: selectedFrameworks }),
           signal: controller.signal,
         });
 
         if (!response.ok) {
           // HTTP error — read body for debug info, then fail without retry
           const errorBody = await response.text().catch(() => '');
-          console.error(
-            `[useAgentStream] HTTP error ${response.status}: ${errorBody}`,
-          );
+          const errorMessage = `HTTP ${response.status}: ${errorBody || 'Analysis failed'}`;
+          console.error(`[useAgentStream] ${errorMessage}`);
           setStreamStatus('error');
           setStatus('error');
+          toast.error('Analysis failed', { description: errorMessage });
           return;
         }
 
@@ -67,9 +68,11 @@ export function useAgentStream() {
         retryCountRef.current = 0;
 
         if (!response.body) {
-          console.error('[useAgentStream] Response body is null');
+          const errorMessage = 'Response body is null — stream unavailable';
+          console.error(`[useAgentStream] ${errorMessage}`);
           setStreamStatus('error');
           setStatus('error');
+          toast.error('Analysis failed', { description: errorMessage });
           return;
         }
 
@@ -159,14 +162,16 @@ export function useAgentStream() {
           );
           await new Promise<void>((resolve) => setTimeout(resolve, backoffMs));
           // Recurse — each retry creates a new AbortController inside startStream
-          await startStream(calmData);
+          await startStream(calmData, selectedFrameworks);
           return;
         }
 
         // Exhausted retries
+        const errorMessage = error.message || 'Network error after 3 retries';
         console.error('[useAgentStream] Max retries reached. Giving up.', error);
         setStreamStatus('error');
         setStatus('error');
+        toast.error('Analysis failed', { description: errorMessage });
       }
     },
     // Stable deps: store actions are stable references from Zustand
