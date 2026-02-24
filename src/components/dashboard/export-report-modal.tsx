@@ -8,7 +8,6 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Download } from 'lucide-react';
 
 export interface ExportReportModalProps {
@@ -68,11 +67,11 @@ export function ExportReportModal({
         </DialogHeader>
 
         {/* Scrollable report preview */}
-        <ScrollArea className="flex-1 min-h-0 border border-slate-700 rounded-lg bg-slate-950/50">
+        <div className="flex-1 min-h-0 overflow-auto border border-slate-700 rounded-lg bg-slate-950/50 max-h-[60vh]">
           <pre className="whitespace-pre-wrap text-xs text-slate-300 font-mono p-4 leading-relaxed">
             {markdown}
           </pre>
-        </ScrollArea>
+        </div>
 
         <DialogFooter className="shrink-0 flex gap-2 justify-end">
           <Button

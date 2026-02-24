@@ -1,7 +1,15 @@
 'use client';
 
-import { memo, useMemo } from 'react';
-import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  ReactFlow,
+  ReactFlowProvider,
+  Background,
+  Controls,
+  MiniMap,
+  useReactFlow,
+  type Node,
+} from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import { useAnalysisStore } from '@/store/analysis-store';
@@ -38,22 +46,66 @@ const edgeTypes = {
   protocol: ProtocolEdge,
 } as const;
 
+/** Dwell time on each node before moving to the next (ms) */
+const TOUR_DWELL_MS = 3000;
+/** Zoom level when focused on a single node */
+const TOUR_ZOOM = 1.0;
+
 /**
- * ArchitectureGraph
- *
- * React Flow wrapper that renders the CALM architecture as an interactive
- * node-edge diagram. Reads directly from Zustand store:
- * - analysisInput: provides nodes and relationships to visualize
- * - analysisResult: provides trust boundary groupings and compliance coloring
- * - status: when 'analyzing', all edges animate
- *
- * Uses dagre LR auto-layout — nodes are not manually draggable (auto-layout only).
+ * TouringCamera — pans/zooms to each node in sequence while analysis runs.
+ * Runs inside ReactFlowProvider so useReactFlow() is available.
  */
+function TouringCamera({ nodes, isAnalyzing }: { nodes: Node[]; isAnalyzing: boolean }) {
+  const { setCenter, fitView } = useReactFlow();
+  const indexRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const tourableNodes = useMemo(
+    () => nodes.filter((n) => n.type !== 'trustBoundary'),
+    [nodes],
+  );
+
+  const visitNext = useCallback(() => {
+    if (tourableNodes.length === 0) return;
+    const node = tourableNodes[indexRef.current % tourableNodes.length];
+    const x = (node.position?.x ?? 0) + ((node.measured?.width ?? 200) / 2);
+    const y = (node.position?.y ?? 0) + ((node.measured?.height ?? 100) / 2);
+    setCenter(x, y, { zoom: TOUR_ZOOM, duration: 1200 });
+    indexRef.current += 1;
+  }, [tourableNodes, setCenter]);
+
+  useEffect(() => {
+    if (!isAnalyzing || tourableNodes.length === 0) {
+      // When analysis ends, zoom back out to full view
+      if (!isAnalyzing && tourableNodes.length > 0) {
+        fitView({ padding: 0.4, duration: 800 });
+      }
+      if (timerRef.current) clearInterval(timerRef.current);
+      return;
+    }
+
+    // Start tour: visit first node, then cycle
+    indexRef.current = 0;
+    visitNext();
+    timerRef.current = setInterval(visitNext, TOUR_DWELL_MS);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isAnalyzing, tourableNodes.length, visitNext, fitView]);
+
+  return null;
+}
+
 interface ArchitectureGraphProps {
   compact?: boolean;
 }
 
-export const ArchitectureGraph = memo(function ArchitectureGraph({ compact = false }: ArchitectureGraphProps) {
+/**
+ * Inner graph component rendered inside ReactFlowProvider.
+ * Separated so TouringCamera can use useReactFlow().
+ */
+function ArchitectureGraphInner({ compact = false }: ArchitectureGraphProps) {
   const analysisInput = useAnalysisStore((state) => state.analysisInput);
   const analysisResult = useAnalysisStore((state) => state.analysisResult);
   const status = useAnalysisStore((state) => state.status);
@@ -76,6 +128,51 @@ export const ArchitectureGraph = memo(function ArchitectureGraph({ compact = fal
     [edges, isAnalyzing]
   );
 
+  return (
+    <ReactFlow
+      nodes={nodes}
+      edges={animatedEdges}
+      nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
+      fitView
+      fitViewOptions={{ padding: 0.4 }}
+      maxZoom={1.2}
+      colorMode="dark"
+      proOptions={{ hideAttribution: true }}
+      nodesDraggable={false}
+      nodesConnectable={false}
+      elementsSelectable={true}
+    >
+      <TouringCamera nodes={nodes} isAnalyzing={isAnalyzing} />
+      <Background color="#334155" gap={16} />
+      {!compact && (
+        <Controls className="!bg-slate-800 !border-slate-700 !rounded-lg" />
+      )}
+      {!compact && (
+        <MiniMap
+          nodeColor={(node) => {
+            const complianceStatus = (node.data as { complianceStatus?: string })?.complianceStatus;
+            switch (complianceStatus) {
+              case 'compliant':
+                return '#10b981'; // emerald-500
+              case 'partial':
+                return '#f59e0b'; // amber-500
+              case 'non-compliant':
+                return '#ef4444'; // red-500
+              default:
+                return '#475569'; // slate-600
+            }
+          }}
+          className="!bg-slate-900 !border-slate-700 !rounded-lg"
+        />
+      )}
+    </ReactFlow>
+  );
+}
+
+export const ArchitectureGraph = memo(function ArchitectureGraph({ compact = false }: ArchitectureGraphProps) {
+  const analysisInput = useAnalysisStore((state) => state.analysisInput);
+
   // Empty state when no architecture is loaded
   if (!analysisInput) {
     return (
@@ -90,43 +187,9 @@ export const ArchitectureGraph = memo(function ArchitectureGraph({ compact = fal
 
   return (
     <div className="w-full h-full min-h-[400px]">
-      <ReactFlow
-        nodes={nodes}
-        edges={animatedEdges}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        fitView
-        fitViewOptions={{ padding: 0.4 }}
-        maxZoom={1.2}
-        colorMode="dark"
-        proOptions={{ hideAttribution: true }}
-        nodesDraggable={false}
-        nodesConnectable={false}
-        elementsSelectable={true}
-      >
-        <Background color="#334155" gap={16} />
-        {!compact && (
-          <Controls className="!bg-slate-800 !border-slate-700 !rounded-lg" />
-        )}
-        {!compact && (
-          <MiniMap
-            nodeColor={(node) => {
-              const complianceStatus = (node.data as { complianceStatus?: string })?.complianceStatus;
-              switch (complianceStatus) {
-                case 'compliant':
-                  return '#10b981'; // emerald-500
-                case 'partial':
-                  return '#f59e0b'; // amber-500
-                case 'non-compliant':
-                  return '#ef4444'; // red-500
-                default:
-                  return '#475569'; // slate-600
-              }
-            }}
-            className="!bg-slate-900 !border-slate-700 !rounded-lg"
-          />
-        )}
-      </ReactFlow>
+      <ReactFlowProvider>
+        <ArchitectureGraphInner compact={compact} />
+      </ReactFlowProvider>
     </div>
   );
 });
