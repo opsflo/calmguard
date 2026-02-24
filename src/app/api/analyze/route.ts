@@ -9,6 +9,9 @@ import type { PipelineConfig } from '@/lib/agents/pipeline-generator';
 // Prevent Next.js from caching this route — required for SSE
 export const dynamic = 'force-dynamic';
 
+// Enable Vercel Fluid Compute 300-second timeout for SSE streaming in production
+export const maxDuration = 300;
+
 /**
  * Global store for the most recent pipeline result.
  * GET /api/pipeline reads from this.
