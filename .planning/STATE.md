@@ -11,11 +11,11 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 Phase: 6 of 6 (Polish, Demo Mode & Deployment) — IN PROGRESS
-Plan: 1 of 3 in current phase — COMPLETE
-Status: Phase 6 Plan 01 Complete — Moving to Phase 6 Plan 02
-Last activity: 2026-02-24 — Completed plan 06-01: CALM upload zone (drag-and-drop), calm-cli validator, /api/calm/validate route, maxDuration=300 (6 min, 2 tasks, 7 files)
+Plan: 3 of 3 in current phase — COMPLETE
+Status: Phase 6 Plan 03 Complete — All Phase 6 plans complete
+Last activity: 2026-02-24 — Completed plan 06-03: cinematic animations — OdometerScore, graph node CSS transitions, heat map stagger, pipeline typewriter (2 tasks, 11 files)
 
-Progress: [██████████] 93.1% (27/29 plans)
+Progress: [██████████] 100% (29/29 plans)
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [██████████] 93.1% (27/29 plans)
 | Phase 05 P05 | 11 | 2 tasks | 27 files |
 | Phase 05 P02 | 4 | 1 tasks | 3 files |
 | Phase 06 P01 | 6 | 2 tasks | 7 files |
+| Phase 06 P03 | 340 | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -135,6 +136,9 @@ Recent decisions affecting current work:
 - [Phase 06]: serverExternalPackages for @finos/calm-cli: prevents webpack from bundling the Node.js CLI tool called via subprocess
 - [Phase 06]: CalmUploadZone in both architecture-selector and sidebar: landing page upload + always-accessible dashboard upload
 - [Phase 06]: maxDuration=300 on analyze route: enables Vercel Fluid Compute 300s SSE streaming in production
+- [Phase 06]: OdometerScore per-digit CSS translateY column animation — ones=1200ms, tens=1800ms for slot-machine feel
+- [Phase 06]: SVG foreignObject embeds OdometerScore inside SVG gauge — only way to run CSS animations inside SVG viewBox
+- [Phase 06]: Pipeline typewriter: shiki highlight-once split into <span class=line> spans, reveal at 30ms/line per tab
 
 ### Pending Todos
 
@@ -151,9 +155,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24 (plan execution)
-Stopped at: Completed 05-02-PLAN.md — API route contract tests, SSE streaming tests, orchestrator flow tests (22 tests total, 930ms runtime)
+Stopped at: Completed 06-03-PLAN.md — cinematic animations: odometer score, graph node transitions, heat map stagger, pipeline typewriter (2 tasks, 11 files)
 Resume file: None
 
 ---
 
-*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) Complete (7/7 plans, gap closure done) - Phase 4 Complete (4/4 plans) - Phase 5 Complete (5/5 plans)*
+*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) Complete (7/7 plans, gap closure done) - Phase 4 Complete (4/4 plans) - Phase 5 Complete (5/5 plans) - Phase 6 Complete (3/3 plans)*
