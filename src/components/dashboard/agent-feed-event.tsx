@@ -16,7 +16,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import type { AgentEvent, Severity } from '@/lib/agents/types';
-import { AGENT_BOT_PERSONAS } from '@/store/analysis-store';
+import { AGENT_BOT_PERSONAS, useAnalysisStore } from '@/store/analysis-store';
 
 // ---------------------------------------------------------------------------
 // Icon registry — maps agent.icon field to Lucide component
@@ -74,6 +74,7 @@ export interface AgentFeedEventProps {
 // AgentFeedEvent component
 // ---------------------------------------------------------------------------
 export function AgentFeedEvent({ event, index }: AgentFeedEventProps) {
+  const demoMode = useAnalysisStore((state) => state.demoMode);
   const persona = AGENT_BOT_PERSONAS[event.agent.name];
   const IconComponent = persona
     ? (ICON_MAP[persona.icon] ?? resolveIcon(event.agent.icon))
@@ -84,8 +85,18 @@ export function AgentFeedEvent({ event, index }: AgentFeedEventProps) {
   // Cap stagger delay so old events don't wait forever
   const animationDelay = `${Math.min(index * 50, 500)}ms`;
 
+  // Demo mode: highlight critical/high findings with a glow and KEY FINDING badge
+  const isKeyFinding =
+    demoMode &&
+    event.type === 'finding' &&
+    (event.severity === 'critical' || event.severity === 'high');
+
   // Event-type-specific row background
-  const rowBg = event.type === 'error' ? 'bg-red-500/5' : '';
+  const rowBg = event.type === 'error'
+    ? 'bg-red-500/5'
+    : isKeyFinding
+    ? 'ring-1 ring-amber-500/30 bg-amber-500/5'
+    : '';
 
   return (
     <div
@@ -133,14 +144,19 @@ export function AgentFeedEvent({ event, index }: AgentFeedEventProps) {
         </div>
       </div>
 
-      {/* Right: severity badge (only for finding events with severity) */}
+      {/* Right: severity badge + KEY FINDING badge (only for finding events with severity) */}
       {event.type === 'finding' && event.severity && (
-        <div className="shrink-0 mt-0.5">
+        <div className="shrink-0 mt-0.5 flex flex-col items-end gap-1">
           <span
             className={`inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium ${SEVERITY_STYLES[event.severity]}`}
           >
             {event.severity}
           </span>
+          {isKeyFinding && (
+            <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
+              KEY FINDING
+            </span>
+          )}
         </div>
       )}
     </div>

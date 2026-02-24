@@ -67,8 +67,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     );
   }
 
-  // 3. Extract selected frameworks from request body
+  // 3. Extract selected frameworks and demoMode from request body
   const selectedFrameworks = bodyResult.data.frameworks;
+  const demoMode = bodyResult.data.demoMode;
 
   // 4. Extract structured analysis input from CALM document
   const analysisInput = extractAnalysisInput(parseResult.data);
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
       try {
         // Run the full 4-agent orchestration — events stream as they happen
-        const result = await runAnalysis(analysisInput, selectedFrameworks);
+        const result = await runAnalysis(analysisInput, selectedFrameworks, demoMode);
 
         // Store pipeline result for GET /api/pipeline
         globalThis.__lastPipelineResult = result.pipeline;

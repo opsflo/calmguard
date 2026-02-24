@@ -17,6 +17,9 @@ interface AnalysisState {
   activeAgents: string[];
   selectedFrameworks: string[];
 
+  // Demo mode flag — set by "Run Demo" CTA on landing page
+  demoMode: boolean;
+
   // Status
   status: AnalysisStatus;
   error: ParseError['error'] | null;
@@ -32,6 +35,7 @@ interface AnalysisState {
   clearAgentEvents: () => void;
   setSelectedFrameworks: (frameworks: string[]) => void;
   toggleFramework: (framework: string) => void;
+  setDemoMode: (v: boolean) => void;
   reset: () => void;
 }
 
@@ -43,6 +47,7 @@ const initialState = {
   agentEvents: [] as AgentEvent[],
   activeAgents: [] as string[],
   selectedFrameworks: ['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC'] as string[],
+  demoMode: false,
   status: 'idle' as AnalysisStatus,
   error: null,
 };
@@ -132,6 +137,8 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
           : [...state.selectedFrameworks, framework],
       };
     }),
+
+  setDemoMode: (v) => set({ demoMode: v }),
 
   reset: () => set(initialState),
 }));

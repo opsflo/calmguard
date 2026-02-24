@@ -36,7 +36,7 @@ export function useAgentStream() {
     useAnalysisStore();
 
   const startStream = useCallback(
-    async (calmData: unknown, selectedFrameworks?: string[]): Promise<void> => {
+    async (calmData: unknown, selectedFrameworks?: string[], demoMode?: boolean): Promise<void> => {
       // Create a new abort controller for this stream session
       const controller = new AbortController();
       abortRef.current = controller;
@@ -49,7 +49,7 @@ export function useAgentStream() {
         const response = await fetch('/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ calm: calmData, frameworks: selectedFrameworks }),
+          body: JSON.stringify({ calm: calmData, frameworks: selectedFrameworks, demoMode }),
           signal: controller.signal,
         });
 
@@ -163,7 +163,7 @@ export function useAgentStream() {
           );
           await new Promise<void>((resolve) => setTimeout(resolve, backoffMs));
           // Recurse — each retry creates a new AbortController inside startStream
-          await startStream(calmData, selectedFrameworks);
+          await startStream(calmData, selectedFrameworks, demoMode);
           return;
         }
 

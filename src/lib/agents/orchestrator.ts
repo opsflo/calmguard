@@ -24,6 +24,9 @@ export const analysisResultSchema = z.object({
 
 export type AnalysisResult = z.infer<typeof analysisResultSchema>;
 
+/** Helper to add dramatic pauses in demo mode for cinematic effect */
+const sleep = (ms: number): Promise<void> => new Promise<void>((r) => setTimeout(r, ms));
+
 /**
  * Run complete analysis orchestration
  *
@@ -35,9 +38,10 @@ export type AnalysisResult = z.infer<typeof analysisResultSchema>;
  *
  * @param input - CALM analysis input
  * @param selectedFrameworks - Optional list of compliance frameworks to analyze (e.g. ['SOX', 'PCI-DSS'])
+ * @param demoMode - When true, adds dramatic pauses between phases for cinematic demo effect
  * @returns AnalysisResult with all agent outputs (null for failed agents)
  */
-export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: string[]): Promise<AnalysisResult> {
+export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: string[], demoMode?: boolean): Promise<AnalysisResult> {
   const startTime = performance.now();
 
   try {
@@ -58,6 +62,9 @@ export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: str
       agent: agentIdentity,
       message: 'Orchestrator started - coordinating 4 AI agents',
     });
+
+    // Demo mode: let judges see the dashboard load before agents fire
+    if (demoMode) await sleep(800);
 
     // Track completed and failed agents
     const completedAgents: string[] = [];
@@ -104,6 +111,9 @@ export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: str
       });
     }
 
+    // Demo mode: stagger result announcements so agents appear sequential
+    if (demoMode) await sleep(500);
+
     // Extract Compliance Mapper result
     const compResult = phase1Results[1];
     if (compResult.status === 'fulfilled' && compResult.value.success && compResult.value.data) {
@@ -122,6 +132,9 @@ export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: str
         severity: 'critical',
       });
     }
+
+    // Demo mode: stagger result announcements
+    if (demoMode) await sleep(500);
 
     // Extract Pipeline Generator result
     const pipeResult = phase1Results[2];
@@ -145,6 +158,9 @@ export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: str
     // ========================================================================
     // PHASE 2: Sequential execution (Risk Scorer requires Phase 1 results)
     // ========================================================================
+
+    // Demo mode: dramatic pause before risk scoring — "and now the verdict..."
+    if (demoMode) await sleep(1500);
 
     // Risk Scorer requires at least Architecture AND Compliance to run
     if (architecture && compliance) {

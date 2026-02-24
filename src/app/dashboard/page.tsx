@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { CheckCircle2, AlertTriangle, RotateCcw } from 'lucide-react';
 import { useAnalysisStore } from '@/store/analysis-store';
 import { useAgentStream } from '@/hooks/use-agent-stream';
@@ -15,7 +16,25 @@ export default function DashboardPage() {
   const rawCalmData = useAnalysisStore((state) => state.rawCalmData);
   const selectedFrameworks = useAnalysisStore((state) => state.selectedFrameworks);
   const status = useAnalysisStore((state) => state.status);
+  const demoMode = useAnalysisStore((state) => state.demoMode);
+  const setDemoMode = useAnalysisStore((state) => state.setDemoMode);
   const { startStream } = useAgentStream();
+
+  // Guard against double-fire on React StrictMode double-invoke
+  const hasStartedRef = useRef(false);
+
+  // Demo mode auto-start: fire analysis 800ms after landing to let dashboard render
+  useEffect(() => {
+    if (demoMode && rawCalmData && status === 'parsed' && !hasStartedRef.current) {
+      hasStartedRef.current = true;
+      const timer = setTimeout(() => {
+        void startStream(rawCalmData, selectedFrameworks, true);
+        setDemoMode(false); // Reset after triggering so re-renders don't re-fire
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [demoMode, rawCalmData, status, startStream, selectedFrameworks, setDemoMode]);
 
   // If no architecture loaded, show centered empty state with call-to-action
   if (!analysisInput) {
@@ -85,10 +104,19 @@ export default function DashboardPage() {
       )}
 
       {/* Pre-analysis prompt — shown when architecture is loaded but analysis hasn't started */}
-      {isParsed && (
+      {isParsed && !demoMode && (
         <div className="bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 mb-4 flex items-center gap-3">
           <span className="text-sm text-slate-400">
             Architecture loaded — click <span className="text-slate-200 font-medium">Analyze</span> in the header to begin compliance analysis.
+          </span>
+        </div>
+      )}
+
+      {/* Demo mode loading indicator */}
+      {isParsed && demoMode && (
+        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-3 mb-4 flex items-center gap-3">
+          <span className="text-sm text-emerald-400 animate-pulse">
+            Initializing demo analysis...
           </span>
         </div>
       )}

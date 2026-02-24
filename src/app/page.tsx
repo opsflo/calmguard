@@ -1,16 +1,47 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useAnalysisStore } from '@/store/analysis-store';
 import { ArchitectureSelector } from '@/components/calm/architecture-selector';
 import { ParseErrorDisplay } from '@/components/calm/parse-error-display';
 import { Card } from '@/components/ui/card';
-import { Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Shield, Play } from 'lucide-react';
+import { DEMO_ARCHITECTURES } from '../../examples';
+import { parseCalm } from '@/lib/calm/parser';
+import { extractAnalysisInput } from '@/lib/calm/extractor';
 
 export default function Home() {
-  const { error, reset } = useAnalysisStore();
+  const router = useRouter();
+  const { error, reset, setCalmData, setDemoMode, setSelectedFrameworks } = useAnalysisStore();
 
   const handleDismissError = () => {
     reset();
+  };
+
+  const handleRunDemo = () => {
+    // Find the trading platform demo architecture
+    const demo = DEMO_ARCHITECTURES.find((d) => d.id === 'trading-platform');
+    if (!demo) return;
+
+    // Parse the CALM document
+    const parseResult = parseCalm(demo.data);
+    if (!parseResult.success) return;
+
+    // Extract structured analysis input
+    const analysisInput = extractAnalysisInput(parseResult.data);
+
+    // Pre-select all frameworks for a comprehensive demo
+    setSelectedFrameworks(['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC']);
+
+    // Populate store with trading platform data
+    setCalmData(parseResult.data, analysisInput);
+
+    // Set demo mode flag — dashboard will auto-start analysis
+    setDemoMode(true);
+
+    // Navigate to dashboard
+    router.push('/dashboard');
   };
 
   return (
@@ -29,6 +60,27 @@ export default function Home() {
             Upload a FINOS CALM architecture and get instant AI-powered
             compliance analysis, risk assessment, and generated CI/CD pipeline
             configurations
+          </p>
+        </div>
+
+        {/* Run Demo CTA — primary action for hackathon judges */}
+        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-6 text-center space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-500">
+            Live Demo
+          </p>
+          <p className="text-sm text-slate-400">
+            See CALMGuard analyze a trading platform architecture in real-time
+          </p>
+          <Button
+            onClick={handleRunDemo}
+            size="lg"
+            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-base h-12 gap-2"
+          >
+            <Play className="h-5 w-5" />
+            Run Demo
+          </Button>
+          <p className="text-xs text-slate-600">
+            Trading Platform — Multi-service system with FIX protocol, order management, and real-time market data
           </p>
         </div>
 
