@@ -191,10 +191,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: Implement custom CALM upload with drag-and-drop, validation, and @finos/calm-cli integration
-- [ ] 06-02: Build guided demo mode with auto-select, dramatic pacing, highlighted findings, and export report
-- [ ] 06-03: Polish all animations (score counting, graph transitions, feed slides, heat map fades, pipeline typewriter, sidebar pulse)
-- [ ] 06-04: Deploy to Vercel with environment variables, verify SSE streaming in production, optimize with React.memo, and test responsive layout
+- [ ] 06-01-PLAN.md — Custom CALM upload with drag-and-drop, calm-cli validation, Vercel maxDuration config (Wave 1)
+- [ ] 06-02-PLAN.md — Guided demo mode with auto-start, dramatic pacing, KEY FINDING highlights, export report modal (Wave 2)
+- [ ] 06-03-PLAN.md — Animation polish: odometer score, graph node transitions, heat map stagger, pipeline typewriter (Wave 2)
 
 ## Progress
 
@@ -208,10 +207,10 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 3. API Routes & Dashboard Core | 7/7 | Complete | 2026-02-24 |
 | 4. Pipeline Generation & Compliance Display | 0/4 | Not started | - |
 | 5. Testing & DevSecOps Dogfooding | 0/5 | Complete    | 2026-02-24 |
-| 6. Polish, Demo Mode & Deployment | 0/4 | Not started | - |
+| 6. Polish, Demo Mode & Deployment | 0/3 | Not started | - |
 
 ---
 
 *Roadmap created: 2026-02-15*
-*Total phases: 6 | Total plans: 29 (estimated)*
+*Total phases: 6 | Total plans: 28 (4+5+7+4+5+3)*
 *Ready for: `/gsd:plan-phase 1`*
