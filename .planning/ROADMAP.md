@@ -30,7 +30,7 @@ v1.2 extends CALMGuard from a file-upload analysis tool to a GitOps-integrated c
 
 Plans:
 - [x] 07-01-PLAN.md — GitHub repo input: Octokit setup, repo URL + path UI fields, fetch CALM via GitHub API, feed into parser (Wave 1)
-- [ ] 07-02-PLAN.md — Pipeline artifact PR: branch creation, commit pipeline files, open PR with compliance summary, display PR link (Wave 2)
+- [x] 07-02-PLAN.md — Pipeline artifact PR: branch creation, commit pipeline files, open PR with compliance summary, display PR link (Wave 2)
 - [ ] 07-03-PLAN.md — Compliance remediation: AI agent generates modified CALM JSON, create branch, commit remediated file with change descriptions, open PR, display link (Wave 2)
 
 ## Progress
@@ -40,7 +40,7 @@ Phase 7 is the only phase in v1.2.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. GitOps PR Generation | 1/3 | In Progress | 07-01 done 2026-02-24 |
+| 7. GitOps PR Generation | 2/3 | In Progress | 07-01 done 2026-02-24, 07-02 done 2026-02-24 |
 
 ---
 

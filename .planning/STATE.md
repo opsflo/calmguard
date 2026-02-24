@@ -11,10 +11,10 @@ See: .planning/PROJECT.md (updated 2026-02-24)
 ## Current Position
 
 Phase: 7 — GitOps PR Generation
-Status: In progress — 07-01 complete, ready for 07-02
-Last activity: 2026-02-24 — Plan 07-01 fully complete (Tasks 1-2 + post-checkpoint design change)
+Status: In progress — 07-02 complete, ready for 07-03
+Last activity: 2026-02-24 — Plan 07-02 fully complete (2 tasks, pipeline PR generation end-to-end)
 
-Progress: [###░░░░░░░] 33% (1/3 plans complete)
+Progress: [######░░░░] 66% (2/3 plans complete)
 
 ## Accumulated Context
 
@@ -29,25 +29,32 @@ v1.2 decisions (resolved during 07-01 execution):
 - Pre-filled demo: finos-labs/dtcch-2026-opsflow-llc / examples/payment-gateway.calm.json
 - gitHubAuthEnabled added to Zustand store for downstream PR button gating without re-fetching
 
+v1.2 decisions (resolved during 07-02 execution):
+- GitHub Git Data API (blobs/trees/commits) used for atomic multi-file commits — not Contents API (which is one file at a time)
+- globals.ts centralizes declare global blocks — imported by both analyze/route.ts and create-pr/route.ts for shared type declarations
+- Branch name format: `calmguard/pipeline-{Date.now()}` — timestamp ensures uniqueness
+- Remediation PR section renders with onGenerate=undefined (not a function) — disables button cleanly without triggering error state
+
 ### Pending Todos
 
 None.
 
 ### Blockers/Concerns
 
-None — Plan 07-01 complete, ready for Plan 07-02.
+None — Plan 07-02 complete, ready for Plan 07-03.
 
 ## Session Continuity
 
-Last session: 2026-02-24 (Plan 07-01 completion with post-checkpoint design change)
-Stopped at: Completed 07-01-PLAN.md — ready to start 07-02
-Resume file: .planning/phases/07-gitops-pr-generation/07-02-PLAN.md
+Last session: 2026-02-24 (Plan 07-02 completion — pipeline PR end-to-end)
+Stopped at: Completed 07-02-PLAN.md — ready to start 07-03
+Resume file: .planning/phases/07-gitops-pr-generation/07-03-PLAN.md
 
 ## Performance Metrics
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 07-gitops-pr-generation | 01 | 15min | 3 | 10 |
+| 07-gitops-pr-generation | 02 | 9min | 2 | 6 |
 
 ---
 
