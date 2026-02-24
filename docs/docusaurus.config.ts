@@ -14,11 +14,11 @@ const config: Config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  url: 'https://calmguard.vercel.app',
-  baseUrl: '/',
+  url: 'https://finos-labs.github.io',
+  baseUrl: '/dtcch-2026-opsflow-llc/',
 
-  organizationName: 'finos',
-  projectName: 'calmguard',
+  organizationName: 'finos-labs',
+  projectName: 'dtcch-2026-opsflow-llc',
 
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
@@ -70,7 +70,7 @@ const config: Config = {
           label: 'Documentation',
         },
         {
-          href: 'https://github.com/finos/dtcch-2026-opsflow-llc',
+          href: 'https://github.com/finos-labs/dtcch-2026-opsflow-llc',
           label: 'GitHub',
           position: 'right',
         },
@@ -118,7 +118,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/finos/dtcch-2026-opsflow-llc',
+              href: 'https://github.com/finos-labs/dtcch-2026-opsflow-llc',
             },
           ],
         },

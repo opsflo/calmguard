@@ -63,7 +63,10 @@ export function FindingsTable() {
   const [frameworkFilter, setFrameworkFilter] = useState<string>('all');
   const [severityFilter, setSeverityFilter] = useState<string>('all');
 
-  const findings = analysisResult?.risk?.topFindings ?? [];
+  const findings = useMemo(
+    () => analysisResult?.risk?.topFindings ?? [],
+    [analysisResult?.risk?.topFindings]
+  );
 
   // Collect unique frameworks (framework is optional — filter undefined values)
   const uniqueFrameworks = useMemo(
