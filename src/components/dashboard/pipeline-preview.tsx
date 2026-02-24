@@ -95,32 +95,58 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
   useEffect(() => {
     if (!pipelineConfig) return;
 
+    let cancelled = false;
+
     async function highlight() {
-      const infraLang =
-        pipelineConfig!.infrastructureAsCode.provider === 'terraform' ? 'hcl' : 'yaml';
+      try {
+        const infraLang =
+          pipelineConfig!.infrastructureAsCode.provider === 'terraform' ? 'hcl' : 'yaml';
 
-      const secContent = pipelineConfig!.securityScanning.tools
-        .map((t: { name: string; config: string }) => `# ${t.name}\n${t.config}`)
-        .join('\n---\n');
+        const secContent = pipelineConfig!.securityScanning.tools
+          .map((t: { name: string; config: string }) => `# ${t.name}\n${t.config}`)
+          .join('\n---\n');
 
-      const [ghHtml, secHtml, infraHtml] = await Promise.all([
-        codeToHtml(pipelineConfig!.githubActions.yaml, {
-          lang: 'yaml',
-          theme: 'github-dark',
-        }),
-        codeToHtml(secContent, {
-          lang: 'yaml',
-          theme: 'github-dark',
-        }),
-        codeToHtml(pipelineConfig!.infrastructureAsCode.config, {
-          lang: infraLang,
-          theme: 'github-dark',
-        }),
-      ]);
-      setHighlightedHtml({ github: ghHtml, security: secHtml, infra: infraHtml });
+        const [ghHtml, secHtml, infraHtml] = await Promise.all([
+          codeToHtml(pipelineConfig!.githubActions.yaml || '# No GitHub Actions YAML generated', {
+            lang: 'yaml',
+            theme: 'github-dark',
+          }),
+          codeToHtml(secContent || '# No security scanning config generated', {
+            lang: 'yaml',
+            theme: 'github-dark',
+          }),
+          codeToHtml(pipelineConfig!.infrastructureAsCode.config || '# No infrastructure config generated', {
+            lang: infraLang,
+            theme: 'github-dark',
+          }),
+        ]);
+
+        if (!cancelled) {
+          setHighlightedHtml({ github: ghHtml, security: secHtml, infra: infraHtml });
+        }
+      } catch (err) {
+        // Shiki failed — fall back to plain text rendering
+        console.error('Shiki highlighting failed:', err);
+        if (!cancelled) {
+          const wrapPlain = (code: string) =>
+            `<pre class="p-4 bg-transparent"><code class="leading-relaxed">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+
+          const secContent = pipelineConfig!.securityScanning.tools
+            .map((t: { name: string; config: string }) => `# ${t.name}\n${t.config}`)
+            .join('\n---\n');
+
+          setHighlightedHtml({
+            github: wrapPlain(pipelineConfig!.githubActions.yaml || '# No content'),
+            security: wrapPlain(secContent || '# No content'),
+            infra: wrapPlain(pipelineConfig!.infrastructureAsCode.config || '# No content'),
+          });
+        }
+      }
     }
 
     void highlight();
+
+    return () => { cancelled = true; };
   }, [pipelineConfig]);
 
   // Copy to clipboard handler
@@ -154,6 +180,27 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
           <h3 className="text-sm font-medium text-slate-400">Pipeline Preview</h3>
           <div className="bg-slate-900 rounded-lg">
             <CodeSkeleton />
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  // Analyzing state — show animated skeleton with progress indicator
+  if (status === 'analyzing' && !pipelineConfig) {
+    return (
+      <Card className="bg-slate-800 border-slate-700">
+        <div className="p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-medium text-slate-400">Pipeline Preview</h3>
+            <div className="flex items-center gap-1.5">
+              <div className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+              <span className="text-xs text-blue-400 animate-pulse">Generating...</span>
+            </div>
+          </div>
+          <div className="bg-slate-900 rounded-lg relative overflow-hidden">
+            <CodeSkeleton />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-700/10 to-transparent animate-shimmer" />
           </div>
         </div>
       </Card>

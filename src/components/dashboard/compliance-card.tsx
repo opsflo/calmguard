@@ -246,12 +246,89 @@ function FrameworkBars({ scores }: FrameworkBarsProps) {
 // ComplianceCard — main export
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Analyzing state — pulsing gauge with progress text
+// ---------------------------------------------------------------------------
+
+function AnalyzingGauge() {
+  return (
+    <svg width={128} height={128} viewBox="0 0 128 128" aria-label="Analysis in progress">
+      {/* Spinning arc background */}
+      <circle
+        cx={CENTER}
+        cy={CENTER}
+        r={RADIUS}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={8}
+        className="text-slate-700"
+      />
+      {/* Animated spinning arc */}
+      <circle
+        cx={CENTER}
+        cy={CENTER}
+        r={RADIUS}
+        fill="none"
+        stroke="#3b82f6"
+        strokeWidth={8}
+        strokeLinecap="round"
+        strokeDasharray={`${CIRCUMFERENCE * 0.25} ${CIRCUMFERENCE * 0.75}`}
+        transform={`rotate(-90 ${CENTER} ${CENTER})`}
+        className="animate-spin origin-center"
+        style={{ transformBox: 'fill-box', animationDuration: '2s' }}
+      />
+      {/* Center text */}
+      <text
+        x={CENTER}
+        y={CENTER - 4}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontSize={11}
+        fontWeight="600"
+        fill="#60a5fa"
+      >
+        Analyzing
+      </text>
+      <text
+        x={CENTER}
+        y={CENTER + 12}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontSize={9}
+        fill="#64748b"
+      >
+        Please wait...
+      </text>
+    </svg>
+  );
+}
+
+function AnalyzingBars() {
+  return (
+    <div className="space-y-3">
+      {['SOX', 'PCI-DSS', 'NIST-CSF', 'FINOS-CCC'].map((label) => (
+        <div key={label}>
+          <div className="flex justify-between mb-1">
+            <span className="text-sm text-slate-500">{label}</span>
+            <span className="text-sm text-slate-600 animate-pulse">...</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-slate-700/50 overflow-hidden">
+            <div className="h-full w-full bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 animate-shimmer rounded-full" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function ComplianceCard() {
   const riskData = useAnalysisStore((state) => state.analysisResult?.risk ?? null);
+  const status = useAnalysisStore((state) => state.status);
 
   const overallScore = riskData?.overallScore ?? 0;
   const displayScore = useCountUp(overallScore);
   const hasData = riskData !== null;
+  const isAnalyzing = status === 'analyzing';
 
   return (
     <Card className="bg-slate-800 border-slate-700">
@@ -260,7 +337,11 @@ export function ComplianceCard() {
 
         {/* SVG Gauge */}
         <div className="flex justify-center mb-6">
-          <ComplianceGauge displayScore={displayScore} hasData={hasData} />
+          {isAnalyzing && !hasData ? (
+            <AnalyzingGauge />
+          ) : (
+            <ComplianceGauge displayScore={displayScore} hasData={hasData} />
+          )}
         </div>
 
         {/* Overall rating — only when data exists */}
@@ -272,7 +353,11 @@ export function ComplianceCard() {
         )}
 
         {/* Per-framework breakdown bars */}
-        <FrameworkBars scores={riskData?.frameworkScores ?? []} />
+        {isAnalyzing && !hasData ? (
+          <AnalyzingBars />
+        ) : (
+          <FrameworkBars scores={riskData?.frameworkScores ?? []} />
+        )}
       </div>
     </Card>
   );

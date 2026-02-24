@@ -9,9 +9,14 @@ import {
   Activity,
   Play,
   CheckCircle,
+  ScanEye,
+  ShieldCheck,
+  Wrench,
+  Crosshair,
   type LucideIcon,
 } from 'lucide-react';
 import type { AgentEvent, Severity } from '@/lib/agents/types';
+import { AGENT_BOT_PERSONAS } from '@/store/analysis-store';
 
 // ---------------------------------------------------------------------------
 // Icon registry — maps agent.icon field to Lucide component
@@ -22,6 +27,11 @@ const ICON_MAP: Record<string, LucideIcon> = {
   'git-branch': GitBranch,
   'bar-chart': BarChart3,
   layers: Layers,
+  network: ScanEye,
+  'scan-eye': ScanEye,
+  'shield-check': ShieldCheck,
+  wrench: Wrench,
+  crosshair: Crosshair,
 };
 
 function resolveIcon(iconName: string): LucideIcon {
@@ -64,7 +74,12 @@ export interface AgentFeedEventProps {
 // AgentFeedEvent component
 // ---------------------------------------------------------------------------
 export function AgentFeedEvent({ event, index }: AgentFeedEventProps) {
-  const IconComponent = resolveIcon(event.agent.icon);
+  const persona = AGENT_BOT_PERSONAS[event.agent.name];
+  const IconComponent = persona
+    ? (ICON_MAP[persona.icon] ?? resolveIcon(event.agent.icon))
+    : resolveIcon(event.agent.icon);
+  const agentColor = persona?.color ?? event.agent.color;
+  const displayName = persona?.botName ?? event.agent.displayName;
 
   // Cap stagger delay so old events don't wait forever
   const animationDelay = `${Math.min(index * 50, 500)}ms`;
@@ -77,21 +92,23 @@ export function AgentFeedEvent({ event, index }: AgentFeedEventProps) {
       className={`flex items-start gap-3 px-4 py-3 rounded-lg animate-slide-in-right ${rowBg}`}
       style={{ animationDelay }}
     >
-      {/* Agent icon */}
-      <div className="mt-0.5 shrink-0">
+      {/* Bot avatar */}
+      <div
+        className="mt-0.5 shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-slate-800 ring-1 ring-slate-700"
+      >
         <IconComponent
-          className="h-4 w-4"
-          style={{ color: event.agent.color }}
+          className="h-3.5 w-3.5"
+          style={{ color: agentColor }}
           aria-hidden="true"
         />
       </div>
 
       {/* Middle column: header + message */}
       <div className="flex-1 min-w-0">
-        {/* Header row: agent name + timestamp */}
+        {/* Header row: bot name + timestamp */}
         <div className="flex items-center justify-between gap-2 mb-0.5">
           <span className="text-xs font-semibold text-slate-200 truncate">
-            {event.agent.displayName}
+            {displayName}
           </span>
           <span className="text-xs text-slate-500 shrink-0 font-mono">
             {formatTime(event.timestamp)}

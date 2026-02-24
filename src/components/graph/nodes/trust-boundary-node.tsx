@@ -1,6 +1,7 @@
 'use client';
 
 import type { Node, NodeProps } from '@xyflow/react';
+import { ShieldAlert, Network, Cloud, Building2 } from 'lucide-react';
 
 export type TrustBoundaryNodeData = {
   label: string;
@@ -9,23 +10,25 @@ export type TrustBoundaryNodeData = {
 
 export type TrustBoundaryNodeType = Node<TrustBoundaryNodeData, 'trustBoundary'>;
 
-const boundaryTypeColors: Record<TrustBoundaryNodeData['boundaryType'], string> = {
-  network: 'border-blue-500/40 text-blue-400',
-  'security-zone': 'border-amber-500/40 text-amber-400',
-  deployment: 'border-teal-500/40 text-teal-400',
-  organizational: 'border-violet-500/40 text-violet-400',
+const boundaryConfig: Record<TrustBoundaryNodeData['boundaryType'], { border: string; text: string; bg: string; Icon: typeof ShieldAlert }> = {
+  network: { border: 'border-blue-500/30', text: 'text-blue-400', bg: 'bg-blue-500/5', Icon: Network },
+  'security-zone': { border: 'border-amber-500/30', text: 'text-amber-400', bg: 'bg-amber-500/5', Icon: ShieldAlert },
+  deployment: { border: 'border-teal-500/30', text: 'text-teal-400', bg: 'bg-teal-500/5', Icon: Cloud },
+  organizational: { border: 'border-violet-500/30', text: 'text-violet-400', bg: 'bg-violet-500/5', Icon: Building2 },
 };
 
 export function TrustBoundaryNode({ data }: NodeProps<TrustBoundaryNodeType>) {
-  const colorClass = boundaryTypeColors[data.boundaryType] ?? 'border-slate-500/40 text-slate-400';
+  const config = boundaryConfig[data.boundaryType] ?? boundaryConfig.network;
+  const { Icon } = config;
 
   return (
     <div
-      className={`border-dashed border-2 ${colorClass} bg-slate-900/30 rounded-lg w-full h-full relative`}
+      className={`border-dashed border-2 ${config.border} ${config.bg} rounded-2xl w-full h-full relative backdrop-blur-[1px]`}
     >
-      <div className="absolute top-1.5 left-2.5 flex items-center gap-1.5">
-        <span className={`text-xs font-medium ${colorClass.split(' ')[1]}`}>{data.label}</span>
-        <span className="text-xs text-slate-600 capitalize">({data.boundaryType})</span>
+      <div className={`absolute top-2 left-3 flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-900/80`}>
+        <Icon className={`h-3 w-3 ${config.text}`} />
+        <span className={`text-[10px] font-semibold ${config.text}`}>{data.label}</span>
+        <span className="text-[9px] text-slate-600 capitalize">({data.boundaryType})</span>
       </div>
     </div>
   );

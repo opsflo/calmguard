@@ -162,6 +162,19 @@ export const AGENT_DISPLAY_NAMES: Record<string, string> = {
 };
 
 /**
+ * Bot personas — Military codename theme.
+ * Each agent gets a Lucide icon name and tactical callsign.
+ * Used in sidebar and agent feed for visual flair.
+ */
+export const AGENT_BOT_PERSONAS: Record<string, { icon: string; botName: string; role: string; color: string }> = {
+  'architecture-analyzer': { icon: 'scan-eye', botName: 'Scout', role: 'Arch Recon', color: '#3b82f6' },
+  'compliance-mapper': { icon: 'shield-check', botName: 'Ranger', role: 'Compliance', color: '#8b5cf6' },
+  'pipeline-generator': { icon: 'wrench', botName: 'Arsenal', role: 'Pipeline', color: '#f97316' },
+  'risk-scorer': { icon: 'crosshair', botName: 'Sniper', role: 'Risk Intel', color: '#ef4444' },
+  orchestrator: { icon: 'swords', botName: 'HQ', role: 'Command', color: '#94a3b8' },
+};
+
+/**
  * Derive per-agent status from agentEvents array.
  *
  * Used by Sidebar to show colored dots:

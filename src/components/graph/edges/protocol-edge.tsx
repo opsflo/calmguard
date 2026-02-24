@@ -36,8 +36,9 @@ export function ProtocolEdge({
         path={edgePath}
         markerEnd={markerEnd}
         style={{
-          stroke: '#475569',
+          stroke: '#64748b',
           strokeWidth: 1.5,
+          opacity: 0.7,
           ...style,
         }}
       />
@@ -49,7 +50,7 @@ export function ProtocolEdge({
               transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
               pointerEvents: 'all',
             }}
-            className="bg-slate-900 text-xs text-slate-400 px-1.5 py-0.5 rounded border border-slate-700 nodrag nopan"
+            className="bg-slate-900/90 backdrop-blur-sm text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded-full border border-slate-700/50 nodrag nopan shadow-sm"
           >
             {(data as ProtocolEdgeData).protocol}
           </div>

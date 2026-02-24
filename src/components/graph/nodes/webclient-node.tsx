@@ -4,7 +4,7 @@ import { Handle, Position } from '@xyflow/react';
 import type { Node, NodeProps } from '@xyflow/react';
 import { Globe } from 'lucide-react';
 import type { ComplianceStatus } from './service-node';
-import { borderColors } from './service-node';
+import { borderColors, glowColors } from './service-node';
 
 export type WebClientNodeData = {
   label: string;
@@ -18,20 +18,22 @@ export type WebClientNodeType = Node<WebClientNodeData, 'webclient'>;
 export function WebClientNode({ data }: NodeProps<WebClientNodeType>) {
   return (
     <div
-      className={`bg-slate-800 border-2 ${borderColors[data.complianceStatus]} rounded-lg min-w-36 overflow-hidden`}
+      className={`bg-slate-800/90 backdrop-blur-sm border-2 ${borderColors[data.complianceStatus]} rounded-xl min-w-[160px] max-w-[200px] overflow-hidden shadow-lg ${glowColors[data.complianceStatus]} transition-shadow duration-500`}
     >
-      <Handle type="target" position={Position.Left} />
-      <div className="bg-teal-900/40 border-b border-teal-700/30 px-2 py-1 flex items-center gap-1.5">
-        <Globe className="h-3 w-3 text-teal-400 flex-shrink-0" />
-        <span className="text-xs font-semibold text-teal-300 uppercase tracking-wider">Web Client</span>
+      <Handle type="target" position={Position.Left} className="!bg-teal-400 !w-2 !h-2 !border-slate-900 !border-2" />
+      <div className="bg-gradient-to-r from-teal-900/60 to-teal-800/30 border-b border-teal-600/30 px-3 py-1.5 flex items-center gap-2">
+        <div className="flex items-center justify-center h-5 w-5 rounded-md bg-teal-500/20">
+          <Globe className="h-3 w-3 text-teal-400" />
+        </div>
+        <span className="text-[10px] font-bold text-teal-300 uppercase tracking-widest">Web Client</span>
       </div>
-      <div className="px-3 py-2">
-        <div className="text-xs font-medium text-slate-200 leading-tight">{data.label}</div>
+      <div className="px-3 py-2.5">
+        <div className="text-xs font-semibold text-slate-100 leading-tight">{data.label}</div>
         {data.description && (
-          <div className="text-xs text-slate-500 mt-0.5 leading-tight line-clamp-2">{data.description}</div>
+          <div className="text-[10px] text-slate-400 mt-1 leading-snug line-clamp-2">{data.description}</div>
         )}
       </div>
-      <Handle type="source" position={Position.Right} />
+      <Handle type="source" position={Position.Right} className="!bg-teal-400 !w-2 !h-2 !border-slate-900 !border-2" />
     </div>
   );
 }
