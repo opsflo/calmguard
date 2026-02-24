@@ -51,6 +51,7 @@ Progress: [█████████░] 89.7% (26/29 plans)
 | Phase 05 P04 | 4 | 2 tasks | 5 files |
 | Phase 05-testing-devsecops-dogfooding P03 | 5 | 2 tasks | 4 files |
 | Phase 05-testing-devsecops-dogfooding P01 | 6 | 2 tasks | 5 files |
+| Phase 05 P05 | 11 | 2 tasks | 27 files |
 
 ## Accumulated Context
 
@@ -124,6 +125,9 @@ Recent decisions affecting current work:
 - [Phase 05-testing-devsecops-dogfooding]: Vitest 4 compatibility: removed poolOptions.forks in favor of default flat config
 - [Phase 05-testing-devsecops-dogfooding]: verbose reporter with summary:false: shows all test names for demo visibility without noise
 - [Phase 05-testing-devsecops-dogfooding]: Fixture factory functions (makeNode, makeMinimalDoc): typed inline fixtures over large JSON blobs
+- [Phase 05]: routeBasePath: / + slug: / on intro.md — Docusaurus docs ARE the site root for clean hackathon URLs
+- [Phase 05]: Regex-based Zod schema extraction in generate-api-docs.ts — avoids full TypeScript AST complexity
+- [Phase 05]: MDX curly brace escaping in API docs generator — HTML-encode braces to prevent acorn parse errors
 
 ### Pending Todos
 
@@ -140,9 +144,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24 (plan execution)
-Stopped at: Completed 05-01-PLAN.md — Vitest test infrastructure + 12 CALM parser/schema unit tests passing in 647ms
+Stopped at: Completed 05-05-PLAN.md — Docusaurus 3 documentation site with 10 pages, Mermaid diagrams, auto-generated API reference
 Resume file: None
 
 ---
 
-*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) Complete (7/7 plans, gap closure done) - Phase 4 Complete (4/4 plans) - Phase 5 next*
+*Phase 1 (Foundation & CALM Parser) Complete - Phase 2 (Multi-Agent Infrastructure) Complete (5/5 plans) - Phase 3 (API Routes & Dashboard Core) Complete (7/7 plans, gap closure done) - Phase 4 Complete (4/4 plans) - Phase 5 Complete (5/5 plans)*
