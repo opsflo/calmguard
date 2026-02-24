@@ -55,6 +55,7 @@ Progress: [██████████] 100% (29/29 plans)
 | Phase 05 P02 | 4 | 1 tasks | 3 files |
 | Phase 06 P01 | 6 | 2 tasks | 7 files |
 | Phase 06 P03 | 340 | 2 tasks | 11 files |
+| Phase 06-polish-demo-mode-deployment P02 | 9 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -139,6 +140,9 @@ Recent decisions affecting current work:
 - [Phase 06]: OdometerScore per-digit CSS translateY column animation — ones=1200ms, tens=1800ms for slot-machine feel
 - [Phase 06]: SVG foreignObject embeds OdometerScore inside SVG gauge — only way to run CSS animations inside SVG viewBox
 - [Phase 06]: Pipeline typewriter: shiki highlight-once split into <span class=line> spans, reveal at 30ms/line per tab
+- [Phase 06-polish-demo-mode-deployment]: demoMode flag in store triggers auto-start via useEffect on dashboard — resets to false after firing
+- [Phase 06-polish-demo-mode-deployment]: Orchestrator sleep pauses additive with real LLM latency: 800ms start + 500ms between Phase 1 results + 1500ms before Risk Scorer
+- [Phase 06-polish-demo-mode-deployment]: ExportReportModal uses Blob + URL.createObjectURL — no server round-trip, pure client-side download
 
 ### Pending Todos
 
@@ -155,7 +159,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-24 (plan execution)
-Stopped at: Completed 06-03-PLAN.md — cinematic animations: odometer score, graph node transitions, heat map stagger, pipeline typewriter (2 tasks, 11 files)
+Stopped at: Completed 06-02-PLAN.md — demo mode: Run Demo CTA, auto-start, orchestrator pacing, KEY FINDING badge, completion summary card, export report modal (2 tasks, 9 files)
 Resume file: None
 
 ---
