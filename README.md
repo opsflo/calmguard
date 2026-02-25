@@ -15,7 +15,7 @@
   <a href="https://github.com/finos-labs/dtcch-2026-opsflow-llc/actions/workflows/semgrep.yml"><img src="https://github.com/finos-labs/dtcch-2026-opsflow-llc/actions/workflows/semgrep.yml/badge.svg" alt="SAST" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License" /></a>
   <img src="https://img.shields.io/badge/TypeScript-strict-blue?logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/FINOS-CALM_1.1-00A3E0?logo=linux-foundation&logoColor=white" alt="FINOS CALM" />
+  <img src="https://img.shields.io/badge/FINOS-CALM_1.0--1.2-00A3E0?logo=linux-foundation&logoColor=white" alt="FINOS CALM" />
   <img src="https://img.shields.io/badge/Node-22+-339933?logo=node.js&logoColor=white" alt="Node 22+" />
   <img src="https://img.shields.io/badge/pnpm-9+-F69220?logo=pnpm&logoColor=white" alt="pnpm" />
 </p>
@@ -36,8 +36,8 @@ Built for the **DTCC/FINOS Innovate.DTCC AI Hackathon** (Feb 23–27, 2026).
 
 | CALM Parser | Real-Time Dashboard | DevSecOps Pipeline Generator |
 |:-----------:|:-------------------:|:----------------------------:|
-| Full CALM 1.1 schema support with Zod validation | React Flow architecture graphs with touring camera animation | GitHub Actions CI with 6 DevSecOps stages |
-| Nodes, relationships, flows, interfaces, controls | Live SSE streaming with agent status indicators | SAST (Semgrep), SCA (Trivy), Secrets (Gitleaks), SBOM (Syft) |
+| Multi-version CALM support (v1.0, v1.1, v1.2) with Zod validation | React Flow architecture graphs with touring camera animation | GitHub Actions CI with 6 DevSecOps stages |
+| Auto-detects version, normalizes legacy types, lenient parsing | Live SSE streaming with agent status indicators | SAST (Semgrep), SCA (Trivy), Secrets (Gitleaks), SBOM (Syft) |
 | Demo architectures included | Compliance gauges, risk heat maps, exportable reports | Security-focused Terraform IaC from CALM signals |
 
 ## How It Works
@@ -163,7 +163,7 @@ graph TB
 | **Language** | TypeScript (strict) | Type-safe codebase, zero `any` |
 | **AI** | Vercel AI SDK | Structured output via `generateObject` + Zod |
 | **LLM Providers** | Gemini, Claude, GPT, Grok | Multi-provider with configurable default |
-| **CALM** | @finos/calm-cli v1.33 | FINOS Architecture-as-Code integration |
+| **CALM** | @finos/calm-cli v1.33 | FINOS Architecture-as-Code — multi-version support (v1.0, v1.1, v1.2) |
 | **Visualization** | React Flow + Recharts | Interactive architecture graphs + compliance charts |
 | **State** | Zustand | Single store, SSE-driven updates |
 | **UI** | shadcn/ui + Tailwind CSS | Dark theme, accessible components |
@@ -315,6 +315,43 @@ Two production-realistic CALM architectures are included in [`examples/`](exampl
 | **Payment Gateway** | Multi-service payment processing with encryption, tokenization, PCI controls |
 | **Trading Platform** | Real-time trading system with market data feeds, order management, risk engine |
 
+## Multi-Version CALM Support
+
+CALMGuard supports all three stable releases of the FINOS CALM specification — **v1.0, v1.1, and v1.2**. The parser automatically detects the version, normalizes fields to a common internal representation, and passes clean data to agents. No user action required — just upload any CALM file.
+
+### Version Detection
+
+Version is detected automatically by schema inference — examining which fields are present:
+
+| Version | Detection Signal | Key Characteristics |
+|---------|-----------------|---------------------|
+| **CALM v1.0** | `calmSchemaVersion` field present | Legacy node types (`apigateway`, `microservice`), legacy relationship types (`uses`) |
+| **CALM v1.1** | `description` on flow transitions, standard `node-type` enum | Standard node types (`service`, `database`, `webclient`, etc.) |
+| **CALM v1.2** | Optional `decorators`, `timelines`, `adrs` fields | All v1.1 features plus ADRs and timeline tracking |
+
+If version is ambiguous, the parser defaults to the latest (v1.2) and parses leniently.
+
+### Legacy Type Mapping
+
+CALM v1.0 uses node and relationship types that were renamed in v1.1. The parser maps these automatically:
+
+| v1.0 Legacy Type | Maps To | Category |
+|------------------|---------|----------|
+| `apigateway` | `service` | Node type |
+| `microservice` | `service` | Node type |
+| `uses` | `connects` | Relationship type |
+
+Unknown node types (e.g., `lambda`) are mapped to `service` — maximizing compatibility over strictness.
+
+### Backward Compatibility
+
+- **Missing fields** are filled with sensible defaults (empty string, empty array) — the file parses successfully, agents work with what's available
+- **Lenient validation** accepts unknown field values and legacy aliases
+- **Version badge** shown on the dashboard next to parsed node/relationship counts (e.g., "CALM v1.1 — 8 nodes, 6 relationships")
+- **No breaking changes** — existing v1.1 demo files (payment-gateway, trading-platform) continue working without regression
+
+> CALMGuard's parser extends the existing pattern of handling CALM CLI output with lenient aliases. Multi-version support is a parser-layer change — transparent to the AI agent system.
+
 ## Documentation
 
 Full documentation is available in [`docs/`](docs/). Run locally with `pnpm docs:dev`, or browse directly on GitHub:
@@ -367,7 +404,7 @@ CALMGuard is built with a clear enterprise evolution path. Current hackathon fea
 | **Compliance Skills** | 7 skill files (6 compliance frameworks + 1 DevSecOps pipeline guide) with closed control ID references | Auto-generated skill appendices from learning engine, versioned skill evolution, community-contributed skill marketplace |
 | **Agent Orchestration** | 6 agents in 3 phases, single Gemini provider default | Per-framework subagents (Ranger spawns SOX/PCI/NIST specialists), multi-provider routing (cost vs accuracy), agent performance analytics |
 | **GitOps** | Single-repo PR generation (CI pipeline + compliance remediation) | Multi-repo fleet scanning, scheduled compliance drift detection, PR approval policies, Slack/Teams notifications |
-| **CALM Support** | CALM 1.1 with lenient parser accepting field aliases | Multi-version CALM (1.0–1.2+), CALM pattern library matching, bi-directional CALM editing (fix gaps → update architecture) |
+| **CALM Support** | Multi-version CALM (1.0, 1.1, 1.2) with auto-detection, legacy type mapping, lenient parsing | CALM pattern library matching, bi-directional CALM editing (fix gaps → update architecture), auto-migration suggestions for older versions |
 | **Compliance Frameworks** | SOX, PCI-DSS, NIST-CSF, FINOS-CCC, SOC2 | HIPAA, GDPR, ISO 27001, FedRAMP, custom framework authoring |
 | **Deployment** | Vercel (single-tenant) | Self-hosted (Docker/K8s), multi-tenant SaaS, air-gapped on-prem, SSO/RBAC |
 | **MCP Server** | — | Expose CALMGuard as an MCP (Model Context Protocol) server — any AI agent or IDE can analyze CALM architectures, run compliance checks, and generate pipelines via tool calls. Enables integration with Claude Code, Cursor, VS Code Copilot, and custom agent workflows |
