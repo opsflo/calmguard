@@ -7,6 +7,8 @@ import { analyzeArchitecture, type ArchitectureAnalysis, architectureAnalysisSch
 import { mapCompliance, type ComplianceMapping, complianceMappingSchema } from './compliance-mapper';
 import { generatePipeline, type PipelineConfig, pipelineConfigSchema } from './pipeline-generator';
 import { scoreRisk, type RiskAssessment, riskAssessmentSchema } from './risk-scorer';
+import { runDeterministicPreChecks } from '@/lib/learning/pre-check';
+import type { DeterministicRule, PreCheckResult } from '@/lib/learning/types';
 
 /**
  * Analysis Result Schema
@@ -41,7 +43,13 @@ const sleep = (ms: number): Promise<void> => new Promise<void>((r) => setTimeout
  * @param demoMode - When true, adds dramatic pauses between phases for cinematic demo effect
  * @returns AnalysisResult with all agent outputs (null for failed agents)
  */
-export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: string[], demoMode?: boolean): Promise<AnalysisResult> {
+export async function runAnalysis(
+  input: AnalysisInput,
+  selectedFrameworks?: string[],
+  demoMode?: boolean,
+  deterministicRules?: DeterministicRule[],
+  learningContext?: string,
+): Promise<AnalysisResult> {
   const startTime = performance.now();
 
   try {
@@ -77,6 +85,60 @@ export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: str
     let risk: RiskAssessment | null = null;
 
     // ========================================================================
+    // PHASE 0: Deterministic Pre-Checks (Oracle — instant, no LLM)
+    // ========================================================================
+
+    const rules = deterministicRules ?? [];
+    let preCheckResults: PreCheckResult[] = [];
+
+    if (rules.length > 0) {
+      const oracleIdentity: AgentIdentity = {
+        name: 'learning-engine',
+        displayName: 'Learning Engine',
+        icon: 'brain',
+        color: 'cyan',
+      };
+
+      emitAgentEvent({
+        type: 'started',
+        agent: oracleIdentity,
+        message: `Oracle started — ${rules.length} deterministic rule${rules.length === 1 ? '' : 's'} loaded`,
+      });
+
+      // Demo mode: brief pause so Oracle visually appears before LLM agents
+      if (demoMode) await sleep(300);
+
+      preCheckResults = runDeterministicPreChecks(input, rules);
+
+      // Emit a finding event for each rule that fired
+      for (const result of preCheckResults) {
+        emitAgentEvent({
+          type: 'finding',
+          agent: oracleIdentity,
+          message: `${result.framework}: ${result.description}`,
+          severity: result.severity,
+          data: { deterministic: true, ...result },
+        });
+
+        // Demo mode: stagger findings for visual impact
+        if (demoMode) await sleep(200);
+      }
+
+      emitAgentEvent({
+        type: 'completed',
+        agent: oracleIdentity,
+        message: preCheckResults.length > 0
+          ? `Oracle fired ${preCheckResults.length} instant finding${preCheckResults.length === 1 ? '' : 's'} from learned rules`
+          : 'Oracle completed — no deterministic rules matched this architecture',
+      });
+
+      completedAgents.push('learning-engine');
+
+      // Demo mode: pause before Phase 1 kicks off
+      if (demoMode) await sleep(500);
+    }
+
+    // ========================================================================
     // PHASE 1: Parallel execution (Architecture Analyzer, Compliance Mapper, Pipeline Generator)
     // ========================================================================
 
@@ -88,7 +150,7 @@ export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: str
 
     const phase1Results = await Promise.allSettled([
       analyzeArchitecture(input),
-      mapCompliance(input, selectedFrameworks),
+      mapCompliance(input, selectedFrameworks, learningContext),
       generatePipeline(input),
     ]);
 
@@ -231,7 +293,7 @@ export async function runAnalysis(input: AnalysisInput, selectedFrameworks?: str
     const duration = performance.now() - startTime;
 
     const successCount = completedAgents.length;
-    const totalCount = 4;
+    const totalCount = rules.length > 0 ? 5 : 4;
 
     emitAgentEvent({
       type: 'completed',

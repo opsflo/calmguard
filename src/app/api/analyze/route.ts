@@ -59,9 +59,11 @@ export async function POST(req: NextRequest): Promise<Response> {
     );
   }
 
-  // 3. Extract selected frameworks and demoMode from request body
+  // 3. Extract selected frameworks, demoMode, and learning params from request body
   const selectedFrameworks = bodyResult.data.frameworks;
   const demoMode = bodyResult.data.demoMode;
+  const deterministicRules = bodyResult.data.deterministicRules;
+  const learningContext = bodyResult.data.learningContext;
 
   // 4. Extract structured analysis input from CALM document
   const analysisInput = extractAnalysisInput(parseResult.data);
@@ -85,7 +87,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
       try {
         // Run the full 4-agent orchestration — events stream as they happen
-        const result = await runAnalysis(analysisInput, selectedFrameworks, demoMode);
+        const result = await runAnalysis(analysisInput, selectedFrameworks, demoMode, deterministicRules, learningContext);
 
         // Store pipeline result and full analysis state for PR generation routes
         globalThis.__lastPipelineResult = result.pipeline;

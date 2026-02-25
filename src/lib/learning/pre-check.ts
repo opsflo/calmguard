@@ -18,7 +18,7 @@ function matchesTriggers(
 
   // Check protocols (OR within)
   if (triggers.protocols.length > 0) {
-    const inputProtocols = new Set(input.metadata.protocols);
+    const inputProtocols = new Set<string>(input.metadata.protocols);
     const hasMatch = triggers.protocols.some(p => inputProtocols.has(p));
     if (!hasMatch) return { matches: false, matchedNodes: [], matchedRelationships: [] };
 

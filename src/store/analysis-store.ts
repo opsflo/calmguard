@@ -214,6 +214,7 @@ export const AGENT_DISPLAY_NAMES: Record<string, string> = {
   'compliance-mapper': 'Compliance Mapper',
   'pipeline-generator': 'Pipeline Generator',
   'risk-scorer': 'Risk Scorer',
+  'learning-engine': 'Learning Engine',
 };
 
 /**
@@ -227,6 +228,7 @@ export const AGENT_BOT_PERSONAS: Record<string, { icon: string; botName: string;
   'pipeline-generator': { icon: 'wrench', botName: 'Arsenal', role: 'Pipeline', color: '#f97316' },
   'risk-scorer': { icon: 'crosshair', botName: 'Sniper', role: 'Risk Intel', color: '#ef4444' },
   orchestrator: { icon: 'swords', botName: 'HQ', role: 'Command', color: '#94a3b8' },
+  'learning-engine': { icon: 'brain', botName: 'Oracle', role: 'Intelligence', color: '#06b6d4' },
 };
 
 /**

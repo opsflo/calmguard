@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { agentEventTypeSchema, agentIdentitySchema, severitySchema } from '@/lib/agents/types';
 import { analysisResultSchema } from '@/lib/agents/orchestrator';
 import { pipelineConfigSchema } from '@/lib/agents/pipeline-generator';
+import { deterministicRuleSchema } from '@/lib/learning/types';
 
 // ============================================================================
 // Request Schemas
@@ -15,6 +16,10 @@ export const analyzeRequestSchema = z.object({
   calm: z.unknown(),
   frameworks: z.array(z.enum(['SOX', 'PCI-DSS', 'CCC', 'NIST-CSF'])).optional(),
   demoMode: z.boolean().optional().default(false),
+  /** Deterministic rules from the client-side learning store */
+  deterministicRules: z.array(deterministicRuleSchema).optional().default([]),
+  /** Learned patterns context (markdown) for prompt enrichment */
+  learningContext: z.string().optional().default(''),
 });
 
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;

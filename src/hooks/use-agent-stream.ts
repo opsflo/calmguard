@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useAnalysisStore } from '@/store/analysis-store';
+import { useLearningStore } from '@/lib/learning/store';
 
 /**
  * Stream status for the SSE fetch-based hook.
@@ -45,11 +46,22 @@ export function useAgentStream() {
       startAnalysis();
       setStreamStatus('running');
 
+      // Read learning store state for deterministic pre-checks and prompt enrichment
+      const learningState = useLearningStore.getState();
+      const deterministicRules = learningState.deterministicRules;
+      const learningContext = learningState.getLearningContext();
+
       try {
         const response = await fetch('/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ calm: calmData, frameworks: selectedFrameworks, demoMode }),
+          body: JSON.stringify({
+            calm: calmData,
+            frameworks: selectedFrameworks,
+            demoMode,
+            deterministicRules,
+            learningContext,
+          }),
           signal: controller.signal,
         });
 
@@ -103,10 +115,19 @@ export function useAgentStream() {
 
               if (parsed.type === 'done') {
                 // Final event — contains AnalysisResult
-                setAnalysisResult(
-                  parsed.result as Parameters<typeof setAnalysisResult>[0],
-                );
+                const result = parsed.result as Parameters<typeof setAnalysisResult>[0];
+                setAnalysisResult(result);
                 setStreamStatus('complete');
+
+                // Record analysis in learning store for pattern extraction
+                const currentInput = useAnalysisStore.getState().analysisInput;
+                if (currentInput) {
+                  useLearningStore.getState().recordAnalysis(
+                    result,
+                    currentInput,
+                    deterministicRules.length,
+                  );
+                }
               } else if (parsed.type === 'error') {
                 // Agent-level error event from the server
                 setStatus('error');

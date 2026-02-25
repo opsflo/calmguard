@@ -249,7 +249,7 @@ describe('runAnalysis orchestrator', () => {
 
     // Phase 1 agents receive the analysis input
     expect(analyzeArchitecture).toHaveBeenCalledWith(minimalAnalysisInput);
-    expect(mapCompliance).toHaveBeenCalledWith(minimalAnalysisInput, undefined);
+    expect(mapCompliance).toHaveBeenCalledWith(minimalAnalysisInput, undefined, undefined);
     expect(generatePipeline).toHaveBeenCalledWith(minimalAnalysisInput);
 
     // Phase 2: risk scorer receives Phase 1 results (architecture, compliance, pipeline)

@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Wrench,
   Crosshair,
+  Brain,
   Bot,
   type LucideIcon,
 } from 'lucide-react';
@@ -30,6 +31,7 @@ const BOT_ICON_MAP: Record<string, LucideIcon> = {
   'shield-check': ShieldCheck,
   wrench: Wrench,
   crosshair: Crosshair,
+  brain: Brain,
   swords: Bot, // Fallback — swords not in lucide, use Bot
 };
 
@@ -117,7 +119,8 @@ export function Sidebar() {
             Agent Squad
           </h3>
           <div className="space-y-1">
-            {AGENT_NAMES.map((name) => {
+            {/* Oracle appears dynamically when it has events */}
+            {[...AGENT_NAMES, ...( agentEvents.some(e => e.agent.name === 'learning-engine') ? ['learning-engine' as const] : [])].map((name) => {
               const status = getAgentStatus(agentEvents, activeAgents, name);
               const persona = AGENT_BOT_PERSONAS[name];
               const IconComponent = persona ? BOT_ICON_MAP[persona.icon] ?? Bot : Bot;

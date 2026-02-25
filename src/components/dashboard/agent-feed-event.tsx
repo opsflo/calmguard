@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Wrench,
   Crosshair,
+  Brain,
   type LucideIcon,
 } from 'lucide-react';
 import type { AgentEvent, Severity } from '@/lib/agents/types';
@@ -32,6 +33,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   'shield-check': ShieldCheck,
   wrench: Wrench,
   crosshair: Crosshair,
+  brain: Brain,
 };
 
 function resolveIcon(iconName: string): LucideIcon {
@@ -91,9 +93,16 @@ export function AgentFeedEvent({ event, index }: AgentFeedEventProps) {
     event.type === 'finding' &&
     (event.severity === 'critical' || event.severity === 'high');
 
+  // Deterministic findings from Oracle's learned rules
+  const isDeterministic =
+    event.type === 'finding' &&
+    (event.data as Record<string, unknown> | undefined)?.deterministic === true;
+
   // Event-type-specific row background
   const rowBg = event.type === 'error'
     ? 'bg-red-500/5'
+    : isDeterministic
+    ? 'ring-1 ring-cyan-500/30 bg-cyan-500/5'
     : isKeyFinding
     ? 'ring-1 ring-amber-500/30 bg-amber-500/5'
     : '';
@@ -152,6 +161,11 @@ export function AgentFeedEvent({ event, index }: AgentFeedEventProps) {
           >
             {event.severity}
           </span>
+          {isDeterministic && (
+            <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+              LEARNED
+            </span>
+          )}
           {isKeyFinding && (
             <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
               KEY FINDING

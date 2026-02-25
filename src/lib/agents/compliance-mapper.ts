@@ -66,7 +66,8 @@ function sleep(ms: number): Promise<void> {
  */
 export async function mapCompliance(
   input: AnalysisInput,
-  _selectedFrameworks?: string[]
+  _selectedFrameworks?: string[],
+  learningContext?: string,
 ): Promise<AgentResult<ComplianceMapping>> {
   const startTime = performance.now();
   const agentName = 'compliance-mapper';
@@ -127,7 +128,7 @@ Calculate per-framework scores:
 - Count total, compliant, partial, and non-compliant controls
 
 **GUIDELINES:**
-- Use the compliance framework knowledge above to identify required controls
+${learningContext ? `**LEARNED PATTERNS FROM PREVIOUS ANALYSES:**\n${learningContext}\n\nUse these patterns to validate and prioritize your findings. Patterns marked as "Deterministic Rules" have been confirmed across multiple analyses and should be treated as high-confidence signals.\n\n` : ''}- Use the compliance framework knowledge above to identify required controls
 - Look for controls in both global controls and node/relationship-level controls
 - Consider node types and protocols when assessing compliance (e.g., HTTPS for PCI-DSS)
 - Flag gaps where framework requires a control but CALM definition lacks it
