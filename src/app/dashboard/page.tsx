@@ -9,6 +9,7 @@ import { PipelinePreview } from '@/components/dashboard/pipeline-preview';
 import { ArchitectureGraph } from '@/components/graph/architecture-graph';
 import { ExportReportModal } from '@/components/dashboard/export-report-modal';
 import { GitOpsCard } from '@/components/dashboard/gitops-card';
+import { LearningPanel } from '@/components/dashboard/learning-panel';
 import { generateMarkdownReport } from '@/lib/report/generate-report';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -223,7 +224,8 @@ export default function DashboardPage() {
         {/* Bottom Left: Pipeline Preview — compact mode for overview grid */}
         <PipelinePreview compact />
 
-        {/* Bottom Right slot: Agent feed moved to permanent right column in layout */}
+        {/* Bottom Right: Learning Intelligence — Oracle's pattern discovery panel */}
+        <LearningPanel />
       </div>
 
       {/* GitOps Actions — only shown when analyzing from GitHub repo */}
