@@ -7,7 +7,11 @@ import type { PatternFingerprint, PatternTriggers } from './types';
  * the same fingerprint, regardless of specific node names or IDs. This enables
  * deduplication of the same compliance issue observed across different analyses.
  *
- * Format: "protocol1,protocol2|nodeType1,nodeType2|relType1|control1,control2|FRAMEWORK|STATUS"
+ * IMPORTANT: missingControls are excluded from the fingerprint because they come
+ * from LLM-generated calmControlId values which vary between runs. Including them
+ * would create unique fingerprints every run, preventing deduplication.
+ *
+ * Format: "protocol1,protocol2|nodeType1,nodeType2|relType1|FRAMEWORK|STATUS"
  *
  * @param triggers - Structural trigger conditions
  * @param framework - Compliance framework (e.g., 'PCI-DSS')
@@ -23,7 +27,6 @@ export function generateFingerprint(
     [...triggers.protocols].sort().join(','),
     [...triggers.nodeTypes].sort().join(','),
     [...triggers.relationshipTypes].sort().join(','),
-    [...triggers.missingControls].sort().join(','),
     framework,
     status,
   ];

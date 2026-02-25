@@ -85,7 +85,7 @@ describe('generateFingerprint', () => {
     };
 
     const fp = generateFingerprint(triggers, 'SOX', 'compliant');
-    expect(fp).toBe('||||SOX|compliant');
+    expect(fp).toBe('|||SOX|compliant');
   });
 
   it('does not mutate input arrays', () => {
