@@ -466,3 +466,31 @@ NIST CSF 2.0 de-emphasized formal tiers but organizations can still assess matur
 - **CSF can complement other frameworks** - Use CSF as meta-framework that maps to PCI-DSS, SOX, ISO 27001 for comprehensive coverage
 - **Incident response is binary** - Either you have a documented IR plan or you don't; "partial" IR is high risk
 - **Backup without testing is insufficient** - RC.RP-01 requires tested recovery, not just backup existence
+
+## Closed Control ID Reference
+
+> Use ONLY the IDs in this table when citing NIST CSF controls. Do not invent or extrapolate IDs beyond this list. CITE EXACTLY AS SHOWN in the "Citation Format" column.
+
+| Control ID | Full Name | CALM Field | Citation Format |
+|------------|-----------|------------|----------------|
+| GV.OC-01 | Organizational mission understood and informs cybersecurity | node.metadata | "NIST CSF 2.0 GV.OC-01" |
+| GV.PO-01 | Cybersecurity policy established and communicated | node.controls.security-policy | "NIST CSF 2.0 GV.PO-01" |
+| GV.RM-01 | Risk management objectives established and communicated | node.controls.risk-management | "NIST CSF 2.0 GV.RM-01" |
+| GV.SC-02 | Cybersecurity supply chain risk management established | node.controls.third-party-management | "NIST CSF 2.0 GV.SC-02" |
+| ID.AM-02 | Software platforms and applications inventoried | node (service, system) | "NIST CSF 2.0 ID.AM-02" |
+| ID.AM-03 | Representations of network communication and data flows | connects relationships | "NIST CSF 2.0 ID.AM-03" |
+| ID.AM-07 | Inventories of data maintained | node (database) | "NIST CSF 2.0 ID.AM-07" |
+| ID.RA-01 | Vulnerabilities identified, validated, recorded | node.controls.vulnerability-scanning | "NIST CSF 2.0 ID.RA-01" |
+| PR.AA-01 | Identities and credentials managed | node.controls.secrets-management | "NIST CSF 2.0 PR.AA-01" |
+| PR.AA-03 | Users, services, hardware authenticated | node.controls.multi-factor-authentication | "NIST CSF 2.0 PR.AA-03" |
+| PR.AA-05 | Access permissions, entitlements, authorizations managed | node.controls.access-control | "NIST CSF 2.0 PR.AA-05" |
+| PR.DS-01 | Data-at-rest confidentiality, integrity, availability protected | node.controls.data-encryption | "NIST CSF 2.0 PR.DS-01" |
+| PR.DS-02 | Data-in-transit confidentiality, integrity, availability protected | connects[].protocol | "NIST CSF 2.0 PR.DS-02" |
+| PR.DS-11 | Data backups maintained, tested, and documented | node.controls.backup-recovery | "NIST CSF 2.0 PR.DS-11" |
+| PR.IR-01 | Networks and environments are protected | node.controls.network-segmentation | "NIST CSF 2.0 PR.IR-01" |
+| PR.PS-01 | Configuration management practices established | node.controls.configuration-management | "NIST CSF 2.0 PR.PS-01" |
+| PR.PS-04 | Log records generated and made available | node.controls.audit-logging | "NIST CSF 2.0 PR.PS-04" |
+| DE.CM-01 | Networks monitored for anomalous behavior | node.controls.intrusion-detection | "NIST CSF 2.0 DE.CM-01" |
+| DE.CM-04 | Malicious code detected | node.controls.malware-protection | "NIST CSF 2.0 DE.CM-04" |
+| RS.MA-01 | Incident response plan executed | node.controls.incident-response | "NIST CSF 2.0 RS.MA-01" |
+| RC.RP-01 | Recovery plan executed | node.controls.disaster-recovery | "NIST CSF 2.0 RC.RP-01" |

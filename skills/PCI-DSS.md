@@ -344,3 +344,29 @@ When analyzing CALM architectures:
 - **ASV scans required for external systems** - Public-facing CDE components must use Approved Scanning Vendor
 - **Risk-based approach in v4.0** - Some requirements offer flexibility (targeted risk analysis), but core requirements (encryption, MFA, logging) are absolute
 - **Card brand fines are severe** - Non-compliance can result in $5,000-$100,000/month fines plus incident costs
+
+## Closed Control ID Reference
+
+> Use ONLY the IDs in this table when citing PCI-DSS controls. Do not invent or extrapolate IDs beyond this list. CITE EXACTLY AS SHOWN in the "Citation Format" column.
+
+| Control ID | Full Name | CALM Field | Citation Format |
+|------------|-----------|------------|----------------|
+| Req 1.2.1 | Define and understand inbound/outbound traffic rules | node.controls.network-segmentation | "PCI-DSS 4.0 Req 1.2.1" |
+| Req 1.3 | Network access to CDE restricted | deployed-in relationships | "PCI-DSS 4.0 Req 1.3" |
+| Req 2.2.7 | Non-console administrative access encrypted | connects[].protocol | "PCI-DSS 4.0 Req 2.2.7" |
+| Req 3.5.1 | PAN rendered unreadable everywhere stored | node.controls.data-encryption | "PCI-DSS 4.0 Req 3.5.1" |
+| Req 4.2.1 | PAN protected with strong cryptography during transmission | connects[].protocol | "PCI-DSS 4.0 Req 4.2.1" |
+| Req 4.2.1.1 | Inventory of trusted keys/certificates for PAN transmission | node.controls | "PCI-DSS 4.0 Req 4.2.1.1" |
+| Req 4.2.1.2 | Wireless networks transmitting PAN use strong cryptography | connects[].protocol | "PCI-DSS 4.0 Req 4.2.1.2" |
+| Req 6.2.4 | Software engineering techniques prevent vulnerabilities | node.controls.vulnerability-scanning | "PCI-DSS 4.0 Req 6.2.4" |
+| Req 6.4.2 | Public-facing web applications protected against attacks | node.controls.web-application-firewall | "PCI-DSS 4.0 Req 6.4.2" |
+| Req 7.2 | Access to system components restricted per least privilege | node.controls.access-control | "PCI-DSS 4.0 Req 7.2" |
+| Req 8.3.1 | All user access authenticated with at least one factor | node.controls.access-control | "PCI-DSS 4.0 Req 8.3.1" |
+| Req 8.4.2 | MFA for all access into CDE | node.controls.multi-factor-authentication | "PCI-DSS 4.0 Req 8.4.2" |
+| Req 10.2.1 | Audit logs capture specified events | node.controls.audit-logging | "PCI-DSS 4.0 Req 10.2.1" |
+| Req 10.2.2 | Audit logs record required details | node.controls.audit-logging | "PCI-DSS 4.0 Req 10.2.2" |
+| Req 10.5.1 | Audit log history retained for 12 months | node.controls.log-retention | "PCI-DSS 4.0 Req 10.5.1" |
+| Req 11.3.1 | Internal vulnerability scans performed quarterly | node.controls.vulnerability-scanning | "PCI-DSS 4.0 Req 11.3.1" |
+| Req 11.4.1 | External penetration testing performed annually | node.controls.penetration-testing | "PCI-DSS 4.0 Req 11.4.1" |
+| Req 11.5.1 | Intrusion-detection techniques detect intrusions | node.controls.intrusion-detection | "PCI-DSS 4.0 Req 11.5.1" |
+| Req 12.10.1 | Incident response plan established and maintained | node.controls.incident-response | "PCI-DSS 4.0 Req 12.10.1" |
