@@ -18,7 +18,7 @@ v1.3 transforms CALMGuard from a demo-grade compliance analyzer into a grounded,
 - Phases 10-11 are sequential
 
 - [x] **Phase 8: Compliance Intelligence** - Grounded skill files with specific control IDs for PCI-DSS, NIST-CSF, SOC2; protocol security rationale; citable agent output (completed 2026-02-25)
-- [ ] **Phase 9: Multi-Version CALM** - Lenient parser accepting CALM 1.0/1.1/1.2 with version detection and dashboard display
+- [x] **Phase 9: Multi-Version CALM** - Lenient parser accepting CALM 1.0/1.1/1.2 with version detection and dashboard display (completed 2026-02-25)
 - [ ] **Phase 10: GitOps Split** - Three separate PR buttons (DevSecOps CI, Compliance Remediation, Cloud Infra) with CI-only pipeline workflow
 - [ ] **Phase 11: CI Integration & Documentation** - GitHub Action workflow for continuous compliance checking; README with agent profiles
 
@@ -95,7 +95,7 @@ Phases 8 and 9 run in parallel (Day 1). Phase 10 follows (Day 2 AM). Phase 11 fo
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 8. Compliance Intelligence | 2/2 | Complete   | 2026-02-25 | - |
-| 9. Multi-Version CALM | 1/2 | In Progress|  | - |
+| 9. Multi-Version CALM | 2/2 | Complete   | 2026-02-25 | - |
 | 10. GitOps Split | v1.3 | 0/? | Not started | - |
 | 11. CI Integration & Docs | v1.3 | 0/? | Not started | - |
 

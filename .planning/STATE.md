@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 
 ## Current Position
 
-Phase: 9 of 11 (Multi-Version CALM) — in progress
-Plan: 1 of 2 complete (09-01 done; 09-02: store+UI remaining)
-Status: 09-01 normalizer+parser complete. Ready for 09-02.
-Last activity: 2026-02-25 — 09-01 executed (normalizer.ts, parser version field, 30 tests)
+Phase: 9 of 11 (Multi-Version CALM) — complete
+Plan: 2 of 2 complete (09-01 normalizer+parser done; 09-02 store+UI done)
+Status: Phase 9 complete. All multi-version CALM support wired end-to-end.
+Last activity: 2026-02-25 — 09-02 executed (store calmVersion, setCalmData call sites, header badge, v1.0 demo)
 
-Progress: [███░░░░░░░] 30%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
@@ -27,6 +27,7 @@ Progress: [███░░░░░░░] 30%
 | 08-compliance-intelligence | 01 | 3min | 3 | 4 |
 | 08-compliance-intelligence | 02 | 3min | 2 | 5 |
 | 09-multi-version-calm | 01 | 8min | 2 | 7 |
+| 09-multi-version-calm | 02 | 10min | 2 | 9 |
 
 ## Accumulated Context
 
@@ -49,6 +50,8 @@ v1.3 decisions:
 - control-matrix.tsx local interface updated inline with Zod enum rather than importing from agent
 - [Phase 09-multi-version-calm]: Pre-Zod normalization pattern: transform raw JSON before Zod sees it, keeping schema canonical v1.1 with normalizer handling v1.0 quirks
 - [Phase 09-multi-version-calm]: Lenient CALM v1.0 mapping: unknown node types to service, unknown rel types to connects — maximizes compatibility with real-world v1.0 documents
+- [Phase 09-multi-version-calm]: setCalmData accepts optional version parameter to avoid breaking all call sites; API boundary consumers cast version string to CalmVersion type
+- [Phase 09-multi-version-calm]: CALM version badge uses neutral slate styling — no warnings for v1.0, consistent with locked CONTEXT.md decision
 
 ### Pending Todos
 
@@ -65,8 +68,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-25 (Phase 9, Plan 1 execution)
-Stopped at: Completed 09-01-PLAN.md — normalizer.ts + parser version field + 30 tests. Next: execute 09-02 (store+UI)
+Last session: 2026-02-25 (Phase 9, Plan 2 execution)
+Stopped at: Completed 09-02-PLAN.md — store calmVersion field, all setCalmData call sites, header badge, v1.0 demo. Phase 9 complete.
 
 ---
 
