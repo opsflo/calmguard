@@ -119,14 +119,73 @@ export function useAgentStream() {
                 setAnalysisResult(result);
                 setStreamStatus('complete');
 
-                // Record analysis in learning store for pattern extraction
+                // ── Oracle Post-Analysis Learning ──────────────────
+                // Record analysis in learning store and emit visible
+                // agent events so Oracle's learning appears in the feed.
                 const currentInput = useAnalysisStore.getState().analysisInput;
                 if (currentInput) {
+                  const oracleAgent = {
+                    name: 'learning-engine',
+                    displayName: 'Learning Engine',
+                    icon: 'brain',
+                    color: 'cyan',
+                  };
+
+                  // Snapshot metrics before learning
+                  const metricsBefore = useLearningStore.getState().getMetrics();
+
+                  const oracleEvent = (e: Omit<Parameters<typeof addAgentEvent>[0], 'timestamp'>) =>
+                    addAgentEvent({ ...e, timestamp: new Date().toISOString() });
+
+                  oracleEvent({
+                    type: 'started',
+                    agent: oracleAgent,
+                    message: 'Oracle analyzing results — extracting compliance patterns...',
+                  });
+
+                  // Small delay so judges see Oracle appear in the feed
+                  await new Promise<void>((r) => setTimeout(r, 1200));
+
+                  // Actually record the analysis (extracts patterns, auto-promotes)
                   useLearningStore.getState().recordAnalysis(
                     result,
                     currentInput,
                     deterministicRules.length,
                   );
+
+                  // Snapshot metrics after learning
+                  const metricsAfter = useLearningStore.getState().getMetrics();
+                  const newPatterns = metricsAfter.totalPatterns - metricsBefore.totalPatterns;
+                  const newRules = metricsAfter.promotedCount - metricsBefore.promotedCount;
+
+                  // Emit thinking event with what was learned
+                  oracleEvent({
+                    type: 'thinking',
+                    agent: oracleAgent,
+                    message: newPatterns > 0
+                      ? `Extracted ${newPatterns} new pattern${newPatterns === 1 ? '' : 's'} from analysis results`
+                      : `Reinforced ${metricsAfter.totalPatterns} existing patterns — confidence updated`,
+                  });
+
+                  await new Promise<void>((r) => setTimeout(r, 800));
+
+                  // Emit promotion event if rules were auto-promoted
+                  if (newRules > 0) {
+                    oracleEvent({
+                      type: 'finding',
+                      agent: oracleAgent,
+                      message: `Auto-promoted ${newRules} pattern${newRules === 1 ? '' : 's'} to deterministic rule${newRules === 1 ? '' : 's'} (75%+ confidence, 3+ observations)`,
+                      severity: 'info',
+                    });
+                    await new Promise<void>((r) => setTimeout(r, 600));
+                  }
+
+                  // Emit completed event
+                  oracleEvent({
+                    type: 'completed',
+                    agent: oracleAgent,
+                    message: `Learning complete — ${metricsAfter.totalPatterns} patterns, ${metricsAfter.promotedCount} rules, intelligence ${metricsAfter.intelligenceScore}/100`,
+                  });
                 }
               } else if (parsed.type === 'error') {
                 // Agent-level error event from the server
