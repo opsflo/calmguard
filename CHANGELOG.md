@@ -5,6 +5,73 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-02-25
+
+### Added
+
+#### GitOps PR Generation
+- GitHub repository integration — fetch CALM files from any public/private repo
+- Three-button GitOps workflow: DevSecOps CI, Compliance Remediation, Cloud Infrastructure PRs
+- GitHub client library with branch creation, file commit, and PR generation
+- SHA tracking on all generated PRs for auditability
+- Tab-based architecture selector (Upload, GitHub, Demo)
+
+#### Compliance Intelligence
+- SOC2 Trust Service Criteria skill file (21 controls: CC6.x, CC7.x, CC8.x, CC9.x)
+- PROTOCOL-SECURITY skill file with upgrade mappings (HTTP→HTTPS, FTP→SFTP, JDBC→TLS) grounded in PCI-DSS, NIST-CSF, SOC2
+- DEVSECOPS-PIPELINE skill file for compliance-first CI generation
+- Closed Control ID Reference tables in PCI-DSS and NIST-CSF skills to prevent LLM hallucination
+- SOC2 as fifth compliance framework wired into analysis pipeline
+
+#### Self-Learning Engine
+- Compliance pattern extraction after every analysis (structural fingerprinting)
+- Confidence tracking with observation count across runs
+- Auto-promotion: patterns observed 3+ times at 75%+ confidence become deterministic rules
+- Oracle agent (Phase 0) fires promoted rules instantly — zero LLM latency
+- Learning Intelligence dashboard with Recharts visualization of intelligence growth
+- Deterministic Rules deck with promotion progress indicators
+
+#### Cloud Infrastructure Generation
+- Cloud Infra Generator agent — maps CALM nodes to AWS Terraform (VPC, ECS, RDS, IAM, Security Groups)
+- CLOUD-INFRASTRUCTURE skill file for AWS resource mapping
+- CALM-to-Terraform traceability for every generated resource
+- Runs in Phase 1 parallel alongside Scout, Ranger, and Arsenal
+
+#### CALM Remediator
+- Programmatic change application engine (`applyChangesToCalm`) — LLM identifies gaps, deterministic code applies fixes
+- Protocol strength ordering prevents downgrades (HTTP=0 → mTLS=5)
+- Preserves all existing controls during remediation (no stripping)
+- Zod `.min(1)` validation ensures LLM always produces actionable changes
+
+#### Multi-Version CALM Support
+- Automatic version detection for CALM v1.0, v1.1, v1.2
+- Legacy type mapping (v1.0 `apigateway`→`service`, `uses`→`connects`)
+- Version badge on dashboard with node/relationship counts
+
+#### Dashboard Enhancements
+- Visual pipeline stage diagram with vertical flow and split-screen layout
+- Agent squad callsigns (HQ, Oracle, Scout, Ranger, Arsenal, Sniper)
+- Squad page with agent profiles, skills, and execution flow
+- Dedicated Learning Intelligence page
+- Oracle pre-check findings collapsed into single summary (reduced UI noise)
+- Cloud Infra Generator findings collapsed into single summary
+
+#### Documentation
+- 12-phase product roadmap from hackathon prototype to enterprise platform
+- Remediation before/after proof with real CALM repository links
+- Comprehensive agent system documentation with 6-agent squad architecture
+
+### Fixed
+
+- Remediation PRs now programmatically apply changes instead of trusting LLM JSON output
+- Oracle pre-check findings collapsed from N events to single summary
+- Cloud Infra Generator findings collapsed from N events to single summary
+- Semgrep SAST `unsafe-formatstring` resolved with `%d` format specifiers
+- Prevent double-normalization of v1.0 CALM documents
+- Learning engine confidence grows with observations, not dilutes with runs
+- CI workflow uses `packageManager` field instead of hardcoded pnpm version
+- Added `.npmrc` for pnpm 10 registry auth compatibility in GitHub Actions
+
 ## [1.1.0] - 2026-02-24
 
 ### Added
@@ -71,5 +138,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - shadcn/ui component library setup with dark theme
 - Basic project structure and configuration
 
+[1.3.0]: https://github.com/finos-labs/dtcch-2026-opsflow-llc/compare/v1.1.0...v1.3.0
 [1.1.0]: https://github.com/finos-labs/dtcch-2026-opsflow-llc/compare/v0.1.0...v1.1.0
 [0.1.0]: https://github.com/finos-labs/dtcch-2026-opsflow-llc/releases/tag/v0.1.0
