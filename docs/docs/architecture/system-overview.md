@@ -40,10 +40,12 @@ graph TB
     end
 
     subgraph Agents ["AI Agent Layer"]
-        AA[Architecture Analyzer]
-        CM[Compliance Mapper]
-        PG[Pipeline Generator]
-        RS[Risk Scorer]
+        ORC[Oracle — Learned Rules]
+        AA[Scout — Architecture Analyzer]
+        CM[Ranger — Compliance Mapper]
+        PG[Arsenal — Pipeline Generator]
+        CI[Cloud Infra Generator]
+        RS[Sniper — Risk Scorer]
     end
 
     subgraph LLM ["LLM Providers"]

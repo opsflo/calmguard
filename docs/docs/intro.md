@@ -20,31 +20,33 @@ Today, compliance review is:
 
 ## The Solution
 
-CALMGuard reads [FINOS CALM](https://github.com/finos/architecture-as-code) architecture definitions and analyzes them with multi-agent AI to produce real-time compliance reports — streaming live to a dashboard as four specialized AI agents work in parallel.
+CALMGuard reads [FINOS CALM](https://github.com/finos/architecture-as-code) architecture definitions and analyzes them with a squad of 6 AI agents to produce real-time compliance reports — streaming live to a dashboard as agents work in parallel.
 
 ```mermaid
 flowchart LR
     A[CALM Architecture JSON] --> B[CALMGuard Platform]
-    B --> C{Multi-Agent AI}
-    C --> D[Architecture Analyzer]
-    C --> E[Compliance Mapper]
-    C --> F[Pipeline Generator]
-    C --> G[Risk Scorer]
-    D --> H[Compliance Dashboard]
-    E --> H
-    F --> H
-    G --> H
-    H --> I[Risk Report]
-    H --> J[CI/CD Pipeline]
-    H --> K[Remediation Plan]
+    B --> C{Agent Squad}
+    C --> D[Oracle — Learned Rules]
+    D --> E[Scout — Arch Recon]
+    D --> F[Ranger — Compliance]
+    D --> G[Arsenal — Pipeline]
+    D --> H[Cloud Infra]
+    E --> I[Sniper — Risk Intel]
+    F --> I
+    G --> I
+    H --> I
+    I --> J[Compliance Dashboard]
+    J --> K[Risk Report]
+    J --> L[CI/CD Pipeline]
+    J --> M[Remediation PR]
 ```
 
 ## Key Features
 
 | Feature | Description |
 |---------|-------------|
-| **Real-time AI Analysis** | 4 specialized agents stream findings as they work |
-| **4 Compliance Frameworks** | SOX, PCI-DSS, NIST-CSF, FINOS CCC coverage |
+| **Real-time AI Analysis** | 6 specialized agents stream findings as they work |
+| **6 Compliance Frameworks** | SOX, PCI-DSS, NIST-CSF, FINOS CCC, SOC2, Protocol Security coverage |
 | **Architecture Graph** | Visual CALM node graph with compliance coloring |
 | **Risk Heat Map** | Node-level risk visualization across frameworks |
 | **Generated CI/CD Pipelines** | Security scanning configs auto-generated from your architecture |

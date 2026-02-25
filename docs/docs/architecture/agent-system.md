@@ -5,27 +5,36 @@ title: Agent System
 
 # Agent System
 
-CALMGuard uses a multi-agent AI architecture where four specialized agents collaborate to analyze CALM architectures. This page covers agent design, orchestration, configuration, and the knowledge injection system.
+CALMGuard uses a multi-agent AI architecture where six specialized agents collaborate to analyze CALM architectures. This page covers agent design, orchestration, configuration, and the knowledge injection system.
 
-## The Four Agents
+## The Agent Squad
 
-| Agent | Phase | Role |
-|-------|-------|------|
-| Architecture Analyzer | 1 (parallel) | Identifies architectural patterns, anti-patterns, and structural risks |
-| Compliance Mapper | 1 (parallel) | Maps CALM controls to compliance frameworks and identifies gaps |
-| Pipeline Generator | 1 (parallel) | Generates CI/CD security scanning configuration |
-| Risk Scorer | 2 (sequential) | Aggregates Phase 1 results into a unified risk score and prioritized findings |
+| Callsign | Agent | Phase | Role |
+|----------|-------|-------|------|
+| **HQ** | Orchestrator | All | Coordinate multi-agent lifecycle — Phase 0 pre-checks, parallel Phase 1, sequential Phase 2, event streaming, result aggregation |
+| **Oracle** | Learning Engine | 0 | Fire deterministic rules from previously learned patterns — zero-latency, no LLM calls |
+| **Scout** | Architecture Analyzer | 1 (parallel) | Extract structural insights — components, data flows, trust boundaries, security zones |
+| **Ranger** | Compliance Mapper | 1 (parallel) | Map CALM controls to SOX, PCI-DSS, FINOS CCC, NIST-CSF, SOC2. Identify gaps, generate per-framework scores |
+| **Arsenal** | Pipeline Generator | 1 (parallel) | Generate DevSecOps CI pipelines with SAST, secret detection, SCA, SBOM — plus security-focused Terraform IaC |
+| **Sniper** | Risk Scorer | 2 (sequential) | Aggregate Phase 1 results into weighted risk assessment — overall score, per-framework scores, node-level heat map |
 
 ## Orchestration Flow
 
 ```mermaid
 flowchart TD
-    START([Input: CALM AnalysisInput]) --> P1
+    START([Input: CALM AnalysisInput]) --> P0
+
+    subgraph P0 ["Phase 0 — Deterministic (Oracle)"]
+        ORC[Oracle — Learned Rules]
+    end
+
+    P0 --> P1
 
     subgraph P1 ["Phase 1 — Parallel Execution (Promise.allSettled)"]
-        AA[Architecture Analyzer]
-        CM[Compliance Mapper]
-        PG[Pipeline Generator]
+        AA[Scout — Architecture Analyzer]
+        CM[Ranger — Compliance Mapper]
+        PG[Arsenal — Pipeline Generator]
+        CI[Cloud Infra Generator]
     end
 
     P1 --> GATE{All Phase 1 Complete}
@@ -34,14 +43,16 @@ flowchart TD
     GATE -->|AA + CM both failed| ERROR([Return partial result])
 
     subgraph P2 ["Phase 2 — Sequential"]
-        RS[Risk Scorer]
+        RS[Sniper — Risk Scorer]
     end
 
     P2 --> RESULT([AnalysisResult])
 
-    AA -->|AgentEvents via SSE| FEED[Agent Feed]
+    ORC -->|AgentEvents via SSE| FEED[Agent Feed]
+    AA -->|AgentEvents via SSE| FEED
     CM -->|AgentEvents via SSE| FEED
     PG -->|AgentEvents via SSE| FEED
+    CI -->|AgentEvents via SSE| FEED
     RS -->|AgentEvents via SSE| FEED
 ```
 

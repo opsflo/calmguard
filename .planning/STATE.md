@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 
 ## Current Position
 
-Phase: 10 of 11 (GitOps Split) — complete
-Plan: 3 of 3 complete (10-01 cloud-infra skill+generator; 10-02 three-button UI + infraPR store; 10-03 create-pr route extended with infra type, labels, IaC removal)
-Status: Phase 10 complete. All three PR types operational with correct branch names, content separation, and auto-labeling.
-Last activity: 2026-02-25 — 10-03 executed (create-pr route extended with infra type, branch renames, LABEL_MAP, IaC removal from pipeline)
+Phase: 11 of 11 (Documentation) — complete
+Plan: N/A (DOCS-01 pre-satisfied — README already contains full agent profiles)
+Status: All v1.3 phases complete. CI integration (CI-01, CI-02) deferred — requires API/MCP server not yet built.
+Last activity: 2026-02-25 — Phase 11 closed (README agent profiles already present)
 
-Progress: [█████░░░░░] 50%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -67,7 +67,7 @@ v1.3 decisions:
 
 ### Pending Todos
 
-- [ ] Update README with actual agent names and profiles (scout, ranger, arsenal, sniper) — `.planning/todos/pending/2026-02-25-update-readme-agent-names-profiles.md`
+- [x] Update README with actual agent names and profiles (scout, ranger, arsenal, sniper) — already present in README lines 177-184
 - [x] Split GitOps into 3 PR buttons (DevSecOps CI, Compliance Remediation, Cloud Infra) — completed in 10-02
 
 ### Roadmap Evolution
