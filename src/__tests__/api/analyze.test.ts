@@ -127,6 +127,27 @@ vi.mock('@/lib/agents/pipeline-generator', async () => {
   };
 });
 
+vi.mock('@/lib/agents/cloud-infra-generator', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/agents/cloud-infra-generator')>(
+    '@/lib/agents/cloud-infra-generator'
+  );
+  return {
+    ...actual,
+    generateCloudInfra: vi.fn(async () => ({
+      agentName: 'cloud-infra-generator',
+      success: true,
+      data: {
+        terraform: {
+          modules: [{ filename: 'terraform/main.tf', content: 'resource "aws_vpc" {}', calmSignal: 'network' }],
+        },
+        traceability: [],
+        summary: 'Mock cloud infra summary',
+      },
+      duration: 100,
+    })),
+  };
+});
+
 vi.mock('@/lib/agents/risk-scorer', async () => {
   const actual = await vi.importActual<typeof import('@/lib/agents/risk-scorer')>(
     '@/lib/agents/risk-scorer'

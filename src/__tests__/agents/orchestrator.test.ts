@@ -128,6 +128,23 @@ const mockPipelineResult = {
   duration: 70,
 };
 
+const mockCloudInfraResult = {
+  agentName: 'cloud-infra-generator',
+  success: true,
+  data: {
+    terraform: {
+      modules: [
+        { filename: 'terraform/main.tf', content: 'resource "aws_vpc" {}', calmSignal: 'network topology' },
+      ],
+    },
+    traceability: [
+      { calmElement: 'svc-1', generatedResource: 'aws_ecs_service.svc_1', rationale: 'Maps service node to ECS' },
+    ],
+    summary: 'Cloud infra generation complete',
+  },
+  duration: 65,
+};
+
 const mockRiskResult = {
   agentName: 'risk-scorer',
   success: true,
@@ -187,6 +204,16 @@ vi.mock('@/lib/agents/pipeline-generator', async () => {
   };
 });
 
+vi.mock('@/lib/agents/cloud-infra-generator', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/agents/cloud-infra-generator')>(
+    '@/lib/agents/cloud-infra-generator'
+  );
+  return {
+    ...actual,
+    generateCloudInfra: vi.fn(async () => mockCloudInfraResult),
+  };
+});
+
 vi.mock('@/lib/agents/risk-scorer', async () => {
   const actual = await vi.importActual<typeof import('@/lib/agents/risk-scorer')>(
     '@/lib/agents/risk-scorer'
@@ -202,6 +229,7 @@ import { runAnalysis } from '@/lib/agents/orchestrator';
 import { analyzeArchitecture } from '@/lib/agents/architecture-analyzer';
 import { mapCompliance } from '@/lib/agents/compliance-mapper';
 import { generatePipeline } from '@/lib/agents/pipeline-generator';
+import { generateCloudInfra } from '@/lib/agents/cloud-infra-generator';
 import { scoreRisk } from '@/lib/agents/risk-scorer';
 
 // Minimal AnalysisInput fixture
@@ -235,22 +263,25 @@ describe('runAnalysis orchestrator', () => {
     (analyzeArchitecture as Mock).mockResolvedValue(mockArchitectureResult);
     (mapCompliance as Mock).mockResolvedValue(mockComplianceResult);
     (generatePipeline as Mock).mockResolvedValue(mockPipelineResult);
+    (generateCloudInfra as Mock).mockResolvedValue(mockCloudInfraResult);
     (scoreRisk as Mock).mockResolvedValue(mockRiskResult);
   });
 
   it('calls Phase 1 agents (architecture, compliance, pipeline) and Phase 2 risk scorer, returns combined result', async () => {
     const result = await runAnalysis(minimalAnalysisInput);
 
-    // All 4 agents must have been called
+    // All 5 agents must have been called
     expect(analyzeArchitecture).toHaveBeenCalledOnce();
     expect(mapCompliance).toHaveBeenCalledOnce();
     expect(generatePipeline).toHaveBeenCalledOnce();
+    expect(generateCloudInfra).toHaveBeenCalledOnce();
     expect(scoreRisk).toHaveBeenCalledOnce();
 
     // Phase 1 agents receive the analysis input
     expect(analyzeArchitecture).toHaveBeenCalledWith(minimalAnalysisInput);
     expect(mapCompliance).toHaveBeenCalledWith(minimalAnalysisInput, undefined, undefined);
     expect(generatePipeline).toHaveBeenCalledWith(minimalAnalysisInput);
+    expect(generateCloudInfra).toHaveBeenCalledWith(minimalAnalysisInput);
 
     // Phase 2: risk scorer receives Phase 1 results (architecture, compliance, pipeline)
     const riskCallArgs = (scoreRisk as Mock).mock.calls[0][0] as {
@@ -264,16 +295,18 @@ describe('runAnalysis orchestrator', () => {
     expect(riskCallArgs.pipeline).toEqual(mockPipelineResult.data);
     expect(riskCallArgs.originalInput).toEqual(minimalAnalysisInput);
 
-    // Result shape: all 4 agent outputs present
+    // Result shape: all 5 agent outputs present
     expect(result.architecture).toEqual(mockArchitectureResult.data);
     expect(result.compliance).toEqual(mockComplianceResult.data);
     expect(result.pipeline).toEqual(mockPipelineResult.data);
+    expect(result.cloudInfra).toEqual(mockCloudInfraResult.data);
     expect(result.risk).toEqual(mockRiskResult.data);
 
     // Metadata
     expect(result.completedAgents).toContain('architecture-analyzer');
     expect(result.completedAgents).toContain('compliance-mapper');
     expect(result.completedAgents).toContain('pipeline-generator');
+    expect(result.completedAgents).toContain('cloud-infra-generator');
     expect(result.completedAgents).toContain('risk-scorer');
     expect(result.failedAgents).toHaveLength(0);
     expect(typeof result.duration).toBe('number');
