@@ -5,6 +5,7 @@ import type { ParseError } from '@/lib/calm/parser';
 import type { AnalysisResult } from '@/lib/agents/orchestrator';
 import type { AgentEvent } from '@/lib/agents/types';
 import type { PRRecord } from '@/lib/github/types';
+import type { CalmVersion } from '@/lib/calm/normalizer';
 
 type AnalysisStatus = 'idle' | 'loading' | 'parsed' | 'analyzing' | 'complete' | 'error';
 
@@ -13,6 +14,7 @@ interface AnalysisState {
   selectedDemoId: string | null;
   rawCalmData: CalmDocument | null;
   analysisInput: AnalysisInput | null;
+  calmVersion: CalmVersion | null;
   analysisResult: AnalysisResult | null;
   agentEvents: AgentEvent[];
   activeAgents: string[];
@@ -39,7 +41,7 @@ interface AnalysisState {
 
   // Actions
   setSelectedDemo: (demoId: string) => void;
-  setCalmData: (data: CalmDocument, input: AnalysisInput) => void;
+  setCalmData: (data: CalmDocument, input: AnalysisInput, version?: CalmVersion) => void;
   setStatus: (status: AnalysisStatus) => void;
   setError: (error: ParseError['error']) => void;
   setAnalysisResult: (result: AnalysisResult) => void;
@@ -66,6 +68,7 @@ const initialState = {
   selectedDemoId: null,
   rawCalmData: null,
   analysisInput: null,
+  calmVersion: null as CalmVersion | null,
   analysisResult: null,
   agentEvents: [] as AgentEvent[],
   activeAgents: [] as string[],
@@ -97,10 +100,11 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
       error: null,
     }),
 
-  setCalmData: (data, input) =>
+  setCalmData: (data, input, version) =>
     set({
       rawCalmData: data,
       analysisInput: input,
+      calmVersion: version ?? null,
       status: 'parsed',
       error: null,
     }),

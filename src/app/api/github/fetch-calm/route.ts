@@ -164,5 +164,6 @@ export async function POST(request: Request): Promise<Response> {
     analysisInput,
     fileSha,
     defaultBranch,
+    version: calmResult.version,
   });
 }

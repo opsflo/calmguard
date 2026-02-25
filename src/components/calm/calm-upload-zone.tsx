@@ -85,7 +85,7 @@ export function CalmUploadZone() {
 
       // Step 4: Success — populate the Zustand store
       const input = extractAnalysisInput(localResult.data);
-      setCalmData(localResult.data, input);
+      setCalmData(localResult.data, input, localResult.version);
       setStatus('ready');
     },
     [setCalmData],

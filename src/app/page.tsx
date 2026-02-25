@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Shield, Play, Loader2 } from 'lucide-react';
 import type { CalmDocument } from '@/lib/calm/types';
 import type { AnalysisInput } from '@/lib/calm/extractor';
+import type { CalmVersion } from '@/lib/calm/normalizer';
 
 const DEMO_REPO = { owner: 'gjs-opsflo', repo: 'payment-gateway-calm', filePath: 'payment-gateway.calm.json' };
 
@@ -32,7 +33,7 @@ export default function Home() {
         body: JSON.stringify(DEMO_REPO),
       });
 
-      const data = await res.json() as { calm: CalmDocument; analysisInput: AnalysisInput; fileSha: string; defaultBranch: string; error?: string };
+      const data = await res.json() as { calm: CalmDocument; analysisInput: AnalysisInput; fileSha: string; defaultBranch: string; version?: string; error?: string };
       if (!res.ok) {
         toast.error(data.error ?? `HTTP ${res.status}: Failed to fetch demo from GitHub`);
         return;
@@ -42,7 +43,7 @@ export default function Home() {
       setSelectedFrameworks(['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC', 'SOC2']);
 
       // Populate store with parsed CALM from GitHub
-      setCalmData(data.calm, data.analysisInput);
+      setCalmData(data.calm, data.analysisInput, data.version as CalmVersion | undefined);
 
       // Store GitHub repo metadata — enables PR generation on dashboard
       setGitHubRepo({

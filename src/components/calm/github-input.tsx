@@ -10,12 +10,14 @@ import { Label } from '@/components/ui/label';
 import { useAnalysisStore } from '@/store/analysis-store';
 import type { CalmDocument } from '@/lib/calm/types';
 import type { AnalysisInput } from '@/lib/calm/extractor';
+import type { CalmVersion } from '@/lib/calm/normalizer';
 
 interface FetchCalmResponse {
   calm: CalmDocument;
   analysisInput: AnalysisInput;
   fileSha: string;
   defaultBranch: string;
+  version?: string;
 }
 
 interface FetchCalmError {
@@ -100,7 +102,7 @@ export function GitHubInput() {
       const successData = data as FetchCalmResponse;
 
       // Populate Zustand with the parsed CALM document
-      setCalmData(successData.calm, successData.analysisInput);
+      setCalmData(successData.calm, successData.analysisInput, successData.version as CalmVersion | undefined);
 
       // Store GitHub repo metadata for PR generation (Plans 02 and 03)
       setGitHubRepo({

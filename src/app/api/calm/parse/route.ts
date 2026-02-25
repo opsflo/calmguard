@@ -50,5 +50,5 @@ export async function POST(req: NextRequest): Promise<Response> {
   const analysisInput = extractAnalysisInput(parseResult.data);
 
   // 5. Return successful parse result
-  return Response.json({ success: true, data: analysisInput });
+  return Response.json({ success: true, data: analysisInput, version: parseResult.version });
 }

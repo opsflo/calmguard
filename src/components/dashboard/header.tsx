@@ -42,7 +42,7 @@ export function Header() {
 
     if (result.success) {
       const input = extractAnalysisInput(result.data);
-      setCalmData(result.data, input);
+      setCalmData(result.data, input, result.version);
     } else {
       setError(result.error);
     }

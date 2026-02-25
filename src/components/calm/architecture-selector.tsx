@@ -68,7 +68,7 @@ export function ArchitectureSelector() {
 
     if (result.success) {
       const analysisInput = extractAnalysisInput(result.data);
-      setCalmData(result.data, analysisInput);
+      setCalmData(result.data, analysisInput, result.version);
     } else {
       setError(result.error);
     }
