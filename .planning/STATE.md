@@ -2,44 +2,33 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-24)
+See: .planning/PROJECT.md (updated 2026-02-25)
 
 **Core value:** When a user uploads a CALM architecture JSON (or points to one in a GitHub repo), CALMGuard must analyze it with AI agents and produce a real-time compliance dashboard — and for repo-connected analyses, generate PRs with pipeline artifacts and compliance-remediated architecture files.
 
-**Current focus:** v1.2 — GitOps PR Generation (COMPLETE)
+**Current focus:** v1.3 — Compliance Intelligence & CI Integration
 
 ## Current Position
 
-Phase: 7 — GitOps PR Generation
-Status: COMPLETE — all 3 plans done
-Last activity: 2026-02-24 — Plan 07-03 fully complete (2 tasks, CALM remediation agent + remediation PR end-to-end)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-25 — Milestone v1.3 started
 
-Progress: [##########] 100% (3/3 plans complete)
+Progress: [░░░░░░░░░░] 0%
 
 ## Accumulated Context
 
 ### Decisions
 
 All v1.1 decisions logged in PROJECT.md Key Decisions table. All marked ✓ Good.
+All v1.2 decisions logged in STATE.md archives and PROJECT.md. Phase 07 complete.
 
-v1.2 decisions (resolved during 07-01 execution):
-- GITHUB_TOKEN server-side only — client uses dual status gate endpoint (enabled + authEnabled flags)
-- GitHub tab is always visible — public repos work without auth; GITHUB_TOKEN only needed for PR generation (Plans 02/03)
-- PRRecord interface in github/types.ts (not store) to prevent circular imports with Plans 02/03
-- Pre-filled demo: finos-labs/dtcch-2026-opsflow-llc / examples/payment-gateway.calm.json
-- gitHubAuthEnabled added to Zustand store for downstream PR button gating without re-fetching
-
-v1.2 decisions (resolved during 07-02 execution):
-- GitHub Git Data API (blobs/trees/commits) used for atomic multi-file commits — not Contents API (which is one file at a time)
-- globals.ts centralizes declare global blocks — imported by both analyze/route.ts and create-pr/route.ts for shared type declarations
-- Branch name format: `calmguard/pipeline-{Date.now()}` — timestamp ensures uniqueness
-- Remediation PR section renders with onGenerate=undefined (not a function) — disables button cleanly without triggering error state
-
-v1.2 decisions (resolved during 07-03 execution):
-- GitHub Contents API PUT used for remediation (single file) vs blob+tree+commit for pipeline (multi-file)
-- readPRStream() helper extracted to DRY up duplicate SSE stream reading logic in GitOps card
-- CALM enum constraints included in agent prompt retry messages to prevent validation failures on retry
-- remediateCalm() called inside SSE stream (step 1) so progress is visible before GitHub ops
+v1.3 decisions:
+- Agentic skills over deterministic rules — faster to build, leverages existing skill loader, grounded compliance output
+- calm-ai is complementary, not competitive — we're the compliance enforcement platform, they're the authoring tool
+- Multi-version CALM via lenient parser — core schema stable 1.0-1.2, accept field aliases
+- 3 PR buttons (DevSecOps CI, Compliance Remediation, Cloud Infra) — different review audiences and risk profiles
 
 ### Pending Todos
 
@@ -48,12 +37,12 @@ v1.2 decisions (resolved during 07-03 execution):
 
 ### Blockers/Concerns
 
-None — Phase 07 complete. v1.2 GitOps PR Generation milestone fully delivered.
+None.
 
 ## Session Continuity
 
-Last session: 2026-02-24 (Plan 07-03 completion — CALM remediation PR end-to-end)
-Stopped at: Completed 07-03-PLAN.md — Phase 07 complete
+Last session: 2026-02-25 (v1.3 milestone initialization)
+Stopped at: Defining requirements for v1.3
 
 ## Performance Metrics
 
@@ -65,4 +54,4 @@ Stopped at: Completed 07-03-PLAN.md — Phase 07 complete
 
 ---
 
-*v1.2 GitOps PR Generation — milestone completed 2026-02-24*
+*v1.3 Compliance Intelligence & CI Integration — started 2026-02-25*

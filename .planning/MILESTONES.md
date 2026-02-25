@@ -1,5 +1,22 @@
 # Milestones
 
+## v1.2 GitOps PR Generation (Shipped: 2026-02-25)
+
+**Phases completed:** 1 phase (Phase 7), 3 plans
+**Timeline:** Feb 24-25, 2026 (2 days)
+
+**Key accomplishments:**
+1. GitHub repo input with URL parsing (owner/repo, full GitHub URLs, .git suffix)
+2. CALM file fetching from GitHub (public repos without auth, PAT for private)
+3. Pipeline PR generation via SSE with step-by-step progress (branch → commit → PR)
+4. CALM remediation agent (AI-powered protocol upgrades + control additions)
+5. Remediation PR with per-change explanations (before/after + rationale)
+6. GitOps dashboard card with dual PR sections and real-time status
+
+**Last phase number:** 7
+
+---
+
 ## v1.1 CALMGuard MVP (Shipped: 2026-02-24)
 
 **Phases completed:** 6 phases, 28 plans

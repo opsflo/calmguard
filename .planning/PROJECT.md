@@ -13,7 +13,7 @@ When a user uploads a CALM architecture JSON (or points to one in a GitHub repo)
 **Shipped:** v1.1 MVP (2026-02-24)
 **Codebase:** 82 TypeScript files, ~46,800 lines, Next.js 15 + Vercel AI SDK
 **Status:** Feature-complete for hackathon demo. Deployed to Vercel.
-**Current milestone:** v1.2 — GitOps PR Generation
+**Current milestone:** v1.3 — Compliance Intelligence & CI Integration
 
 ## Requirements
 
@@ -39,16 +39,24 @@ When a user uploads a CALM architecture JSON (or points to one in a GitHub repo)
 - ✓ CALM CLI validation integration (@finos/calm-cli) — v1.1
 - ✓ Framework selector to scope compliance checks — v1.1
 - ✓ Deploy to Vercel with SSE streaming support — v1.1
+- ✓ Accept GitHub repo URL + path to CALM file as input source — v1.2
+- ✓ Fetch CALM file from GitHub via API (public repos without auth, PAT for private) — v1.2
+- ✓ Generate PR with pipeline artifacts (GitHub Actions, SAST configs, IaC) committed to repo — v1.2
+- ✓ Generate compliance-remediated CALM file via AI agent with missing controls and protocol upgrades — v1.2
+- ✓ Generate PR with modified CALM file + per-change explanations — v1.2
+- ✓ Dashboard UI for repo input alongside file upload (always visible, public repos work without token) — v1.2
+- ✓ PR generation status and links displayed in dashboard GitOps card — v1.2
 
 ### Active
 
-- [ ] Accept GitHub repo URL + path to CALM file as input source — v1.2
-- [ ] Fetch CALM file from GitHub via API using PAT authentication — v1.2
-- [ ] Generate PR with pipeline artifacts (GitHub Actions, SAST configs, IaC) committed to repo — v1.2
-- [ ] Generate compliance-remediated CALM file with missing controls added and weak protocols upgraded — v1.2
-- [ ] Generate PR with modified CALM file + change description explaining each remediation — v1.2
-- [ ] Dashboard UI for repo input (URL + path fields) alongside existing file upload — v1.2
-- [ ] PR generation status and links displayed in dashboard after analysis — v1.2
+- [ ] Agentic compliance skills with specific control IDs for PCI-DSS, SOC2, NIST-CSF — v1.3
+- [ ] Protocol security skill grounding agent remediation decisions — v1.3
+- [ ] Multi-version CALM support (1.0, 1.1, 1.2) with version detection — v1.3
+- [ ] CALM v1.2 decorators and timelines as optional schema fields — v1.3
+- [ ] Split GitOps into 3 PR buttons: DevSecOps CI, Compliance Remediation, Cloud Infra — v1.3
+- [ ] CI-only GitHub Actions workflow (no deployment stages) — v1.3
+- [ ] GitHub Action for continuous compliance checking on PRs touching CALM files — v1.3
+- [ ] README with agent profiles (Scout, Ranger, Arsenal, Sniper) — v1.3
 
 ### Out of Scope
 
@@ -65,7 +73,9 @@ When a user uploads a CALM architecture JSON (or points to one in a GitHub repo)
 - **Positioning**: "From Architecture-as-Code to Continuous Compliance — Automatically."
 - **v1.2 narrative**: "We don't just tell you what's wrong — we fix it, as a PR, ready for review." GitOps-safe compliance remediation.
 - **Prior winner context**: 2025 Grand Prize winner was CIBC's "Automated Regulatory Change Management" — proves regulatory compliance automation wins. CALMGuard differentiates by being architecture-aware via CALM AND now actionable via PRs.
-- **CALM ecosystem**: FINOS's flagship Architecture-as-Code initiative. Schema version 1.1.
+- **CALM ecosystem**: FINOS's flagship Architecture-as-Code initiative. Schema versions 1.0-rc1 through 1.2 (core schema stable across 1.0-1.2; v1.2 adds decorators + timelines).
+- **calm-ai positioning**: calm-ai is an IDE authoring tool (prompts for Copilot/Kiro). CALMGuard is the compliance enforcement platform — complementary, not competitive. "calm-ai helps you write CALM. CALMGuard ensures what you wrote is secure."
+- **v1.3 narrative**: Grounded compliance intelligence with agentic skills, multi-version CALM support, and CI/CD integration via GitHub Action.
 - **AOF inspiration**: Agent definitions use YAML format, SKILL.md files for domain knowledge injection, fleet orchestration pattern.
 - **LLM strategy**: Vercel AI SDK for multi-provider support. Gemini as default. Architecture supports Anthropic, OpenAI, Ollama, Grok as alternatives.
 - **GitHub integration**: PAT-based auth via GITHUB_TOKEN env var. Uses Octokit REST API for repo content fetching, branch creation, file commits, and PR creation.
@@ -73,7 +83,7 @@ When a user uploads a CALM architecture JSON (or points to one in a GitHub repo)
 ## Constraints
 
 - **Two developers**: OpsFlow LLC team
-- **Timeline**: 3 days remaining (Feb 25-27, 2026)
+- **Timeline**: 2 days remaining (Feb 26-27, 2026)
 - **Tech stack**: Next.js 15 (App Router), TypeScript strict, pnpm, Vercel AI SDK, shadcn/ui, React Flow, Zustand, Zod, Octokit
 - **Deployment**: Vercel free tier, zero-config
 - **License**: Apache 2.0, must be open-sourceable and contribute to FINOS ecosystem
@@ -96,7 +106,9 @@ When a user uploads a CALM architecture JSON (or points to one in a GitHub repo)
 | Vercel Fluid Compute 300s | maxDuration=300 enables long-running SSE streaming in production | ✓ Good |
 | GitHub PAT over OAuth | Simpler for hackathon, env var based, covers demo needs | — Pending |
 | Direct CALM modification over separate file | More impactful demo — PR diff shows actual protocol/control changes | — Pending |
-| Single phase for v1.2 | Tight timeline (3 days), focused scope, maximum demo impact | — Pending |
+| Single phase for v1.2 | Tight timeline (3 days), focused scope, maximum demo impact | ✓ Good |
+| Agentic skills over deterministic rules | Faster to build, leverages existing skill loader infrastructure, easier to iterate | — Pending |
+| Multi-version CALM via lenient parser | Core schema stable 1.0-1.2, accept field aliases, version detection | — Pending |
 
 ---
-*Last updated: 2026-02-24 after v1.2 milestone start*
+*Last updated: 2026-02-25 after v1.3 milestone start*
