@@ -178,17 +178,14 @@ Never put multi-line HCL on a single line.`;
       throw new Error(`Failed after 3 attempts: ${lastError?.message || 'Unknown error'}`);
     }
 
-    // Emit finding events for each traceability entry
-    for (const trace of result.traceability) {
+    // Single summary instead of per-traceability events to reduce UI noise
+    if (result.traceability.length > 0) {
       emitAgentEvent({
         type: 'finding',
         agent: agentIdentity,
-        message: `${trace.calmElement} → ${trace.generatedResource}: ${trace.rationale}`,
+        message: `Generated ${result.terraform.modules.length} Terraform modules with ${result.traceability.length} CALM-traced resources`,
         severity: 'info',
-        data: {
-          calmElement: trace.calmElement,
-          generatedResource: trace.generatedResource,
-        },
+        data: { moduleCount: result.terraform.modules.length, traceCount: result.traceability.length },
       });
     }
 
