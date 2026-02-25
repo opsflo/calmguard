@@ -28,7 +28,7 @@ Progress: [████░░░░░░] 45%
 | 08-compliance-intelligence | 02 | 3min | 2 | 5 |
 | 09-multi-version-calm | 01 | 8min | 2 | 7 |
 | 09-multi-version-calm | 02 | 10min | 2 | 9 |
-| 10-gitops-split | 01 | — | 2 | 2 |
+| 10-gitops-split | 01 | 4min | 2 | 7 |
 | 10-gitops-split | 02 | 2min | 2 | 3 |
 
 ## Accumulated Context
@@ -54,6 +54,9 @@ v1.3 decisions:
 - [Phase 09-multi-version-calm]: Lenient CALM v1.0 mapping: unknown node types to service, unknown rel types to connects — maximizes compatibility with real-world v1.0 documents
 - [Phase 09-multi-version-calm]: setCalmData accepts optional version parameter to avoid breaking all call sites; API boundary consumers cast version string to CalmVersion type
 - [Phase 09-multi-version-calm]: CALM version badge uses neutral slate styling — no warnings for v1.0, consistent with locked CONTEXT.md decision
+- [Phase 10-01-gitops-split]: Cloud infra runs in Phase 1 parallel — only needs AnalysisInput, not Phase 2 results, so parallelism is free wall-clock time
+- [Phase 10-01-gitops-split]: cloudInfraConfigSchema uses modules[] array (separate files: vpc.tf, ecs.tf, rds.tf) for production-realistic multi-file Terraform
+- [Phase 10-01-gitops-split]: Every Terraform resource requires traceability entry — calmElement → generatedResource → rationale
 - [Phase 10-gitops-split]: Explicit disabled prop on PRSection instead of overloading onGenerate === undefined — avoids conflating "coming soon" with "temporarily disabled during generation"
 - [Phase 10-gitops-split]: isAnyGenerating derived at GitOpsCard level, passed down as disabled — single source of truth for concurrency lock
 - [Phase 10-gitops-split]: Generating branch in PRSection renders unconditionally, ignoring disabled — active spinner never gets locked
@@ -73,8 +76,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-25 (Phase 10, Plan 2 execution)
-Stopped at: Completed 10-02-PLAN.md — PRRecord infra type, infraPR Zustand state, GitOpsCard 3-button layout with concurrency lock.
+Last session: 2026-02-25 (Phase 10, Plan 1 formal execution)
+Stopped at: Completed 10-01-PLAN.md — CLOUD-INFRASTRUCTURE.md skill, cloud-infra-generator agent, globalThis.__lastCloudInfraResult, orchestrator Phase 1 extended to 4 agents.
 
 ---
 

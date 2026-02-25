@@ -96,7 +96,7 @@ Phases 8 and 9 run in parallel (Day 1). Phase 10 follows (Day 2 AM). Phase 11 fo
 |-------|-----------|----------------|--------|-----------|
 | 8. Compliance Intelligence | 2/2 | Complete   | 2026-02-25 | - |
 | 9. Multi-Version CALM | 2/2 | Complete   | 2026-02-25 | - |
-| 10. GitOps Split | 1/3 | In Progress|  | - |
+| 10. GitOps Split | 2/3 | In Progress|  | - |
 | 11. CI Integration & Docs | v1.3 | 0/? | Not started | - |
 
 ---
