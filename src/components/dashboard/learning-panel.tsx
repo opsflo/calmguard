@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Brain, Zap, TrendingUp, BarChart3, ChevronUp } from 'lucide-react';
+import { Brain, Zap, TrendingUp, BarChart3, ChevronUp, ShieldCheck } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { OdometerScore } from '@/components/ui/odometer-score';
@@ -326,6 +326,64 @@ export function LearningPanel() {
 
         {/* Learning Curve */}
         <LearningCurve data={chartData} />
+
+        {/* Deterministic Rules — proof that auto-promotion works */}
+        {deterministicRules.length > 0 && (
+          <div className="mt-4">
+            <h4 className="text-xs font-medium text-amber-500/80 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <Zap className="h-3 w-3" />
+              Deterministic Rules
+              <span className="ml-auto text-[10px] text-slate-500 normal-case font-normal">
+                fires on next analysis
+              </span>
+            </h4>
+            <ScrollArea className={deterministicRules.length > 3 ? 'h-[120px]' : ''}>
+              <div className="space-y-1.5 pr-2">
+                {deterministicRules.map((rule) => (
+                  <div
+                    key={rule.id}
+                    className="bg-amber-500/5 rounded-lg px-3 py-2 border border-amber-500/20"
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
+                        {rule.description}
+                      </p>
+                      <FrameworkBadge framework={rule.framework} />
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] text-slate-500">
+                      <span className="flex items-center gap-0.5">
+                        <ShieldCheck className="h-2.5 w-2.5 text-amber-500" />
+                        {rule.severity}
+                      </span>
+                      <span>
+                        {rule.sourceObservations}x observed
+                      </span>
+                      <span>
+                        {Math.round(rule.sourceConfidence * 100)}% confidence
+                      </span>
+                      <span className="ml-auto text-slate-600">
+                        promoted {new Date(rule.promotedAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        )}
+
+        {/* Promotion progress — show when close to promoting */}
+        {deterministicRules.length === 0 && sortedPatterns.length > 0 && (
+          <div className="mt-3 px-3 py-2 bg-slate-900/30 rounded-lg border border-dashed border-slate-700/50">
+            <p className="text-[10px] text-slate-500 text-center">
+              {(() => {
+                const maxObs = Math.max(...sortedPatterns.map(p => p.observationCount));
+                if (maxObs >= 2) return `Patterns at ${maxObs}/3 observations — ${3 - maxObs} more run${3 - maxObs === 1 ? '' : 's'} to auto-promote`;
+                return `Run ${3 - maxObs} more time${3 - maxObs === 1 ? '' : 's'} to start auto-promoting patterns to deterministic rules`;
+              })()}
+            </p>
+          </div>
+        )}
 
         {/* Insights Feed */}
         {sortedPatterns.length > 0 && (
