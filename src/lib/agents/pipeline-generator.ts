@@ -13,21 +13,21 @@ import type { AnalysisInput } from '@/lib/calm/extractor';
 export const pipelineConfigSchema = z.object({
   githubActions: z.object({
     name: z.string(),
-    yaml: z.string(),
+    yaml: z.string().describe('Complete multi-line GitHub Actions YAML workflow. MUST use literal newline characters (\\n) to separate lines — never put the whole YAML on a single line. Indent nested YAML keys with 2 spaces after each newline.'),
   }),
   securityScanning: z.object({
     tools: z.array(
       z.object({
         name: z.enum(['semgrep', 'codeql', 'trivy', 'npm-audit']),
         description: z.string(),
-        config: z.string(),
+        config: z.string().describe('Multi-line tool configuration. MUST use literal newline characters (\\n) to separate lines.'),
       })
     ),
     summary: z.string(),
   }),
   infrastructureAsCode: z.object({
     provider: z.enum(['terraform', 'cloudformation']),
-    config: z.string(),
+    config: z.string().describe('Complete multi-line Terraform HCL or CloudFormation YAML. MUST use literal newline characters (\\n) to separate lines — never put the entire config on a single line. Indent nested blocks with 2 spaces.'),
   }),
   recommendations: z.array(
     z.object({
@@ -135,6 +135,13 @@ Generate production-ready CI/CD and infrastructure configurations:
 - Consider node types and protocols when generating configs
 - Apply security controls from CALM definition to pipeline
 - Be specific in recommendations (not generic advice)
+
+**CRITICAL FORMATTING RULE:**
+All YAML and HCL config strings MUST be properly formatted with real newline characters.
+Each line of YAML/HCL/config must be separated by a newline character (\\n in the JSON string).
+Example of CORRECT yaml field value: "name: ci\\non:\\n  push:\\n    branches: [main]\\njobs:\\n  build:\\n    runs-on: ubuntu-latest"
+Example of WRONG yaml field value: "name: ci on: push: branches: [main] jobs: build: runs-on: ubuntu-latest"
+Never compress multi-line configs into a single line.
 
 Provide structured output matching the schema.`;
 

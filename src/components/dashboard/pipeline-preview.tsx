@@ -25,19 +25,50 @@ interface PipelinePreviewProps {
 
 /**
  * Normalize code content from LLM output.
- * LLMs sometimes return YAML with literal escaped newlines (\\n), markdown
- * fenced code block markers, or trailing whitespace that break rendering.
+ * LLMs sometimes return YAML/HCL as a single line, with literal escaped
+ * newlines (\\n), markdown fenced code block markers, or other oddities.
+ * This function aggressively restores proper multi-line formatting.
  */
 function normalizeCode(raw: string): string {
   let code = raw;
+
   // Strip markdown fenced code block markers (```yaml ... ```)
   code = code.replace(/^```[\w-]*\n?/gm, '').replace(/\n?```$/gm, '');
-  // Replace literal escaped newlines with real newlines
+
+  // Replace literal escaped newlines with real newlines (\\n → \n)
   code = code.replace(/\\n/g, '\n');
-  // Replace literal escaped tabs with real tabs (LLMs sometimes emit \\t)
+
+  // Replace literal escaped tabs with spaces
   code = code.replace(/\\t/g, '  ');
+
+  // Replace literal escaped quotes that some LLMs produce
+  code = code.replace(/\\"/g, '"');
+
+  // If content is still essentially one line (no real newlines or very few),
+  // attempt to inject newlines before common YAML/HCL structural keywords.
+  // This catches cases where the LLM flattened everything to a single string.
+  const lineCount = code.split('\n').length;
+  const contentLength = code.length;
+
+  if (lineCount <= 3 && contentLength > 100) {
+    // YAML patterns: inject newline before top-level keys
+    code = code
+      // YAML top-level keys (name:, on:, jobs:, steps:, runs-on:, etc.)
+      .replace(/\s+(name|on|jobs|steps|runs-on|uses|with|env|services|strategy|permissions|concurrency|defaults|timeout-minutes|if|needs|outputs|container|volumes):/g, '\n$1:')
+      // YAML list items
+      .replace(/\s+- /g, '\n- ')
+      // HCL blocks: resource, variable, provider, data, output, locals, terraform
+      .replace(/\s+(resource|variable|provider|data|output|locals|terraform|module)\s+/g, '\n$1 ')
+      // HCL closing braces on same line
+      .replace(/\}\s*\{/g, '}\n{')
+      .replace(/\}\s+(resource|variable|provider|data|output|locals|terraform|module)/g, '}\n\n$1')
+      // Insert newlines before closing braces that aren't already on their own line
+      .replace(/([^\n])\}/g, '$1\n}');
+  }
+
   // Collapse multiple blank lines into a single blank line
   code = code.replace(/\n{3,}/g, '\n\n');
+
   return code.trim();
 }
 
