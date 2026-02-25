@@ -114,16 +114,18 @@ export const useLearningStore = create<LearningState & LearningActions>()(
         // Merge with existing library
         const updatedLibrary = { ...state.patternLibrary };
         let newPatternsDiscovered = 0;
-        const totalRuns = state.analysisHistory.length + 1;
 
         for (const pattern of newPatterns) {
           const existing = updatedLibrary[pattern.fingerprint];
           if (existing) {
             // Increment observation count and recalculate confidence
+            // Confidence = how close to promotion threshold (0-1, capped at 1)
+            // A pattern seen 3+ times reaches 100% regardless of total runs
+            const newObsCount = existing.observationCount + 1;
             updatedLibrary[pattern.fingerprint] = {
               ...existing,
-              observationCount: existing.observationCount + 1,
-              confidence: (existing.observationCount + 1) / totalRuns,
+              observationCount: newObsCount,
+              confidence: Math.min(1, newObsCount / PROMOTION_THRESHOLD_COUNT),
               lastSeen: now,
               // Keep the most severe severity seen
               severity: compareSeverity(pattern.severity, existing.severity) > 0
@@ -131,10 +133,10 @@ export const useLearningStore = create<LearningState & LearningActions>()(
                 : existing.severity,
             };
           } else {
-            // New pattern
+            // New pattern — confidence starts at 1/threshold (33% with threshold=3)
             updatedLibrary[pattern.fingerprint] = {
               ...pattern,
-              confidence: 1 / totalRuns,
+              confidence: Math.min(1, 1 / PROMOTION_THRESHOLD_COUNT),
             };
             newPatternsDiscovered++;
           }
