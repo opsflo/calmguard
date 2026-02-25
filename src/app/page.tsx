@@ -1,47 +1,69 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { useAnalysisStore } from '@/store/analysis-store';
 import { ArchitectureSelector } from '@/components/calm/architecture-selector';
 import { ParseErrorDisplay } from '@/components/calm/parse-error-display';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Shield, Play } from 'lucide-react';
-import { DEMO_ARCHITECTURES } from '../../examples';
-import { parseCalm } from '@/lib/calm/parser';
-import { extractAnalysisInput } from '@/lib/calm/extractor';
+import { Shield, Play, Loader2 } from 'lucide-react';
+import type { CalmDocument } from '@/lib/calm/types';
+import type { AnalysisInput } from '@/lib/calm/extractor';
+
+const DEMO_REPO = { owner: 'gjs-opsflo', repo: 'payment-gateway-calm', filePath: 'payment-gateway.calm.json' };
 
 export default function Home() {
   const router = useRouter();
-  const { error, reset, setCalmData, setDemoMode, setSelectedFrameworks } = useAnalysisStore();
+  const { error, reset, setCalmData, setDemoMode, setSelectedFrameworks, setGitHubRepo } = useAnalysisStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDismissError = () => {
     reset();
   };
 
-  const handleRunDemo = () => {
-    // Find the trading platform demo architecture
-    const demo = DEMO_ARCHITECTURES.find((d) => d.id === 'trading-platform');
-    if (!demo) return;
+  const handleRunDemo = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/github/fetch-calm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(DEMO_REPO),
+      });
 
-    // Parse the CALM document
-    const parseResult = parseCalm(demo.data);
-    if (!parseResult.success) return;
+      const data = await res.json() as { calm: CalmDocument; analysisInput: AnalysisInput; fileSha: string; defaultBranch: string; error?: string };
+      if (!res.ok) {
+        toast.error(data.error ?? `HTTP ${res.status}: Failed to fetch demo from GitHub`);
+        return;
+      }
 
-    // Extract structured analysis input
-    const analysisInput = extractAnalysisInput(parseResult.data);
+      // Pre-select all frameworks
+      setSelectedFrameworks(['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC', 'SOC2']);
 
-    // Pre-select all frameworks for a comprehensive demo
-    setSelectedFrameworks(['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC', 'SOC2']);
+      // Populate store with parsed CALM from GitHub
+      setCalmData(data.calm, data.analysisInput);
 
-    // Populate store with trading platform data
-    setCalmData(parseResult.data, analysisInput);
+      // Store GitHub repo metadata — enables PR generation on dashboard
+      setGitHubRepo({
+        owner: DEMO_REPO.owner,
+        repo: DEMO_REPO.repo,
+        filePath: DEMO_REPO.filePath,
+        fileSha: data.fileSha,
+        defaultBranch: data.defaultBranch,
+      });
 
-    // Set demo mode flag — dashboard will auto-start analysis
-    setDemoMode(true);
+      // Set demo mode flag — dashboard will auto-start analysis
+      setDemoMode(true);
 
-    // Navigate to dashboard
-    router.push('/dashboard');
+      // Navigate to dashboard
+      router.push('/dashboard');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Network error';
+      toast.error(`Failed to fetch demo: ${message}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -72,12 +94,22 @@ export default function Home() {
             See CALMGuard analyze a trading platform architecture in real-time
           </p>
           <Button
-            onClick={handleRunDemo}
+            onClick={() => { void handleRunDemo(); }}
+            disabled={isLoading}
             size="lg"
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-base h-12 gap-2"
+            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-base h-12 gap-2 disabled:bg-slate-700 disabled:text-slate-500"
           >
-            <Play className="h-5 w-5" />
-            Run Demo
+            {isLoading ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Fetching from GitHub...
+              </>
+            ) : (
+              <>
+                <Play className="h-5 w-5" />
+                Run Demo
+              </>
+            )}
           </Button>
           <p className="text-xs text-slate-600">
             Trading Platform — Multi-service system with FIX protocol, order management, and real-time market data
