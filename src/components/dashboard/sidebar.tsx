@@ -13,6 +13,7 @@ import {
   Wrench,
   Crosshair,
   Brain,
+  BookOpen,
   Bot,
   type LucideIcon,
 } from 'lucide-react';
@@ -47,6 +48,7 @@ const navItems: NavItem[] = [
   { label: 'Compliance', href: '/dashboard/compliance', icon: Shield },
   { label: 'Pipeline', href: '/dashboard/pipeline', icon: GitBranch },
   { label: 'Findings', href: '/dashboard/findings', icon: AlertTriangle },
+  { label: 'Learning', href: '/dashboard/learning', icon: BookOpen },
 ];
 
 const statusColors = {
