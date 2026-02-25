@@ -206,6 +206,8 @@ export const AGENT_NAMES = [
   'compliance-mapper',
   'pipeline-generator',
   'risk-scorer',
+  'learning-engine',
+  'orchestrator',
 ] as const;
 
 /** Human-readable display names keyed by agent name. Used in sidebar and event feeds. */
@@ -215,6 +217,7 @@ export const AGENT_DISPLAY_NAMES: Record<string, string> = {
   'pipeline-generator': 'Pipeline Generator',
   'risk-scorer': 'Risk Scorer',
   'learning-engine': 'Learning Engine',
+  orchestrator: 'Orchestrator',
 };
 
 /**

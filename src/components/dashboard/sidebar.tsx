@@ -119,8 +119,7 @@ export function Sidebar() {
             Agent Squad
           </h3>
           <div className="space-y-1">
-            {/* Oracle appears dynamically when it has events */}
-            {[...AGENT_NAMES, ...( agentEvents.some(e => e.agent.name === 'learning-engine') ? ['learning-engine' as const] : [])].map((name) => {
+            {AGENT_NAMES.map((name) => {
               const status = getAgentStatus(agentEvents, activeAgents, name);
               const persona = AGENT_BOT_PERSONAS[name];
               const IconComponent = persona ? BOT_ICON_MAP[persona.icon] ?? Bot : Bot;
