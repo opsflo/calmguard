@@ -12,6 +12,7 @@
     "url": "https://github.com/finos-labs/dtcch-2026-opsflow-llc/issues"
   },
   "license": "Apache-2.0",
+  "packageManager": "pnpm@10.23.0",
   "author": "OpsFlow LLC",
   "keywords": [
     "calm",
