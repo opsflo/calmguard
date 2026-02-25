@@ -1,4 +1,5 @@
 import { calmDocumentSchema, type CalmDocument } from './types';
+import { detectCalmVersion, normalizeCalmDocument, type CalmVersion } from './normalizer';
 import type { ZodError } from 'zod';
 
 /**
@@ -7,6 +8,7 @@ import type { ZodError } from 'zod';
 export interface ParseSuccess {
   success: true;
   data: CalmDocument;
+  version: CalmVersion;
 }
 
 /**
@@ -60,10 +62,12 @@ function formatZodError(error: ZodError): ParseError['error'] {
  * ```
  */
 export function parseCalm(json: unknown): ParseResult {
-  const result = calmDocumentSchema.safeParse(json);
+  const version = detectCalmVersion(json);
+  const normalized = normalizeCalmDocument(json, version);
+  const result = calmDocumentSchema.safeParse(normalized);
 
   if (result.success) {
-    return { success: true, data: result.data };
+    return { success: true, data: result.data, version };
   }
 
   return { success: false, error: formatZodError(result.error) };

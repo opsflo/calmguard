@@ -99,3 +99,88 @@ describe('parseCalmFromString', () => {
     expect(result.error.message.toLowerCase()).toContain('json');
   });
 });
+
+// --- Multi-version support tests ---
+
+// Minimal v1.0 document with calmSchemaVersion and legacy types
+const v10Doc = {
+  calmSchemaVersion: '1.0',
+  name: 'API Gateway Architecture',
+  nodes: [
+    { name: 'api-gateway', type: 'apigateway', metadata: { description: 'The API gateway' } },
+    { name: 'customer-service', type: 'microservice', metadata: { description: 'Customer service' } },
+  ],
+  relationships: [
+    { from: 'api-gateway', to: 'customer-service', type: 'uses' },
+  ],
+};
+
+// Minimal v1.2 document with extra fields
+const v12Doc = {
+  nodes: [makeNode('node-1', 'service', 'Service A', 'A service')],
+  relationships: [],
+  adrs: ['https://example.com/adr/001', 'https://example.com/adr/002'],
+  decorators: { highlight: ['node-1'] },
+  timelines: [{ label: 'Phase 1', nodes: ['node-1'] }],
+};
+
+describe('parseCalm — version field (multi-version support)', () => {
+  it('returns version "1.1" for standard v1.1 document (regression)', () => {
+    const result = parseCalm(makeMinimalDoc());
+
+    expect(result.success).toBe(true);
+    if (!result.success) throw new Error('Expected success');
+    expect(result.version).toBe('1.1');
+  });
+
+  it('successfully parses a v1.0 document with legacy node types and returns version "1.0"', () => {
+    const result = parseCalm(v10Doc);
+
+    expect(result.success).toBe(true);
+    if (!result.success) throw new Error('Expected success');
+    expect(result.version).toBe('1.0');
+  });
+
+  it('maps v1.0 apigateway nodes to service node-type in parsed output', () => {
+    const result = parseCalm(v10Doc);
+
+    expect(result.success).toBe(true);
+    if (!result.success) throw new Error('Expected success');
+    const gatewayNode = result.data.nodes.find(n => n['unique-id'] === 'api-gateway');
+    expect(gatewayNode).toBeDefined();
+    expect(gatewayNode?.['node-type']).toBe('service');
+  });
+
+  it('maps v1.0 "uses" relationships to connects in parsed output', () => {
+    const result = parseCalm(v10Doc);
+
+    expect(result.success).toBe(true);
+    if (!result.success) throw new Error('Expected success');
+    const rel = result.data.relationships[0];
+    expect(rel['relationship-type']).toBe('connects');
+  });
+
+  it('successfully parses a v1.2 document with adrs, decorators, timelines and returns version "1.2"', () => {
+    const result = parseCalm(v12Doc);
+
+    expect(result.success).toBe(true);
+    if (!result.success) throw new Error('Expected success');
+    expect(result.version).toBe('1.2');
+  });
+
+  it('preserves v1.2 adrs array in parsed output', () => {
+    const result = parseCalm(v12Doc);
+
+    expect(result.success).toBe(true);
+    if (!result.success) throw new Error('Expected success');
+    expect(result.data.adrs).toEqual(['https://example.com/adr/001', 'https://example.com/adr/002']);
+  });
+
+  it('parseCalmFromString returns version field on success', () => {
+    const result = parseCalmFromString(JSON.stringify(v10Doc));
+
+    expect(result.success).toBe(true);
+    if (!result.success) throw new Error('Expected success');
+    expect(result.version).toBe('1.0');
+  });
+});

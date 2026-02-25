@@ -7,6 +7,12 @@ import { z } from 'zod';
 export const CALM_SCHEMA_VERSION = '1.1';
 
 /**
+ * CALM Version type — supported schema versions
+ * Re-exported from normalizer for convenience
+ */
+export type { CalmVersion } from './normalizer';
+
+/**
  * Node Types
  * All 9 node types supported in CALM v1.1
  */
@@ -224,13 +230,21 @@ export type CalmFlow = z.infer<typeof calmFlowSchema>;
 
 /**
  * CALM Document
- * Root schema for a complete CALM architecture definition
+ * Root schema for a complete CALM architecture definition.
+ * Supports v1.1 core, v1.2 extra fields, and v1.0 legacy top-level fields.
  */
 export const calmDocumentSchema = z.object({
   nodes: z.array(calmNodeSchema).min(1, 'Document must have at least one node'),
   relationships: z.array(calmRelationshipSchema),
   controls: z.record(z.string(), controlDefinitionSchema).optional(),
   flows: z.array(calmFlowSchema).optional(),
+  // v1.2 additions — preserve without strict typing
+  adrs: z.array(z.string()).optional(),
+  decorators: z.unknown().optional(),
+  timelines: z.unknown().optional(),
+  // v1.0 legacy top-level fields — accept but don't require
+  calmSchemaVersion: z.string().optional(),
+  name: z.string().optional(),
 });
 
 export type CalmDocument = z.infer<typeof calmDocumentSchema>;
