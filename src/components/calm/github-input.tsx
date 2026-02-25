@@ -35,7 +35,7 @@ export function GitHubInput() {
   const router = useRouter();
   const { setCalmData, setGitHubRepo } = useAnalysisStore();
 
-  const [repoSlug, setRepoSlug] = useState('finos-labs/dtcch-2026-opsflow-llc');
+  const [repoSlug, setRepoSlug] = useState('');
   const [filePath, setFilePath] = useState('examples/payment-gateway.calm.json');
   const [isLoading, setIsLoading] = useState(false);
 

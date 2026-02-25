@@ -27,11 +27,8 @@ export async function githubFetch(
     headers['Content-Type'] = 'application/json';
   }
 
-  console.log('[githubFetch]', method, url, 'token?', !!token, 'tokenLen:', token?.length ?? 0, 'authHeader:', headers.Authorization?.slice(0, 15));
-
   return new Promise<Response>((resolve, reject) => {
     const req = https.request(url, { method, headers }, (res) => {
-      console.log('[githubFetch] response:', res.statusCode, res.statusMessage);
       const chunks: Buffer[] = [];
       res.on('data', (chunk: Buffer) => chunks.push(chunk));
       res.on('end', () => {
