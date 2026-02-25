@@ -259,7 +259,7 @@ export function LearningPanel() {
   const patternLibrary = useLearningStore((state) => state.patternLibrary);
   const deterministicRules = useLearningStore((state) => state.deterministicRules);
   const analysisHistory = useLearningStore((state) => state.analysisHistory);
-  const metrics = useLearningStore((state) => state.getMetrics());
+  const metrics = useLearningStore.getState().getMetrics();
 
   const displayScore = useCountUp(metrics.intelligenceScore);
   const hasData = metrics.totalRuns > 0;
