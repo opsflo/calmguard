@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 
 ## Current Position
 
-Phase: 8 of 11 (Compliance Intelligence) — executing
-Plan: 2 of 4 complete
-Status: Plan 08-02 complete (skill wiring + SOC2 enum extension), Plan 08-03 next
-Last activity: 2026-02-25 — skill wiring: SOC2 as fifth framework in compliance-mapper, PROTOCOL-SECURITY injected into calm-remediator
+Phase: 9 of 11 (Multi-Version CALM) — context gathered, ready for planning
+Plan: 0 of ? (not yet planned)
+Status: Phase 8.1 UAT complete (4/6 passed, 2 skipped). Phase 9 CONTEXT.md written with all decisions.
+Last activity: 2026-02-25 — Phase 9 discuss-phase complete, context captured for multi-version CALM parser
 
-Progress: [█░░░░░░░░░] 10%
+Progress: [██░░░░░░░░] 20%
 
 ## Performance Metrics
 
@@ -62,8 +62,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-25 (Phase 08 Plan 02 execution)
-Stopped at: Completed 08-02-PLAN.md — skill wiring (SOC2 as fifth framework, PROTOCOL-SECURITY injected into remediator)
+Last session: 2026-02-25 (Phase 9 context gathering)
+Stopped at: Phase 9 discuss-phase complete — CONTEXT.md written with version detection, schema differences, display, and backward compatibility decisions. Next: /gsd:plan-phase 9
 
 ---
 
