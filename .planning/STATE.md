@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 
 ## Current Position
 
-Phase: 9 of 11 (Multi-Version CALM) — planned, ready for execution
-Plan: 0 of 2 (planned, not yet executed)
-Status: Phase 9 plans created (09-01: normalizer+parser, 09-02: store+UI). Ready for /gsd:execute-phase 9.
-Last activity: 2026-02-25 — Phase 9 plan-phase complete, 2 plans created with 4 tasks total
+Phase: 9 of 11 (Multi-Version CALM) — in progress
+Plan: 1 of 2 complete (09-01 done; 09-02: store+UI remaining)
+Status: 09-01 normalizer+parser complete. Ready for 09-02.
+Last activity: 2026-02-25 — 09-01 executed (normalizer.ts, parser version field, 30 tests)
 
-Progress: [██░░░░░░░░] 20%
+Progress: [███░░░░░░░] 30%
 
 ## Performance Metrics
 
@@ -26,6 +26,7 @@ Progress: [██░░░░░░░░] 20%
 | 07-gitops-pr-generation | 03 | 5min | 2 | 5 |
 | 08-compliance-intelligence | 01 | 3min | 3 | 4 |
 | 08-compliance-intelligence | 02 | 3min | 2 | 5 |
+| 09-multi-version-calm | 01 | 8min | 2 | 7 |
 
 ## Accumulated Context
 
@@ -46,6 +47,8 @@ v1.3 decisions:
 - SOC2 added to both frameworkMappings and frameworkScores enums simultaneously to maintain schema consistency
 - PROTOCOL SECURITY KNOWLEDGE block placed before ORIGINAL CALM DOCUMENT in remediator prompt (mirrors compliance-mapper pattern)
 - control-matrix.tsx local interface updated inline with Zod enum rather than importing from agent
+- [Phase 09-multi-version-calm]: Pre-Zod normalization pattern: transform raw JSON before Zod sees it, keeping schema canonical v1.1 with normalizer handling v1.0 quirks
+- [Phase 09-multi-version-calm]: Lenient CALM v1.0 mapping: unknown node types to service, unknown rel types to connects — maximizes compatibility with real-world v1.0 documents
 
 ### Pending Todos
 
@@ -62,8 +65,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-25 (Phase 9 planning)
-Stopped at: Phase 9 plan-phase complete — 2 plans created (09-01: normalizer+parser backend, 09-02: store+UI+demo). Next: /gsd:execute-phase 9
+Last session: 2026-02-25 (Phase 9, Plan 1 execution)
+Stopped at: Completed 09-01-PLAN.md — normalizer.ts + parser version field + 30 tests. Next: execute 09-02 (store+UI)
 
 ---
 

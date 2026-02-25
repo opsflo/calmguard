@@ -15,10 +15,10 @@
 
 ### Multi-Version CALM
 
-- [ ] **CALM-01**: Parser accepts valid CALM v1.0 documents (no `description` required on flow transitions)
-- [ ] **CALM-02**: Parser accepts valid CALM v1.1 documents (current behavior, no regression)
-- [ ] **CALM-03**: Parser accepts valid CALM v1.2 documents with optional decorators, timelines, and ADRs fields
-- [ ] **CALM-04**: Version detection reports which CALM version a document conforms to
+- [x] **CALM-01**: Parser accepts valid CALM v1.0 documents (no `description` required on flow transitions)
+- [x] **CALM-02**: Parser accepts valid CALM v1.1 documents (current behavior, no regression)
+- [x] **CALM-03**: Parser accepts valid CALM v1.2 documents with optional decorators, timelines, and ADRs fields
+- [x] **CALM-04**: Version detection reports which CALM version a document conforms to
 
 ### GitOps Split
 
@@ -69,10 +69,10 @@
 | COMP-03 | Phase 8 | Complete |
 | COMP-04 | Phase 8 | Complete |
 | COMP-05 | Phase 8 | Complete |
-| CALM-01 | Phase 9 | Pending |
-| CALM-02 | Phase 9 | Pending |
-| CALM-03 | Phase 9 | Pending |
-| CALM-04 | Phase 9 | Pending |
+| CALM-01 | Phase 9 | Complete |
+| CALM-02 | Phase 9 | Complete |
+| CALM-03 | Phase 9 | Complete |
+| CALM-04 | Phase 9 | Complete |
 | GOPS-01 | Phase 10 | Pending |
 | GOPS-02 | Phase 10 | Pending |
 | GOPS-03 | Phase 10 | Pending |
