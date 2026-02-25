@@ -15,6 +15,7 @@ import {
   Brain,
   BookOpen,
   Bot,
+  Users,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -49,6 +50,7 @@ const navItems: NavItem[] = [
   { label: 'Pipeline', href: '/dashboard/pipeline', icon: GitBranch },
   { label: 'Findings', href: '/dashboard/findings', icon: AlertTriangle },
   { label: 'Learning', href: '/dashboard/learning', icon: BookOpen },
+  { label: 'Squad', href: '/dashboard/squad', icon: Users },
 ];
 
 const statusColors = {
