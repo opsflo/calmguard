@@ -91,6 +91,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
         // Store pipeline result and full analysis state for PR generation routes
         globalThis.__lastPipelineResult = result.pipeline;
+        globalThis.__lastCloudInfraResult = result.cloudInfra;
         globalThis.__lastAnalysisResult = result;
         globalThis.__lastCalmDocument = parseResult.data;
 

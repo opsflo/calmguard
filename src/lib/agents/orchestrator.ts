@@ -6,6 +6,7 @@ import type { AnalysisInput } from '@/lib/calm/extractor';
 import { analyzeArchitecture, type ArchitectureAnalysis, architectureAnalysisSchema } from './architecture-analyzer';
 import { mapCompliance, type ComplianceMapping, complianceMappingSchema } from './compliance-mapper';
 import { generatePipeline, type PipelineConfig, pipelineConfigSchema } from './pipeline-generator';
+import { generateCloudInfra, type CloudInfraConfig, cloudInfraConfigSchema } from './cloud-infra-generator';
 import { scoreRisk, type RiskAssessment, riskAssessmentSchema } from './risk-scorer';
 import { runDeterministicPreChecks } from '@/lib/learning/pre-check';
 import type { DeterministicRule, PreCheckResult } from '@/lib/learning/types';
@@ -18,6 +19,7 @@ export const analysisResultSchema = z.object({
   architecture: architectureAnalysisSchema.nullable(),
   compliance: complianceMappingSchema.nullable(),
   pipeline: pipelineConfigSchema.nullable(),
+  cloudInfra: cloudInfraConfigSchema.nullable(),
   risk: riskAssessmentSchema.nullable(),
   duration: z.number(),
   completedAgents: z.array(z.string()),
@@ -68,7 +70,7 @@ export async function runAnalysis(
     emitAgentEvent({
       type: 'started',
       agent: agentIdentity,
-      message: 'Orchestrator started - coordinating 4 AI agents',
+      message: 'Orchestrator started - coordinating 5 AI agents',
     });
 
     // Demo mode: let judges see the dashboard load before agents fire
@@ -82,6 +84,7 @@ export async function runAnalysis(
     let architecture: ArchitectureAnalysis | null = null;
     let compliance: ComplianceMapping | null = null;
     let pipeline: PipelineConfig | null = null;
+    let cloudInfra: CloudInfraConfig | null = null;
     let risk: RiskAssessment | null = null;
 
     // ========================================================================
@@ -160,19 +163,20 @@ export async function runAnalysis(
     await sleep(500);
 
     // ========================================================================
-    // PHASE 1: Parallel execution (Architecture Analyzer, Compliance Mapper, Pipeline Generator)
+    // PHASE 1: Parallel execution (Architecture Analyzer, Compliance Mapper, Pipeline Generator, Cloud Infra Generator)
     // ========================================================================
 
     emitAgentEvent({
       type: 'thinking',
       agent: agentIdentity,
-      message: 'Running Architecture Analyzer, Compliance Mapper, and Pipeline Generator in parallel...',
+      message: 'Running Architecture Analyzer, Compliance Mapper, Pipeline Generator, and Cloud Infra Generator in parallel...',
     });
 
     const phase1Results = await Promise.allSettled([
       analyzeArchitecture(input),
       mapCompliance(input, selectedFrameworks, learningContext),
       generatePipeline(input),
+      generateCloudInfra(input),
     ]);
 
     // Extract Architecture Analyzer result
@@ -237,6 +241,31 @@ export async function runAnalysis(
         severity: 'critical',
       });
     }
+
+    // Demo mode: stagger result announcements
+    if (demoMode) await sleep(500);
+
+    // Extract Cloud Infra Generator result
+    const cloudInfraResult = phase1Results[3];
+    if (cloudInfraResult.status === 'fulfilled' && cloudInfraResult.value.success && cloudInfraResult.value.data) {
+      cloudInfra = cloudInfraResult.value.data;
+      completedAgents.push('cloud-infra-generator');
+    } else {
+      const error = cloudInfraResult.status === 'rejected'
+        ? cloudInfraResult.reason
+        : cloudInfraResult.value.error || 'Unknown error';
+      failedAgents.push('cloud-infra-generator');
+
+      emitAgentEvent({
+        type: 'finding',
+        agent: agentIdentity,
+        message: `Cloud Infra Generator failed: ${error}`,
+        severity: 'critical',
+      });
+    }
+
+    // Store cloud infra result globally for PR route access
+    globalThis.__lastCloudInfraResult = cloudInfra;
 
     // ========================================================================
     // PHASE 2: Sequential execution (Risk Scorer requires Phase 1 results)
@@ -314,7 +343,7 @@ export async function runAnalysis(
     const duration = performance.now() - startTime;
 
     const successCount = completedAgents.length;
-    const totalCount = rules.length > 0 ? 5 : 4;
+    const totalCount = rules.length > 0 ? 6 : 5;
 
     emitAgentEvent({
       type: 'completed',
@@ -326,6 +355,7 @@ export async function runAnalysis(
       architecture,
       compliance,
       pipeline,
+      cloudInfra,
       risk,
       duration,
       completedAgents,

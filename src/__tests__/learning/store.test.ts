@@ -65,6 +65,7 @@ function makeResult(overrides?: Partial<AnalysisResult>): AnalysisResult {
       summary: 'test',
     },
     pipeline: null,
+    cloudInfra: null,
     risk: {
       overallScore: 45,
       overallRating: 'medium',
