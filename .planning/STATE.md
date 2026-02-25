@@ -43,7 +43,7 @@ v1.2 decisions (resolved during 07-03 execution):
 
 ### Pending Todos
 
-None.
+- [ ] Update README with actual agent names and profiles (scout, ranger, arsenal, sniper) — `.planning/todos/pending/2026-02-25-update-readme-agent-names-profiles.md`
 
 ### Blockers/Concerns
 
