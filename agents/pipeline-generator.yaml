@@ -17,7 +17,8 @@ spec:
     provider: google
     model: gemini-2.5-flash
     temperature: 0.3
-  skills: []
+  skills:
+    - skills/DEVSECOPS-PIPELINE.md
   inputs:
     - type: parsed-architecture
   outputs:

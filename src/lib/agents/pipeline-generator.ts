@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { generateObject } from 'ai';
 import { loadAgentConfig } from './registry';
+import { loadSkillsForAgent } from '@/lib/skills/loader';
 import { getModelForAgent, getDefaultModel } from '@/lib/ai/provider';
 import { emitAgentEvent } from '@/lib/ai/streaming';
 import { type AgentResult, type AgentIdentity } from './types';
@@ -90,60 +91,46 @@ export async function generatePipeline(
       message: 'Pipeline Generator started',
     });
 
-    // Build prompt
+    // Load skills for pipeline generation guidance
+    const skillsContent = loadSkillsForAgent(config);
+
+    // Build prompt — focused on DevSecOps CI, not deployment
     const prompt = `${config.spec.role}
 
-You are generating CI/CD pipeline configurations for a CALM architecture definition.
+${skillsContent ? `**PIPELINE GENERATION GUIDELINES:**\n${skillsContent}\n\n` : ''}You are generating a **DevSecOps CI pipeline** for a CALM architecture definition.
+This is a compliance-focused continuous integration pipeline — NOT a deployment pipeline.
 
 **INPUT:**
 ${JSON.stringify(input, null, 2)}
 
 **TASK:**
-Generate production-ready CI/CD and infrastructure configurations:
+Generate a concise, compliance-first DevSecOps CI pipeline:
 
-1. **GitHub Actions Workflow**: Complete YAML with stages:
-   - Lint and type checking
-   - Build
-   - Test (unit, integration)
-   - Security scanning
-   - Deploy (with environment gates)
-   - Include appropriate triggers (push, pull_request)
+1. **GitHub Actions Workflow** (30-50 lines max):
+   - Triggers: push and pull_request to main
+   - Jobs: lint → test → security-scan → build
+   - Security scan step is the compliance-critical gate
+   - DO NOT include deployment, staging, production, Docker, or Kubernetes steps
 
-2. **Security Scanning Tools**: Configure based on node types and protocols:
-   - Semgrep: For code security patterns
-   - CodeQL: For vulnerability detection
-   - Trivy: For container/dependency scanning
-   - npm-audit: For Node.js dependency vulnerabilities
-   - Provide complete config files as strings
+2. **Security Scanning** (pick 2 most relevant tools):
+   - Configure based on the architecture's node types and protocols
+   - Keep each tool config to 10-20 lines
+   - Focus on compliance-relevant checks (protocol security, dependency vulnerabilities)
 
-3. **Infrastructure as Code**: Generate Terraform or CloudFormation based on architecture:
-   - Network infrastructure (VPCs, subnets, security groups)
-   - Compute resources (based on node types)
-   - Databases (based on database nodes)
-   - Load balancers and API gateways
-   - Include security controls from CALM definition
+3. **Infrastructure as Code** (20-40 lines of Terraform):
+   - Provider block + 1-2 key security resources (VPC, security groups)
+   - Security group rules should map to CALM protocol requirements
+   - Keep it representative, not exhaustive
 
-4. **Recommendations**: Actionable recommendations for:
-   - CI/CD improvements (caching, parallelization, secrets management)
-   - Security enhancements (SAST, DAST, dependency scanning)
-   - Infrastructure optimizations (cost, performance, reliability)
-   - Monitoring and observability
-
-**GUIDELINES:**
-- Use realistic, production-ready configurations
-- Include comments explaining key sections
-- Consider node types and protocols when generating configs
-- Apply security controls from CALM definition to pipeline
-- Be specific in recommendations (not generic advice)
+4. **Recommendations** (3-4 max):
+   - Each tied to a specific compliance finding from the architecture
+   - Actionable and specific, not generic
 
 **CRITICAL FORMATTING RULE:**
-All YAML and HCL config strings MUST be properly formatted with real newline characters.
-Each line of YAML/HCL/config must be separated by a newline character (\\n in the JSON string).
-Example of CORRECT yaml field value: "name: ci\\non:\\n  push:\\n    branches: [main]\\njobs:\\n  build:\\n    runs-on: ubuntu-latest"
-Example of WRONG yaml field value: "name: ci on: push: branches: [main] jobs: build: runs-on: ubuntu-latest"
-Never compress multi-line configs into a single line.
-
-Provide structured output matching the schema.`;
+All YAML and HCL config strings MUST use real newline characters (\\n in JSON).
+CORRECT: "name: ci\\non:\\n  push:\\n    branches: [main]"
+WRONG: "name: ci on: push: branches: [main]"
+Never put multi-line configs on a single line.`;
 
     // Emit thinking event
     emitAgentEvent({

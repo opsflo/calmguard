@@ -49,6 +49,7 @@ const SKILLS: Record<string, SkillRef> = {
   'NIST-CSF': { name: 'NIST-CSF', file: 'skills/NIST-CSF.md', description: 'NIST Cybersecurity Framework' },
   SOC2: { name: 'SOC2', file: 'skills/SOC2.md', description: 'Service Organization Control 2' },
   'PROTOCOL-SECURITY': { name: 'Protocol Security', file: 'skills/PROTOCOL-SECURITY.md', description: 'Protocol security upgrade paths' },
+  'DEVSECOPS-PIPELINE': { name: 'DevSecOps Pipeline', file: 'skills/DEVSECOPS-PIPELINE.md', description: 'CI pipeline generation guidelines' },
 };
 
 const HQ: AgentProfile = {
@@ -86,9 +87,9 @@ const RANGER: AgentProfile = {
 const ARSENAL: AgentProfile = {
   callsign: 'Arsenal', displayName: 'Pipeline Generator', icon: Wrench, color: '#f97316',
   tagline: 'Turns compliance into code',
-  description: 'Generates GitHub Actions CI/CD, configures security scanning (Semgrep, CodeQL, Trivy), and produces Terraform IaC matching CALM topology.',
-  skills: [],
-  tools: [{ name: 'Gemini 2.5 Flash', type: 'sdk' }, { name: 'GitHub API', type: 'api' }],
+  description: 'Generates DevSecOps CI pipelines with compliance-first security gates, scanning tool configs, and Terraform IaC matching CALM topology.',
+  skills: [SKILLS['DEVSECOPS-PIPELINE']],
+  tools: [{ name: 'Gemini 2.5 Flash', type: 'sdk' }, { name: 'GitHub API', type: 'api' }, { name: 'Skill Loader', type: 'internal' }],
 };
 
 const SNIPER: AgentProfile = {
