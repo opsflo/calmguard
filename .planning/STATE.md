@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 
 ## Current Position
 
-Phase: 10 of 11 (GitOps Split) — in progress
-Plan: 2 of 3 complete (10-01 cloud-infra skill+generator done; 10-02 three-button UI + infraPR store done)
-Status: Plan 10-02 complete. GitOpsCard has 3 buttons with concurrency lock. Plan 10-03 extends create-pr API for infra type.
-Last activity: 2026-02-25 — 10-02 executed (PRRecord infra type, infraPR store, GitOpsCard 3-button layout, concurrency lock)
+Phase: 10 of 11 (GitOps Split) — complete
+Plan: 3 of 3 complete (10-01 cloud-infra skill+generator; 10-02 three-button UI + infraPR store; 10-03 create-pr route extended with infra type, labels, IaC removal)
+Status: Phase 10 complete. All three PR types operational with correct branch names, content separation, and auto-labeling.
+Last activity: 2026-02-25 — 10-03 executed (create-pr route extended with infra type, branch renames, LABEL_MAP, IaC removal from pipeline)
 
-Progress: [████░░░░░░] 45%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -30,6 +30,7 @@ Progress: [████░░░░░░] 45%
 | 09-multi-version-calm | 02 | 10min | 2 | 9 |
 | 10-gitops-split | 01 | 4min | 2 | 7 |
 | 10-gitops-split | 02 | 2min | 2 | 3 |
+| 10-gitops-split | 03 | 4min | 2 | 2 |
 
 ## Accumulated Context
 
@@ -60,6 +61,9 @@ v1.3 decisions:
 - [Phase 10-gitops-split]: Explicit disabled prop on PRSection instead of overloading onGenerate === undefined — avoids conflating "coming soon" with "temporarily disabled during generation"
 - [Phase 10-gitops-split]: isAnyGenerating derived at GitOpsCard level, passed down as disabled — single source of truth for concurrency lock
 - [Phase 10-gitops-split]: Generating branch in PRSection renders unconditionally, ignoring disabled — active spinner never gets locked
+- [Phase 10-gitops-split]: Label failures non-blocking: ensureLabel() ignores 422, addLabelToPR() logs warn but never throws — PR creation always succeeds even if label API fails
+- [Phase 10-gitops-split]: IaC exclusively in Cloud Infra PR: buildPipelineFiles() now contains only GitHub Actions workflow and security scanning configs — no terraform/main.tf, no cloudformation/template.yaml
+- [Phase 10-gitops-split]: Three-PR GitOps split complete with distinct branch names (devsecops-ci, compliance-remediation, cloud-infra), content separation, and auto-labeling
 
 ### Pending Todos
 
@@ -76,8 +80,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-25 (Phase 10, Plan 1 formal execution)
-Stopped at: Completed 10-01-PLAN.md — CLOUD-INFRASTRUCTURE.md skill, cloud-infra-generator agent, globalThis.__lastCloudInfraResult, orchestrator Phase 1 extended to 4 agents.
+Last session: 2026-02-25 (Phase 10, Plan 3 execution)
+Stopped at: Completed 10-03-PLAN.md — create-pr route extended with infra type, branch renames (devsecops-ci, compliance-remediation, cloud-infra), LABEL_MAP auto-labeling, IaC removed from pipeline, buildInfraFiles/buildInfraPRBody added.
 
 ---
 
