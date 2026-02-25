@@ -44,7 +44,7 @@ vi.mock('@/lib/agents/registry', () => ({
     },
     spec: {
       role: 'Mock agent role',
-      model: { provider: 'google', model: 'gemini-2.0-flash-exp', temperature: 0.3 },
+      model: { provider: 'google', model: 'gemini-2.5-flash', temperature: 0.3 },
       skills: [],
       inputs: [{ type: 'AnalysisInput' }],
       outputs: [{ type: 'MockOutput' }],

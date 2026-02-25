@@ -19,7 +19,7 @@ spec:
     - Every change you make MUST be listed in the changes array with clear before/after and rationale.
   model:
     provider: google
-    model: gemini-2.0-flash-exp
+    model: gemini-2.5-flash
     temperature: 0.2
   skills: []
   inputs:

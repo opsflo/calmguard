@@ -75,7 +75,7 @@ export function getDefaultModel() {
   assertProviderConfigured();
 
   if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-    return registry.languageModel('google:gemini-2.0-flash-exp');
+    return registry.languageModel('google:gemini-2.5-flash');
   }
 
   if (process.env.ANTHROPIC_API_KEY) {
