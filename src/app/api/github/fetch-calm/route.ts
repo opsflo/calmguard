@@ -13,7 +13,6 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request): Promise<Response> {
   // GITHUB_TOKEN is optional — public repos work without auth (lower rate limits)
   const token = process.env.GITHUB_TOKEN;
-
   // Parse and validate request body
   let body: unknown;
   try {
@@ -38,7 +37,7 @@ export async function POST(request: Request): Promise<Response> {
   // Step 1: Fetch repo metadata to get default branch
   let defaultBranch: string;
   try {
-    const repoRes = await githubFetch(`/repos/${owner}/${repo}`, { ...(token && { token }) });
+    const repoRes = await githubFetch(`/repos/${owner}/${repo}`, { token: token ?? undefined });
 
     if (repoRes.status === 404) {
       return NextResponse.json(
@@ -85,7 +84,7 @@ export async function POST(request: Request): Promise<Response> {
   let fileSha: string;
   let rawContent: string;
   try {
-    const contentsRes = await githubFetch(`/repos/${owner}/${repo}/contents/${filePath}`, { ...(token && { token }) });
+    const contentsRes = await githubFetch(`/repos/${owner}/${repo}/contents/${filePath}`, { token: token ?? undefined });
 
     if (contentsRes.status === 404) {
       return NextResponse.json(
