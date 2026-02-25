@@ -35,8 +35,8 @@ export function GitHubInput() {
   const router = useRouter();
   const { setCalmData, setGitHubRepo } = useAnalysisStore();
 
-  const [repoSlug, setRepoSlug] = useState('');
-  const [filePath, setFilePath] = useState('examples/payment-gateway.calm.json');
+  const [repoSlug, setRepoSlug] = useState('gjs-opsflo/payment-gateway-calm');
+  const [filePath, setFilePath] = useState('payment-gateway.calm.json');
   const [isLoading, setIsLoading] = useState(false);
 
   /**

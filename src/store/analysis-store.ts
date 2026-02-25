@@ -69,7 +69,7 @@ const initialState = {
   analysisResult: null,
   agentEvents: [] as AgentEvent[],
   activeAgents: [] as string[],
-  selectedFrameworks: ['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC'] as string[],
+  selectedFrameworks: ['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC', 'SOC2'] as string[],
   demoMode: false,
   status: 'idle' as AnalysisStatus,
   error: null,

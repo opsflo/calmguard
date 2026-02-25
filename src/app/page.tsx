@@ -32,7 +32,7 @@ export default function Home() {
     const analysisInput = extractAnalysisInput(parseResult.data);
 
     // Pre-select all frameworks for a comprehensive demo
-    setSelectedFrameworks(['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC']);
+    setSelectedFrameworks(['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC', 'SOC2']);
 
     // Populate store with trading platform data
     setCalmData(parseResult.data, analysisInput);

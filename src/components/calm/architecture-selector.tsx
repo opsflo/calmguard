@@ -26,6 +26,7 @@ const FRAMEWORKS = [
   { value: 'PCI-DSS', label: 'PCI-DSS' },
   { value: 'NIST-CSF', label: 'NIST-CSF' },
   { value: 'CCC', label: 'FINOS-CCC' },
+  { value: 'SOC2', label: 'SOC2' },
 ] as const;
 
 export function ArchitectureSelector() {
