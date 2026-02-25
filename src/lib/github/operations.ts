@@ -193,6 +193,63 @@ export async function commitMultipleFiles(
  * @param token - GitHub personal access token with repo scope
  * @returns The PR URL and number
  */
+/**
+ * Create a label in a repository, ignoring 422 (already exists).
+ * Labels are cosmetic — failure is non-critical.
+ *
+ * @param owner - Repository owner
+ * @param repo - Repository name
+ * @param name - Label name (e.g. "ci/cd")
+ * @param color - Hex color without '#' (e.g. "0075ca")
+ * @param description - Short label description
+ * @param token - GitHub personal access token with repo scope
+ */
+export async function ensureLabel(
+  owner: string,
+  repo: string,
+  name: string,
+  color: string,
+  description: string,
+  token: string,
+): Promise<void> {
+  const res = await githubFetch(`/repos/${owner}/${repo}/labels`, {
+    method: 'POST',
+    token,
+    body: JSON.stringify({ name, color, description }),
+  });
+  // 201 = created, 422 = already exists — both are fine
+  if (!res.ok && res.status !== 422) {
+    console.warn(`Failed to ensure label "${name}" (${res.status})`);
+  }
+}
+
+/**
+ * Add labels to a PR (PRs are issues in GitHub's data model).
+ * Label failures are non-critical — log but don't throw.
+ *
+ * @param owner - Repository owner
+ * @param repo - Repository name
+ * @param prNumber - Pull request number
+ * @param labels - Array of label names to add
+ * @param token - GitHub personal access token with repo scope
+ */
+export async function addLabelToPR(
+  owner: string,
+  repo: string,
+  prNumber: number,
+  labels: string[],
+  token: string,
+): Promise<void> {
+  const res = await githubFetch(`/repos/${owner}/${repo}/issues/${prNumber}/labels`, {
+    method: 'POST',
+    token,
+    body: JSON.stringify({ labels }),
+  });
+  if (!res.ok) {
+    console.warn(`Failed to add labels to PR #${prNumber}: ${res.status}`);
+  }
+}
+
 export async function createPR(
   owner: string,
   repo: string,
