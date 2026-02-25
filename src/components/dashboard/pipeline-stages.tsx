@@ -7,7 +7,6 @@ import {
   Shield,
   Package,
   Rocket,
-  ChevronRight,
   AlertTriangle,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -24,36 +23,26 @@ interface Stage {
   label: string;
   icon: LucideIcon;
   color: string;
-  bgColor: string;
-  borderColor: string;
+  glowColor: string;
+  dotColor: string;
 }
 
 const STAGES: Stage[] = [
-  { id: 'source', label: 'Source', icon: GitCommit, color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30' },
-  { id: 'quality', label: 'Quality', icon: CheckCircle, color: 'text-violet-400', bgColor: 'bg-violet-500/10', borderColor: 'border-violet-500/30' },
-  { id: 'test', label: 'Test', icon: FlaskConical, color: 'text-cyan-400', bgColor: 'bg-cyan-500/10', borderColor: 'border-cyan-500/30' },
-  { id: 'security', label: 'Security', icon: Shield, color: 'text-amber-400', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/30' },
-  { id: 'build', label: 'Build', icon: Package, color: 'text-emerald-400', bgColor: 'bg-emerald-500/10', borderColor: 'border-emerald-500/30' },
-  { id: 'deploy', label: 'Deploy', icon: Rocket, color: 'text-rose-400', bgColor: 'bg-rose-500/10', borderColor: 'border-rose-500/30' },
+  { id: 'source',   label: 'Source',   icon: GitCommit,   color: 'text-blue-400',    glowColor: 'shadow-blue-500/20',    dotColor: 'bg-blue-400' },
+  { id: 'quality',  label: 'Quality',  icon: CheckCircle, color: 'text-violet-400',  glowColor: 'shadow-violet-500/20',  dotColor: 'bg-violet-400' },
+  { id: 'test',     label: 'Test',     icon: FlaskConical, color: 'text-cyan-400',   glowColor: 'shadow-cyan-500/20',    dotColor: 'bg-cyan-400' },
+  { id: 'security', label: 'Security', icon: Shield,      color: 'text-amber-400',   glowColor: 'shadow-amber-500/20',   dotColor: 'bg-amber-400' },
+  { id: 'build',    label: 'Build',    icon: Package,     color: 'text-emerald-400', glowColor: 'shadow-emerald-500/20', dotColor: 'bg-emerald-400' },
+  { id: 'deploy',   label: 'Deploy',   icon: Rocket,      color: 'text-rose-400',    glowColor: 'shadow-rose-500/20',    dotColor: 'bg-rose-400' },
 ];
 
-// ---------------------------------------------------------------------------
-// Tool icon colors
-// ---------------------------------------------------------------------------
-
 const TOOL_COLORS: Record<string, string> = {
-  semgrep: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-  codeql: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-  trivy: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
-  'npm-audit': 'bg-red-500/20 text-red-300 border-red-500/30',
-  gitleaks: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  syft: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-};
-
-const PRIORITY_COLORS: Record<string, string> = {
-  high: 'bg-red-500/20 text-red-400 border-red-500/30',
-  medium: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  low: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  semgrep: 'bg-purple-500/15 text-purple-300 border-purple-500/25',
+  codeql: 'bg-blue-500/15 text-blue-300 border-blue-500/25',
+  trivy: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/25',
+  'npm-audit': 'bg-red-500/15 text-red-300 border-red-500/25',
+  gitleaks: 'bg-amber-500/15 text-amber-300 border-amber-500/25',
+  syft: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
 };
 
 // ---------------------------------------------------------------------------
@@ -66,17 +55,17 @@ export function PipelineStages() {
 
   const pipeline = analysisResult?.pipeline ?? null;
 
-  // Loading skeleton
+  // Loading skeleton — vertical
   if (status === 'idle' || status === 'parsed' || status === 'loading') {
     return (
-      <Card className="bg-slate-800 border-slate-700">
-        <div className="p-6 space-y-4">
-          <h3 className="text-sm font-medium text-slate-400">Pipeline Stages</h3>
-          <div className="flex items-center gap-3">
+      <Card className="bg-slate-800/50 border-slate-700/50 h-full">
+        <div className="p-5 space-y-4">
+          <Skeleton className="h-4 w-24 bg-slate-700/50" />
+          <div className="space-y-6 pl-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="flex items-center gap-3">
-                <Skeleton className="h-14 w-20 rounded-lg bg-slate-700/50" />
-                {i < 5 && <Skeleton className="h-0.5 w-6 bg-slate-700/50" />}
+                <Skeleton className="h-10 w-10 rounded-full bg-slate-700/50" />
+                <Skeleton className="h-3 w-16 bg-slate-700/50" />
               </div>
             ))}
           </div>
@@ -85,41 +74,36 @@ export function PipelineStages() {
     );
   }
 
-  // Analyzing — show animated skeleton
+  // Analyzing — animated skeleton
   if (status === 'analyzing' && !pipeline) {
     return (
-      <Card className="bg-slate-800 border-slate-700">
-        <div className="p-6 space-y-4">
+      <Card className="bg-slate-800/50 border-slate-700/50 h-full relative overflow-hidden">
+        <div className="p-5 space-y-4">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-medium text-slate-400">Pipeline Stages</h3>
-            <div className="flex items-center gap-1.5">
-              <div className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-              <span className="text-xs text-blue-400 animate-pulse">Generating...</span>
-            </div>
+            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Pipeline</span>
+            <div className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
           </div>
-          <div className="flex items-center gap-3 relative overflow-hidden">
+          <div className="space-y-6 pl-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="flex items-center gap-3">
-                <Skeleton className="h-14 w-20 rounded-lg bg-slate-700/50" />
-                {i < 5 && <Skeleton className="h-0.5 w-6 bg-slate-700/50" />}
+                <Skeleton className="h-10 w-10 rounded-full bg-slate-700/50" />
+                <Skeleton className="h-3 w-16 bg-slate-700/50" />
               </div>
             ))}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-700/10 to-transparent animate-shimmer" />
           </div>
         </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-700/5 to-transparent animate-shimmer" />
       </Card>
     );
   }
 
-  // Pipeline agent failed
+  // Failed
   if (status === 'complete' && !pipeline) {
     return (
-      <Card className="bg-slate-800 border-slate-700">
-        <div className="p-6 flex items-center gap-3">
+      <Card className="bg-slate-800/50 border-slate-700/50 h-full">
+        <div className="p-5 flex items-center gap-3">
           <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0" />
-          <p className="text-sm text-amber-400">
-            Pipeline stages unavailable — pipeline generator agent failed
-          </p>
+          <p className="text-sm text-amber-400">Pipeline unavailable</p>
         </div>
       </Card>
     );
@@ -127,118 +111,63 @@ export function PipelineStages() {
 
   if (!pipeline) return null;
 
-  const toolCount = pipeline.securityScanning.tools.length;
+  const tools = pipeline.securityScanning.tools;
+  const provider = pipeline.infrastructureAsCode.provider === 'terraform' ? 'Terraform' : 'CloudFormation';
 
   return (
-    <Card className="bg-slate-800 border-slate-700">
-      <div className="p-6 space-y-6">
+    <Card className="bg-slate-800/50 border-slate-700/50 h-full">
+      <div className="p-5 flex flex-col h-full">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-slate-400">Pipeline Stages</h3>
-          <span className="text-xs text-slate-500">{pipeline.githubActions.name}</span>
+        <div className="flex items-center justify-between mb-6">
+          <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">Pipeline</span>
+          <span className="text-[10px] text-slate-600">{provider}</span>
         </div>
 
-        {/* Stage Flow */}
-        <div className="flex items-center justify-between gap-1 overflow-x-auto pb-2">
-          {STAGES.map((stage, i) => (
-            <div
-              key={stage.id}
-              className="flex items-center gap-1 shrink-0"
-              style={{ animationDelay: `${i * 80}ms` }}
-            >
-              <StageNode
-                stage={stage}
-                badge={stage.id === 'security' && toolCount > 0 ? String(toolCount) : undefined}
-              />
-              {i < STAGES.length - 1 && (
-                <ChevronRight className="h-4 w-4 text-slate-600 shrink-0" />
-              )}
-            </div>
-          ))}
-        </div>
+        {/* Vertical stage flow */}
+        <div className="flex-1 flex flex-col justify-between relative">
+          {/* Vertical connector line */}
+          <div className="absolute left-5 top-5 bottom-5 w-px bg-gradient-to-b from-blue-500/40 via-amber-500/40 to-rose-500/40" />
 
-        {/* Security Tools */}
-        {toolCount > 0 && (
-          <div className="space-y-3">
-            <h4 className="text-xs font-medium text-slate-500 uppercase tracking-wider">Security Tools</h4>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {pipeline.securityScanning.tools.map((tool) => (
-                <ToolCard key={tool.name} name={tool.name} description={tool.description} />
-              ))}
-            </div>
-          </div>
-        )}
+          {STAGES.map((stage, i) => {
+            const Icon = stage.icon;
+            const isSecurityStage = stage.id === 'security';
+            return (
+              <div
+                key={stage.id}
+                className="relative flex items-center gap-4 group"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                {/* Icon circle */}
+                <div className={`relative z-10 flex items-center justify-center h-10 w-10 rounded-full bg-slate-900 border border-slate-700/80 shadow-lg ${stage.glowColor} group-hover:scale-110 transition-transform duration-200`}>
+                  <Icon className={`h-4.5 w-4.5 ${stage.color}`} />
+                </div>
 
-        {/* Recommendations */}
-        {pipeline.recommendations.length > 0 && (
-          <div className="space-y-3">
-            <h4 className="text-xs font-medium text-slate-500 uppercase tracking-wider">Recommendations</h4>
-            <div className="space-y-2">
-              {pipeline.recommendations.map((rec, i) => (
-                <RecommendationRow key={i} {...rec} />
-              ))}
-            </div>
-          </div>
-        )}
+                {/* Label + optional tool badges */}
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium text-slate-200 group-hover:text-white transition-colors">
+                    {stage.label}
+                  </span>
+                  {isSecurityStage && tools.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {tools.map((tool) => (
+                        <span
+                          key={tool.name}
+                          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${TOOL_COLORS[tool.name] ?? 'bg-slate-700/50 text-slate-400 border-slate-600/50'}`}
+                        >
+                          {tool.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-        {/* IaC Provider */}
-        <div className="flex items-center gap-2 pt-2 border-t border-slate-700">
-          <span className="text-xs text-slate-500">Infrastructure:</span>
-          <span className="inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-slate-700/50 text-slate-300 border border-slate-600/50">
-            {pipeline.infrastructureAsCode.provider === 'terraform' ? 'Terraform' : 'CloudFormation'}
-          </span>
+                {/* Pulse dot on active line */}
+                <div className={`absolute left-[18px] top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full ${stage.dotColor} opacity-0 group-hover:opacity-100 transition-opacity ring-2 ring-current`} />
+              </div>
+            );
+          })}
         </div>
       </div>
     </Card>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Sub-components
-// ---------------------------------------------------------------------------
-
-function StageNode({ stage, badge }: { stage: Stage; badge?: string }) {
-  const Icon = stage.icon;
-  return (
-    <div className={`relative flex flex-col items-center gap-1.5 rounded-lg border ${stage.borderColor} ${stage.bgColor} px-4 py-3 transition-colors hover:brightness-125`}>
-      <Icon className={`h-5 w-5 ${stage.color}`} />
-      <span className="text-[11px] font-medium text-slate-300">{stage.label}</span>
-      {badge && (
-        <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-slate-900">
-          {badge}
-        </span>
-      )}
-    </div>
-  );
-}
-
-function ToolCard({ name, description }: { name: string; description: string }) {
-  const colorClass = TOOL_COLORS[name] ?? 'bg-slate-700/50 text-slate-300 border-slate-600/50';
-  return (
-    <div className={`rounded-lg border px-3 py-2 ${colorClass}`}>
-      <div className="text-xs font-semibold">{name}</div>
-      <div className="text-[10px] opacity-70 mt-0.5 line-clamp-2">{description}</div>
-    </div>
-  );
-}
-
-function RecommendationRow({
-  category,
-  recommendation,
-  priority,
-}: {
-  category: string;
-  recommendation: string;
-  priority: string;
-}) {
-  const priorityColor = PRIORITY_COLORS[priority] ?? PRIORITY_COLORS['low'];
-  return (
-    <div className="flex items-start gap-2 text-xs">
-      <span className={`inline-flex items-center rounded px-1.5 py-0.5 font-medium border shrink-0 ${priorityColor}`}>
-        {priority}
-      </span>
-      <span className="text-slate-500 shrink-0">{category}:</span>
-      <span className="text-slate-300">{recommendation}</span>
-    </div>
   );
 }

@@ -12,8 +12,12 @@ export default function PipelinePage() {
           Generated CI/CD pipeline configurations and security scanning templates
         </p>
       </div>
-      <PipelineStages />
-      <PipelinePreview />
+
+      {/* Split layout: visual pipeline left, code right */}
+      <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-4 items-stretch">
+        <PipelineStages />
+        <PipelinePreview />
+      </div>
     </div>
   );
 }
