@@ -30,15 +30,15 @@ Built for the **DTCC/FINOS Innovate.DTCC AI Hackathon** (Feb 23–27, 2026).
 
 | AI Agent Squad | Compliance Skills | Learning Intelligence | GitOps Integration |
 |:--------------:|:-----------------:|:---------------------:|:------------------:|
-| 6 agents: Scout, Ranger, Arsenal, Sniper, Oracle, HQ | 6 skill files with 100+ KB of regulatory knowledge | Self-learning engine with pattern fingerprinting | Fetch CALM from GitHub, generate PRs |
+| 6 agents: Scout, Ranger, Arsenal, Sniper, Oracle, HQ | 7 skill files with 100+ KB of regulatory knowledge | Self-learning engine with pattern fingerprinting | Fetch CALM from GitHub, generate PRs |
 | Multi-provider LLM: Gemini, Claude, GPT, Grok | SOX, PCI-DSS, NIST-CSF, FINOS-CCC, SOC2, Protocol Security | Auto-promotes patterns to deterministic rules after 3 observations | DevSecOps CI pipeline and compliance remediation PRs |
 | Parallel Phase 1 + sequential Phase 2 orchestration | Closed Control ID Reference tables prevent LLM hallucination | Phase 0 Oracle fires instant findings before LLM agents start | Full repo-connected workflow with SHA tracking |
 
-| CALM Parser | Real-Time Dashboard | Pipeline Generator |
-|:-----------:|:-------------------:|:------------------:|
-| Full CALM 1.1 schema support with Zod validation | React Flow architecture graphs with touring camera animation | GitHub Actions, security scanning, IaC configs |
-| Nodes, relationships, flows, interfaces, controls | Live SSE streaming with agent status indicators | SAST, dependency audit, license compliance |
-| Demo architectures included | Compliance gauges, risk heat maps, exportable reports | Automated from your architecture definition |
+| CALM Parser | Real-Time Dashboard | DevSecOps Pipeline Generator |
+|:-----------:|:-------------------:|:----------------------------:|
+| Full CALM 1.1 schema support with Zod validation | React Flow architecture graphs with touring camera animation | GitHub Actions CI with 6 DevSecOps stages |
+| Nodes, relationships, flows, interfaces, controls | Live SSE streaming with agent status indicators | SAST (Semgrep), SCA (Trivy), Secrets (Gitleaks), SBOM (Syft) |
+| Demo architectures included | Compliance gauges, risk heat maps, exportable reports | Security-focused Terraform IaC from CALM signals |
 
 ## How It Works
 
@@ -131,6 +131,7 @@ graph TB
         CCC[FINOS-CCC.md]
         SOC2[SOC2.md]
         PROTO[PROTOCOL-SECURITY.md]
+        DEVSEC[DEVSECOPS-PIPELINE.md]
     end
 
     subgraph Providers["LLM Providers"]
@@ -148,6 +149,7 @@ graph TB
     AA & CM & PG --> RS
     Skills -.-> CM
     PROTO -.-> PG
+    DEVSEC -.-> PG
     AA & CM & PG & RS -.-> Providers
     AA & CM & PG & RS --> Stream
     RS --> LS
@@ -178,7 +180,7 @@ CALMGuard runs a coordinated squad of 6 AI agents with tactical callsigns. LLM a
 | **Oracle** | Learning Engine | 0 | Fire deterministic rules from previously learned patterns — zero-latency, no LLM calls. Instant compliance findings before any AI agent starts | Deterministic (no LLM) |
 | **Scout** | Architecture Analyzer | 1 | Extract structural insights — components, data flows, trust boundaries, security zones, protocol usage, deployment topology | Gemini 2.5-flash |
 | **Ranger** | Compliance Mapper | 1 | Map CALM controls to SOX, PCI-DSS, FINOS CCC, NIST-CSF, SOC2. Assess compliance status, identify gaps, generate per-framework scores with auditor evidence | Gemini 2.5-flash |
-| **Arsenal** | Pipeline Generator | 1 | Generate production-ready GitHub Actions CI/CD, SAST/DAST scanning configs (Semgrep, CodeQL), Terraform IaC matching CALM deployment topology | Gemini 2.5-flash |
+| **Arsenal** | Pipeline Generator | 1 | Generate DevSecOps CI pipelines with SAST (Semgrep), secret detection (Gitleaks), SCA (Trivy), SBOM (Syft) — stages derived from CALM signals. Security-focused Terraform IaC from protocol requirements | Gemini 2.5-flash |
 | **Sniper** | Risk Scorer | 2 | Aggregate all Phase 1 results into weighted risk assessment — overall score (0-100), per-framework scores, node-level risk heat map, executive summary | Gemini 2.5-flash |
 
 **Three-phase orchestration:**
@@ -201,6 +203,7 @@ CALMGuard's compliance intelligence is powered by **skill files** — markdown d
 | [`FINOS-CCC.md`](skills/FINOS-CCC.md) | FINOS Common Cloud Controls | Cloud-native security controls | Ranger |
 | [`SOC2.md`](skills/SOC2.md) | SOC2 TSC | 21 AICPA Trust Service Criteria (CC6.x, CC7.x, CC8.x, CC9.x) | Ranger |
 | [`PROTOCOL-SECURITY.md`](skills/PROTOCOL-SECURITY.md) | Cross-framework | Protocol upgrade mappings (HTTP→HTTPS, FTP→SFTP, etc.) with PCI-DSS + NIST + SOC2 grounding | Arsenal |
+| [`DEVSECOPS-PIPELINE.md`](skills/DEVSECOPS-PIPELINE.md) | DevSecOps CI | Compliance-first pipeline generation — stage selection rules, tool configs, CALM signal mapping | Arsenal |
 
 Skills are loaded at runtime via `loadSkillsForAgent()` and injected as knowledge blocks in agent prompts. This gives agents grounded, auditable regulatory knowledge rather than relying on parametric LLM memory.
 
@@ -220,6 +223,77 @@ The Learning Intelligence dashboard panel shows:
 - **Learning Curve** — Recharts visualization of intelligence growth over time
 
 > *"Run it once, it learns. Run it three times, it auto-generates deterministic compliance rules. By run 4, Oracle fires instant findings before the LLM even starts."*
+
+## Pipeline Generation Capabilities
+
+Arsenal generates **DevSecOps CI pipelines** derived directly from CALM architectural signals. Every security stage maps to a decision visible in your architecture definition — making the pipeline auditable and compliance-justified.
+
+### Generated Artifacts
+
+| Artifact | What It Produces | Derived From |
+|----------|-----------------|--------------|
+| **GitHub Actions Workflow** | Complete CI YAML (40-60 lines) with multi-stage DevSecOps gates | CALM node types, protocols, relationships |
+| **Security Scanning Configs** | Tool-specific configs (10-20 lines each) for 2-3 tools | CALM node types + compliance controls |
+| **Infrastructure as Code** | Security-focused Terraform (20-40 lines) with compliance controls | CALM protocol requirements + relationships |
+| **Recommendations** | 3-4 actionable items mapping CALM signals to compliance frameworks | Full CALM analysis |
+
+### DevSecOps CI Stages
+
+Generated pipelines include these stages, selected based on what CALM tells Arsenal about the architecture:
+
+```
+code-quality ──▶ ┌─ sast ─────────────┐
+                 ├─ secret-detection ──┤ ──▶ build (compliance gate)
+                 ├─ sca ──────────────┤
+                 └─ sbom ─────────────┘
+```
+
+| Stage | Tool | Purpose | CALM Signal That Triggers It |
+|-------|------|---------|------------------------------|
+| **SAST** | Semgrep | Static code analysis — SQL injection, XSS, insecure crypto | Always (adapts rules to node types: DB→SQLi, webclient→XSS) |
+| **Secret Detection** | Gitleaks | Detect leaked credentials, API keys, tokens | Always (universal compliance requirement) |
+| **SCA** | Trivy / npm-audit | Dependency vulnerability scanning | `service` or `ecosystem` nodes present |
+| **SBOM** | Syft | Software Bill of Materials for audit trail | Compliance controls present in CALM |
+| **Code Quality** | ESLint + TypeCheck | Lint and type safety gate | Always |
+| **Build** | Compile + artifacts | Final gate — only passes if all security stages pass | Always |
+
+### Security Scanning Tools
+
+| Tool | Category | What It Detects | When Selected |
+|------|----------|----------------|---------------|
+| **Semgrep** | SAST | Code patterns (SQLi, XSS, CSRF, insecure crypto, hardcoded secrets) | Always — rules tuned to CALM architecture |
+| **CodeQL** | SAST | Language-specific vulnerability detection | Alternative for complex architectures |
+| **Trivy** | SCA | Container and dependency CVEs | When service/database nodes present |
+| **npm-audit** | SCA | Node.js dependency vulnerabilities | When webclient nodes present |
+| **Gitleaks** | Secrets | Leaked credentials, API keys, private keys | Always |
+| **Syft** | SBOM | Software Bill of Materials (CycloneDX format) | When compliance controls present |
+
+### Infrastructure as Code
+
+Terraform configs map CALM protocol requirements to cloud security controls:
+
+| CALM Signal | Generated Terraform Rule |
+|------------|------------------------|
+| HTTPS relationships | Allow port 443, deny port 80 |
+| Database connections | Restrict to service CIDR only |
+| mTLS relationships | Reference certificate resources |
+| Network segmentation | VPC/subnet isolation |
+
+### CALM Signal → Pipeline Mapping
+
+Arsenal reads the CALM architecture and makes deterministic decisions about what to include:
+
+| CALM Signal | Pipeline Decision |
+|-------------|------------------|
+| Has `database` nodes | SAST with SQL injection rules |
+| Has `webclient` nodes | SAST with XSS/CSRF rules, npm-audit for SCA |
+| Has `service` nodes | Trivy dependency scanning |
+| Has `ecosystem` nodes | SCA for supply chain risk |
+| Uses HTTP (not HTTPS) | WARNING comment + upgrade recommendation |
+| Has compliance controls | SBOM generation for audit trail |
+| Any architecture | Secret detection + SAST + build gate |
+
+> Arsenal is guided by the [`DEVSECOPS-PIPELINE.md`](skills/DEVSECOPS-PIPELINE.md) skill file — a compliance-first CI generation guide injected into its prompt at runtime.
 
 ## GitOps Integration
 
@@ -290,12 +364,13 @@ CALMGuard is built with a clear enterprise evolution path. Current hackathon fea
 | Area | Current (Hackathon) | Enterprise Roadmap |
 |------|--------------------|--------------------|
 | **Learning Engine** | Client-side pattern extraction, localStorage persistence, deterministic rule promotion at 3+ observations | Server-side learning store (PostgreSQL), auto-append promoted rules to skill files, cross-team pattern sharing, admin approval workflow for rule promotion |
-| **Compliance Skills** | 6 static skill files with closed control ID references, manual authoring | Auto-generated skill appendices from learning engine, versioned skill evolution, community-contributed skill marketplace |
+| **Compliance Skills** | 7 skill files (6 compliance frameworks + 1 DevSecOps pipeline guide) with closed control ID references | Auto-generated skill appendices from learning engine, versioned skill evolution, community-contributed skill marketplace |
 | **Agent Orchestration** | 6 agents in 3 phases, single Gemini provider default | Per-framework subagents (Ranger spawns SOX/PCI/NIST specialists), multi-provider routing (cost vs accuracy), agent performance analytics |
 | **GitOps** | Single-repo PR generation (CI pipeline + compliance remediation) | Multi-repo fleet scanning, scheduled compliance drift detection, PR approval policies, Slack/Teams notifications |
 | **CALM Support** | CALM 1.1 with lenient parser accepting field aliases | Multi-version CALM (1.0–1.2+), CALM pattern library matching, bi-directional CALM editing (fix gaps → update architecture) |
 | **Compliance Frameworks** | SOX, PCI-DSS, NIST-CSF, FINOS-CCC, SOC2 | HIPAA, GDPR, ISO 27001, FedRAMP, custom framework authoring |
 | **Deployment** | Vercel (single-tenant) | Self-hosted (Docker/K8s), multi-tenant SaaS, air-gapped on-prem, SSO/RBAC |
+| **MCP Server** | — | Expose CALMGuard as an MCP (Model Context Protocol) server — any AI agent or IDE can analyze CALM architectures, run compliance checks, and generate pipelines via tool calls. Enables integration with Claude Code, Cursor, VS Code Copilot, and custom agent workflows |
 | **Reporting** | Dashboard + JSON export | PDF/DOCX compliance reports, audit trail with timestamps, executive summary email digests, SOC2 Type II evidence packages |
 
 ## Team
