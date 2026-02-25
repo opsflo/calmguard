@@ -10,10 +10,10 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 
 ## Current Position
 
-Phase: 9 of 11 (Multi-Version CALM) — context gathered, ready for planning
-Plan: 0 of ? (not yet planned)
-Status: Phase 8.1 UAT complete (4/6 passed, 2 skipped). Phase 9 CONTEXT.md written with all decisions.
-Last activity: 2026-02-25 — Phase 9 discuss-phase complete, context captured for multi-version CALM parser
+Phase: 9 of 11 (Multi-Version CALM) — planned, ready for execution
+Plan: 0 of 2 (planned, not yet executed)
+Status: Phase 9 plans created (09-01: normalizer+parser, 09-02: store+UI). Ready for /gsd:execute-phase 9.
+Last activity: 2026-02-25 — Phase 9 plan-phase complete, 2 plans created with 4 tasks total
 
 Progress: [██░░░░░░░░] 20%
 
@@ -62,8 +62,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-25 (Phase 9 context gathering)
-Stopped at: Phase 9 discuss-phase complete — CONTEXT.md written with version detection, schema differences, display, and backward compatibility decisions. Next: /gsd:plan-phase 9
+Last session: 2026-02-25 (Phase 9 planning)
+Stopped at: Phase 9 plan-phase complete — 2 plans created (09-01: normalizer+parser backend, 09-02: store+UI+demo). Next: /gsd:execute-phase 9
 
 ---
 

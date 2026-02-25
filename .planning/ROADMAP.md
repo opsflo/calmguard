@@ -59,7 +59,11 @@ Plans:
   2. All existing CALM v1.1 demo files (trading platform, payment gateway) continue to parse and analyze identically to v1.2 behavior (no regression)
   3. A CALM v1.2 document with optional `decorators`, `timelines`, and `adrs` fields parses successfully without stripping those fields
   4. The dashboard displays the detected CALM version (e.g., "CALM v1.2") after parsing
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — CALM version normalizer and parser extension (normalizer.ts, types.ts, parser.ts, tests)
+- [ ] 09-02-PLAN.md — Store integration, call site updates, and dashboard version badge
 
 ### Phase 10: GitOps Split
 **Goal**: Users generate three distinct PRs targeting different review audiences: CI/security engineers (DevSecOps CI), compliance officers (Remediation), and infrastructure teams (Cloud Infra)
@@ -91,7 +95,7 @@ Phases 8 and 9 run in parallel (Day 1). Phase 10 follows (Day 2 AM). Phase 11 fo
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 8. Compliance Intelligence | 2/2 | Complete   | 2026-02-25 | - |
-| 9. Multi-Version CALM | v1.3 | 0/? | Not started | - |
+| 9. Multi-Version CALM | v1.3 | 0/2 | Planned | - |
 | 10. GitOps Split | v1.3 | 0/? | Not started | - |
 | 11. CI Integration & Docs | v1.3 | 0/? | Not started | - |
 
