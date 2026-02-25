@@ -7,10 +7,10 @@
 
 ### Compliance Intelligence
 
-- [ ] **COMP-01**: PCI-DSS skill file includes specific Requirement IDs from PCI-DSS 4.0 (e.g., Req 4.2.1, Req 6.2.4) with CALM field mappings
-- [ ] **COMP-02**: NIST-CSF skill file includes Function/Category/Subcategory IDs from CSF 2.0 (e.g., GV.OC-01, PR.DS-01) with CALM field mappings
-- [ ] **COMP-03**: SOC2 skill file created with AICPA Trust Service Criteria IDs (CC6.1, CC7.2, A1.1) and CALM field mappings
-- [ ] **COMP-04**: Protocol security skill file with explicit upgrade mappings (HTTP→HTTPS, FTP→SFTP, LDAP→TLS, TCP→TLS) grounding remediation decisions
+- [x] **COMP-01**: PCI-DSS skill file includes specific Requirement IDs from PCI-DSS 4.0 (e.g., Req 4.2.1, Req 6.2.4) with CALM field mappings
+- [x] **COMP-02**: NIST-CSF skill file includes Function/Category/Subcategory IDs from CSF 2.0 (e.g., GV.OC-01, PR.DS-01) with CALM field mappings
+- [x] **COMP-03**: SOC2 skill file created with AICPA Trust Service Criteria IDs (CC6.1, CC7.2, A1.1) and CALM field mappings
+- [x] **COMP-04**: Protocol security skill file with explicit upgrade mappings (HTTP→HTTPS, FTP→SFTP, LDAP→TLS, TCP→TLS) grounding remediation decisions
 - [ ] **COMP-05**: Agent output includes citable control IDs from skill files, not hallucinated identifiers
 
 ### Multi-Version CALM
@@ -64,10 +64,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| COMP-01 | Phase 8 | Pending |
-| COMP-02 | Phase 8 | Pending |
-| COMP-03 | Phase 8 | Pending |
-| COMP-04 | Phase 8 | Pending |
+| COMP-01 | Phase 8 | Complete |
+| COMP-02 | Phase 8 | Complete |
+| COMP-03 | Phase 8 | Complete |
+| COMP-04 | Phase 8 | Complete |
 | COMP-05 | Phase 8 | Pending |
 | CALM-01 | Phase 9 | Pending |
 | CALM-02 | Phase 9 | Pending |
