@@ -5,7 +5,7 @@ import { loadSkillsForAgent } from '@/lib/skills/loader';
 import { getModelForAgent, getDefaultModel } from '@/lib/ai/provider';
 import { emitAgentEvent } from '@/lib/ai/streaming';
 import { type AgentResult, type AgentIdentity } from './types';
-import { calmDocumentSchema, type CalmDocument } from '@/lib/calm/types';
+import type { CalmDocument } from '@/lib/calm/types';
 import type { ComplianceMapping } from './compliance-mapper';
 import type { RiskAssessment } from './risk-scorer';
 
@@ -17,7 +17,6 @@ import type { RiskAssessment } from './risk-scorer';
  * - summary: human-readable summary of all changes made
  */
 export const calmRemediationOutputSchema = z.object({
-  remediatedCalm: calmDocumentSchema,
   changes: z.array(
     z.object({
       nodeOrRelationshipId: z.string(),
@@ -27,7 +26,7 @@ export const calmRemediationOutputSchema = z.object({
       before: z.string(),
       after: z.string(),
     })
-  ),
+  ).min(1),
   summary: z.string(),
 });
 
@@ -92,10 +91,11 @@ export async function remediateCalm(
       message: 'CALM Remediator started',
     });
 
-    // Build prompt
+    // Build prompt — ONLY ask for changes[], never the full document.
+    // LLMs reliably identify gaps but fail to embed 30+ controls into JSON.
     const prompt = `${config.spec.role}
 
-You are remediating a CALM v1.1 architecture document to address compliance gaps.
+You are analyzing a CALM v1.1 architecture document to produce a list of compliance remediation changes.
 
 **PROTOCOL SECURITY KNOWLEDGE:**
 ${skillsContent}
@@ -113,29 +113,30 @@ ${JSON.stringify(compliance.frameworkMappings.filter((m) => m.status !== 'compli
 ${JSON.stringify(risk.topFindings, null, 2)}
 
 **TASK:**
-Modify the CALM document to address the compliance gaps and risk findings:
+Produce a changes array listing EVERY remediation needed. Do NOT return the modified document — only the changes list. Our code will apply the changes programmatically.
 
-1. **Protocol Upgrades** — Upgrade weak protocols to their secure equivalents:
-   - HTTP → HTTPS
-   - LDAP → TLS (LDAPS is not in the CALM enum; use TLS as the protocol and add a control noting LDAP+TLS)
-   - TCP → TLS
-   - FTP → SFTP
-   Only upgrade protocols that appear in the original document's relationships.
+For EACH compliance gap or risk finding, add an entry to the changes array:
 
-2. **Add Missing Controls** — For each compliance gap, add a control to the relevant node or relationship:
-   - Use the control key format: {framework}-{controlId} (e.g., "pci-dss-req-4.1")
-   - Include a description explaining the control
-   - Add a requirement with a requirement-url pointing to the framework spec (use https://example.com/{framework}/{controlId} as placeholder URL)
+1. **Protocol Upgrades** (changeType: 'protocol-upgrade'):
+   - HTTP → HTTPS, LDAP → TLS, TCP → TLS, FTP → SFTP, JDBC → TLS
+   - nodeOrRelationshipId: the relationship unique-id
+   - before: current protocol, after: upgraded protocol
 
-3. **Document Every Change** — For each modification, add an entry to the changes array with:
-   - nodeOrRelationshipId: the unique-id of the modified node/relationship
-   - changeType: 'protocol-upgrade' or 'control-added'
-   - description: what was changed (human-readable)
-   - rationale: why it was changed (reference the compliance gap or risk finding)
-   - before: the value before modification
-   - after: the value after modification
+2. **Add Missing Controls** (changeType: 'control-added'):
+   - nodeOrRelationshipId: the node or relationship unique-id that needs the control
+   - after: the control key in format {framework}-{control-id} (e.g., "pci-dss-req-8-4-2-mfa")
+   - before: "N/A"
+   - rationale: explain WHY this control is needed, citing the specific framework requirement ID
+   - description: human-readable description of what the control does
 
-Return the COMPLETE modified document (all nodes, relationships, controls, flows) plus the changes array.`;
+CRITICAL RULES:
+- You MUST produce at least one change entry for every compliance gap and risk finding
+- Every control-added entry MUST have a unique control key in the "after" field
+- The "after" field IS the control key that will be added to the CALM document
+- Use the node/relationship unique-id from the original document as nodeOrRelationshipId
+- For system-wide controls (policies, governance), use "system-wide" as nodeOrRelationshipId
+- Aim for comprehensive coverage — address ALL identified gaps, not just the top ones
+- The summary field should describe ALL changes at a high level`;
 
     // Emit thinking event
     emitAgentEvent({
