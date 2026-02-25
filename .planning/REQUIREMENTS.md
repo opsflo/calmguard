@@ -64,28 +64,28 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| COMP-01 | TBD | Pending |
-| COMP-02 | TBD | Pending |
-| COMP-03 | TBD | Pending |
-| COMP-04 | TBD | Pending |
-| COMP-05 | TBD | Pending |
-| CALM-01 | TBD | Pending |
-| CALM-02 | TBD | Pending |
-| CALM-03 | TBD | Pending |
-| CALM-04 | TBD | Pending |
-| GOPS-01 | TBD | Pending |
-| GOPS-02 | TBD | Pending |
-| GOPS-03 | TBD | Pending |
-| GOPS-04 | TBD | Pending |
-| CI-01 | TBD | Pending |
-| CI-02 | TBD | Pending |
-| DOCS-01 | TBD | Pending |
+| COMP-01 | Phase 8 | Pending |
+| COMP-02 | Phase 8 | Pending |
+| COMP-03 | Phase 8 | Pending |
+| COMP-04 | Phase 8 | Pending |
+| COMP-05 | Phase 8 | Pending |
+| CALM-01 | Phase 9 | Pending |
+| CALM-02 | Phase 9 | Pending |
+| CALM-03 | Phase 9 | Pending |
+| CALM-04 | Phase 9 | Pending |
+| GOPS-01 | Phase 10 | Pending |
+| GOPS-02 | Phase 10 | Pending |
+| GOPS-03 | Phase 10 | Pending |
+| GOPS-04 | Phase 10 | Pending |
+| CI-01 | Phase 11 | Pending |
+| CI-02 | Phase 11 | Pending |
+| DOCS-01 | Phase 11 | Pending |
 
 **Coverage:**
 - v1.3 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16
+- Mapped to phases: 16
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-25*
-*Last updated: 2026-02-25 after initial definition*
+*Last updated: 2026-02-25 after roadmap creation (all 16 requirements mapped to phases 8-11)*

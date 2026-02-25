@@ -1,49 +1,88 @@
-# Roadmap: CALMGuard v1.2 — GitOps PR Generation
+# Roadmap: CALMGuard v1.3 — Compliance Intelligence & CI Integration
 
 ## Overview
 
-v1.2 extends CALMGuard from a file-upload analysis tool to a GitOps-integrated compliance platform. Users can point CALMGuard at a GitHub repo containing a CALM architecture file, run the existing 4-agent analysis, and then generate PRs with both pipeline artifacts and a compliance-remediated architecture file — all from the dashboard.
+v1.3 transforms CALMGuard from a demo-grade compliance analyzer into a grounded, auditable compliance intelligence platform. Agents cite specific control IDs (PCI-DSS 4.0 Req 4.2.1, NIST CSF 2.0 PR.DS-01, SOC2 CC6.1) instead of vague framework references. The CALM parser accepts architecture files from all stable versions (1.0-1.2). GitOps splits into three targeted PRs for different review audiences. A generated GitHub Action workflow enables continuous compliance checking in customer repos. All within 2 days (Feb 26-27, 2026) with two developers.
+
+## Milestones
+
+- ✅ **v1.1 MVP** - Phases 1-6 (shipped 2026-02-24)
+- ✅ **v1.2 GitOps PR Generation** - Phase 7 (shipped 2026-02-25)
+- 🚧 **v1.3 Compliance Intelligence & CI Integration** - Phases 8-11 (in progress)
 
 ## Phases
 
-- [x] **Phase 7: GitOps PR Generation** - GitHub repo input, fetch CALM via API, generate pipeline artifact PR, AI-powered compliance remediation PR, dashboard PR status display
+**Phase Numbering:**
+- Continues from v1.2 (Phase 7 was last)
+- Phases 8-9 can execute in parallel (no shared files)
+- Phases 10-11 are sequential
+
+- [ ] **Phase 8: Compliance Intelligence** - Grounded skill files with specific control IDs for PCI-DSS, NIST-CSF, SOC2; protocol security rationale; citable agent output
+- [ ] **Phase 9: Multi-Version CALM** - Lenient parser accepting CALM 1.0/1.1/1.2 with version detection and dashboard display
+- [ ] **Phase 10: GitOps Split** - Three separate PR buttons (DevSecOps CI, Compliance Remediation, Cloud Infra) with CI-only pipeline workflow
+- [ ] **Phase 11: CI Integration & Documentation** - GitHub Action workflow for continuous compliance checking; README with agent profiles
 
 ## Phase Details
 
-### Phase 7: GitOps PR Generation
-**Goal**: User can enter a GitHub repo URL + CALM file path, run analysis, and generate two PRs: one with pipeline artifacts (GitHub Actions, SAST configs, IaC) and one with a compliance-remediated CALM file showing added controls and upgraded protocols.
-
-**Depends on**: v1.1 (all existing analysis infrastructure)
-
-**Requirements**: GIT-01, GIT-02, GIT-03, ANLZ-01, PR-01, PR-02, PR-03, PR-04, FIX-01, FIX-02, FIX-03, FIX-04
-
+### Phase 8: Compliance Intelligence
+**Goal**: Agents produce compliance findings with citable, auditable control IDs from official frameworks — not hallucinated identifiers
+**Depends on**: Nothing (pure content and config changes, no code dependencies on other v1.3 phases)
+**Requirements**: COMP-01, COMP-02, COMP-03, COMP-04, COMP-05
 **Success Criteria** (what must be TRUE):
-  1. User can enter a GitHub repo URL (e.g., `owner/repo`) and path to CALM file (e.g., `calm/payment-gateway.calm.json`) in the dashboard UI
-  2. System fetches the CALM file from GitHub using GITHUB_TOKEN and feeds it through existing parser
-  3. Existing 4-agent analysis runs on the fetched architecture with full SSE streaming to dashboard
-  4. After analysis, user can click "Generate Pipeline PR" and system creates a branch, commits GitHub Actions + SAST + IaC files, and opens a PR
-  5. After analysis, user can click "Generate Remediation PR" and system creates a branch with modified CALM file (missing controls added, weak protocols upgraded) and opens a PR with change descriptions
-  6. Dashboard shows PR links (clickable to GitHub) and generation status for both PRs
-  7. PR descriptions include compliance report summary and specific change explanations
+  1. Running analysis on a CALM file produces findings that cite specific PCI-DSS 4.0 requirement IDs (e.g., "Req 4.2.1") instead of generic "PCI-DSS compliance" references
+  2. Running analysis produces findings that cite specific NIST CSF 2.0 subcategory IDs (e.g., "PR.DS-01") with function/category context
+  3. Running analysis produces findings that reference SOC2 Trust Service Criteria IDs (e.g., "CC6.1", "CC7.2") where relevant to the architecture
+  4. The compliance remediator agent cites protocol upgrade rationale (HTTP to HTTPS, FTP to SFTP) with specific regulatory control IDs grounding each recommendation
+  5. No compliance finding in agent output contains a control ID that does not exist in the corresponding official framework
+**Plans**: TBD
 
-**Plans**: 3 plans
+### Phase 9: Multi-Version CALM
+**Goal**: Users can analyze CALM architecture files from any stable version (1.0, 1.1, 1.2) without parser failures
+**Depends on**: Nothing (parser-layer change, transparent to agents; can run in parallel with Phase 8)
+**Requirements**: CALM-01, CALM-02, CALM-03, CALM-04
+**Success Criteria** (what must be TRUE):
+  1. A valid CALM v1.0 document (without `description` on flow transitions) parses successfully and produces analysis results
+  2. All existing CALM v1.1 demo files (trading platform, payment gateway) continue to parse and analyze identically to v1.2 behavior (no regression)
+  3. A CALM v1.2 document with optional `decorators`, `timelines`, and `adrs` fields parses successfully without stripping those fields
+  4. The dashboard displays the detected CALM version (e.g., "CALM v1.2") after parsing
+**Plans**: TBD
 
-Plans:
-- [x] 07-01-PLAN.md — GitHub repo input: Octokit setup, repo URL + path UI fields, fetch CALM via GitHub API, feed into parser (Wave 1)
-- [x] 07-02-PLAN.md — Pipeline artifact PR: branch creation, commit pipeline files, open PR with compliance summary, display PR link (Wave 2)
-- [x] 07-03-PLAN.md — Compliance remediation: AI agent generates modified CALM JSON, create branch, commit remediated file with change descriptions, open PR, display link (Wave 2)
+### Phase 10: GitOps Split
+**Goal**: Users generate three distinct PRs targeting different review audiences: CI/security engineers (DevSecOps CI), compliance officers (Remediation), and infrastructure teams (Cloud Infra)
+**Depends on**: Phase 9 (create-pr route calls parseCalm; parser types must be stable before adding third PR branch)
+**Requirements**: GOPS-01, GOPS-02, GOPS-03, GOPS-04
+**Success Criteria** (what must be TRUE):
+  1. The GitOps card shows three separate PR buttons: "DevSecOps CI", "Compliance Remediation", and "Cloud Infrastructure"
+  2. Clicking "DevSecOps CI" creates a PR containing GitHub Actions workflows (lint, build, test, security scan) with NO deployment stages
+  3. Clicking "Cloud Infrastructure" creates a PR containing Terraform/CloudFormation configs only (no CI workflows, no CALM modifications)
+  4. Clicking "Compliance Remediation" creates a PR with modified CALM file identical to v1.2 behavior (controls added, protocols upgraded, change explanations in description)
+  5. Clicking any PR button disables all three buttons until generation completes (prevents concurrent PR corruption)
+**Plans**: TBD
+
+### Phase 11: CI Integration & Documentation
+**Goal**: Users can integrate continuous compliance checking into their own repos via a generated GitHub Action, and understand the agent system through documentation
+**Depends on**: Phase 10 (headless API route needs stable PipelineConfig type; CI workflow generator extends Phase 10 pipeline generator)
+**Requirements**: CI-01, CI-02, DOCS-01
+**Success Criteria** (what must be TRUE):
+  1. The DevSecOps CI PR includes a `calmguard-check.yml` workflow file alongside the standard CI pipeline
+  2. The generated `calmguard-check.yml` workflow triggers on PRs that modify CALM files (using `paths:` filter) and runs compliance validation
+  3. README contains agent profiles for all four agents (Scout/Architecture Analyzer, Ranger/Compliance Mapper, Arsenal/Pipeline Generator, Sniper/Risk Scorer) with their roles and capabilities
+**Plans**: TBD
 
 ## Progress
 
 **Execution Order:**
-Phase 7 is the only phase in v1.2.
+Phases 8 and 9 run in parallel (Day 1). Phase 10 follows (Day 2 AM). Phase 11 follows (Day 2 PM).
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 7. GitOps PR Generation | 3/3 | Complete | 07-01 done 2026-02-24, 07-02 done 2026-02-24, 07-03 done 2026-02-24 |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 8. Compliance Intelligence | v1.3 | 0/? | Not started | - |
+| 9. Multi-Version CALM | v1.3 | 0/? | Not started | - |
+| 10. GitOps Split | v1.3 | 0/? | Not started | - |
+| 11. CI Integration & Docs | v1.3 | 0/? | Not started | - |
 
 ---
 
-*Roadmap created: 2026-02-24*
-*Total phases: 1 | Total plans: 3*
-*Ready for: `/gsd:execute-phase 7`*
+*Roadmap created: 2026-02-25*
+*Total phases: 4 (8-11) | Total plans: TBD*
+*Ready for: `/gsd:plan-phase 8` (parallel with Phase 9)*
