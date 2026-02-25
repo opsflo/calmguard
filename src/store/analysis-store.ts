@@ -38,6 +38,7 @@ interface AnalysisState {
   } | null;
   pipelinePR: PRRecord;
   remediationPR: PRRecord;
+  infraPR: PRRecord;
 
   // Actions
   setSelectedDemo: (demoId: string) => void;
@@ -61,6 +62,7 @@ interface AnalysisState {
   }) => void;
   setPipelinePR: (pr: Partial<PRRecord>) => void;
   setRemediationPR: (pr: Partial<PRRecord>) => void;
+  setInfraPR: (pr: Partial<PRRecord>) => void;
   reset: () => void;
 }
 
@@ -87,6 +89,7 @@ const initialState = {
   } | null,
   pipelinePR: { type: 'pipeline' as const, status: 'idle' as const },
   remediationPR: { type: 'remediation' as const, status: 'idle' as const },
+  infraPR: { type: 'infra' as const, status: 'idle' as const },
 };
 
 export const useAnalysisStore = create<AnalysisState>((set) => ({
@@ -190,6 +193,11 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   setRemediationPR: (pr) =>
     set((state) => ({
       remediationPR: { ...state.remediationPR, ...pr },
+    })),
+
+  setInfraPR: (pr) =>
+    set((state) => ({
+      infraPR: { ...state.infraPR, ...pr },
     })),
 
   reset: () => set(initialState),

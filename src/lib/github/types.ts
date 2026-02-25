@@ -27,7 +27,7 @@ export type GitHubRepoResponse = z.infer<typeof githubRepoResponseSchema>;
 
 // PR record for Zustand store — used by Plans 02 and 03
 export interface PRRecord {
-  type: 'pipeline' | 'remediation';
+  type: 'pipeline' | 'remediation' | 'infra';
   status: 'idle' | 'generating' | 'open' | 'error';
   step?: string;
   branchName?: string;
