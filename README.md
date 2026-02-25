@@ -283,6 +283,21 @@ We welcome contributions! See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for:
 
 All commits must include a **DCO sign-off** (`git commit -s`).
 
+## Roadmap — Path to Enterprise
+
+CALMGuard is built with a clear enterprise evolution path. Current hackathon features lay the foundation for production-grade compliance automation:
+
+| Area | Current (Hackathon) | Enterprise Roadmap |
+|------|--------------------|--------------------|
+| **Learning Engine** | Client-side pattern extraction, localStorage persistence, deterministic rule promotion at 3+ observations | Server-side learning store (PostgreSQL), auto-append promoted rules to skill files, cross-team pattern sharing, admin approval workflow for rule promotion |
+| **Compliance Skills** | 6 static skill files with closed control ID references, manual authoring | Auto-generated skill appendices from learning engine, versioned skill evolution, community-contributed skill marketplace |
+| **Agent Orchestration** | 6 agents in 3 phases, single Gemini provider default | Per-framework subagents (Ranger spawns SOX/PCI/NIST specialists), multi-provider routing (cost vs accuracy), agent performance analytics |
+| **GitOps** | Single-repo PR generation (CI pipeline + compliance remediation) | Multi-repo fleet scanning, scheduled compliance drift detection, PR approval policies, Slack/Teams notifications |
+| **CALM Support** | CALM 1.1 with lenient parser accepting field aliases | Multi-version CALM (1.0–1.2+), CALM pattern library matching, bi-directional CALM editing (fix gaps → update architecture) |
+| **Compliance Frameworks** | SOX, PCI-DSS, NIST-CSF, FINOS-CCC, SOC2 | HIPAA, GDPR, ISO 27001, FedRAMP, custom framework authoring |
+| **Deployment** | Vercel (single-tenant) | Self-hosted (Docker/K8s), multi-tenant SaaS, air-gapped on-prem, SSO/RBAC |
+| **Reporting** | Dashboard + JSON export | PDF/DOCX compliance reports, audit trail with timestamps, executive summary email digests, SOC2 Type II evidence packages |
+
 ## Team
 
 **OpsFlow LLC** — Built for DTCC/FINOS Innovate.DTCC AI Hackathon 2026
