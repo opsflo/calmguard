@@ -40,6 +40,16 @@ Plans:
 - [ ] 08-01-PLAN.md — Author compliance skill files (SOC2, PROTOCOL-SECURITY) and add closed ID appendices to PCI-DSS and NIST-CSF
 - [ ] 08-02-PLAN.md — Wire skill files into agent YAML configs, extend SOC2 enum, add remediator skill loading
 
+### Phase 08.1: Compliance Learning Engine (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 8
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 08.1 to break down)
+
 ### Phase 9: Multi-Version CALM
 **Goal**: Users can analyze CALM architecture files from any stable version (1.0, 1.1, 1.2) without parser failures
 **Depends on**: Nothing (parser-layer change, transparent to agents; can run in parallel with Phase 8)
