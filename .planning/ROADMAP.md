@@ -34,7 +34,11 @@ v1.3 transforms CALMGuard from a demo-grade compliance analyzer into a grounded,
   3. Running analysis produces findings that reference SOC2 Trust Service Criteria IDs (e.g., "CC6.1", "CC7.2") where relevant to the architecture
   4. The compliance remediator agent cites protocol upgrade rationale (HTTP to HTTPS, FTP to SFTP) with specific regulatory control IDs grounding each recommendation
   5. No compliance finding in agent output contains a control ID that does not exist in the corresponding official framework
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Author compliance skill files (SOC2, PROTOCOL-SECURITY) and add closed ID appendices to PCI-DSS and NIST-CSF
+- [ ] 08-02-PLAN.md — Wire skill files into agent YAML configs, extend SOC2 enum, add remediator skill loading
 
 ### Phase 9: Multi-Version CALM
 **Goal**: Users can analyze CALM architecture files from any stable version (1.0, 1.1, 1.2) without parser failures
@@ -76,7 +80,7 @@ Phases 8 and 9 run in parallel (Day 1). Phase 10 follows (Day 2 AM). Phase 11 fo
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 8. Compliance Intelligence | v1.3 | 0/? | Not started | - |
+| 8. Compliance Intelligence | v1.3 | 0/2 | Planned | - |
 | 9. Multi-Version CALM | v1.3 | 0/? | Not started | - |
 | 10. GitOps Split | v1.3 | 0/? | Not started | - |
 | 11. CI Integration & Docs | v1.3 | 0/? | Not started | - |
@@ -85,4 +89,4 @@ Phases 8 and 9 run in parallel (Day 1). Phase 10 follows (Day 2 AM). Phase 11 fo
 
 *Roadmap created: 2026-02-25*
 *Total phases: 4 (8-11) | Total plans: TBD*
-*Ready for: `/gsd:plan-phase 8` (parallel with Phase 9)*
+*Ready for: `/gsd:execute-phase 8` (parallel with Phase 9)*
