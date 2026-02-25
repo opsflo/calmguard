@@ -311,8 +311,8 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
     URL.revokeObjectURL(url); // revoke immediately to prevent memory leak
   };
 
-  // Code display max height — compact: constrained; normal: fill available space; fullscreen: near-viewport
-  const codeMaxH = fullscreen ? 'max-h-[calc(100vh-12rem)]' : compact ? 'max-h-[200px]' : 'max-h-[calc(100vh-18rem)]';
+  // Code display height — compact: constrained; normal: fill available space; fullscreen: near-viewport
+  const codeMaxH = fullscreen ? 'max-h-[calc(100vh-12rem)]' : compact ? 'max-h-[200px]' : 'min-h-[400px] max-h-[calc(100vh-18rem)]';
 
   // Empty state — no analysis run yet
   if (status === 'idle' || status === 'parsed' || status === 'loading') {
