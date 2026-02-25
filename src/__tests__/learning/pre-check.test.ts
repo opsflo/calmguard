@@ -179,4 +179,28 @@ describe('runDeterministicPreChecks', () => {
     const results = runDeterministicPreChecks(mockInput, [broadRule]);
     expect(results).toHaveLength(1);
   });
+
+  it('filters rules by selected frameworks — only fires matching frameworks', () => {
+    const results = runDeterministicPreChecks(mockInput, [httpRule, missingControlRule], ['PCI-DSS']);
+
+    // httpRule is PCI-DSS (selected), missingControlRule is SOX (not selected)
+    expect(results).toHaveLength(1);
+    expect(results[0].ruleId).toBe('rule-001');
+    expect(results[0].framework).toBe('PCI-DSS');
+  });
+
+  it('filters out all rules when no selected frameworks match', () => {
+    const results = runDeterministicPreChecks(mockInput, [httpRule, missingControlRule], ['NIST-CSF']);
+    expect(results).toHaveLength(0);
+  });
+
+  it('fires all matching rules when selectedFrameworks is undefined', () => {
+    const results = runDeterministicPreChecks(mockInput, [httpRule, missingControlRule], undefined);
+    expect(results).toHaveLength(2);
+  });
+
+  it('fires all matching rules when selectedFrameworks is empty array', () => {
+    const results = runDeterministicPreChecks(mockInput, [httpRule, missingControlRule], []);
+    expect(results).toHaveLength(2);
+  });
 });

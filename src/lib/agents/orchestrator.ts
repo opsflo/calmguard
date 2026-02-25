@@ -119,16 +119,16 @@ export async function runAnalysis(
 
       await sleep(800);
 
-      preCheckResults = runDeterministicPreChecks(input, rules);
+      preCheckResults = runDeterministicPreChecks(input, rules, selectedFrameworks);
 
-      // Emit a finding event for each rule that fired
+      // Emit advisory finding events for each rule that fired
       for (const result of preCheckResults) {
         emitAgentEvent({
           type: 'finding',
           agent: oracleIdentity,
           message: `${result.framework}: ${result.description}`,
-          severity: result.severity,
-          data: { deterministic: true, ...result },
+          severity: 'info',
+          data: { deterministic: true, advisory: true, ...result },
         });
 
         // Stagger findings for visual impact
@@ -149,8 +149,8 @@ export async function runAnalysis(
       agent: oracleIdentity,
       message: rules.length > 0
         ? preCheckResults.length > 0
-          ? `Oracle fired ${preCheckResults.length} instant finding${preCheckResults.length === 1 ? '' : 's'} from learned rules`
-          : 'Oracle completed — no rules matched this architecture'
+          ? `Oracle surfaced ${preCheckResults.length} advisory insight${preCheckResults.length === 1 ? '' : 's'} from learned rules`
+          : 'Oracle completed — no learned rules matched this architecture'
         : `Oracle ready — will learn from this analysis to build deterministic rules`,
     });
 

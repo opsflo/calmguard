@@ -79,17 +79,33 @@ function matchesTriggers(
  * Each promoted rule checks structural conditions in the CALM document
  * and produces findings without any AI calls.
  *
+ * Rules are filtered by selected frameworks — only rules matching the
+ * user's chosen compliance frameworks will fire, preventing irrelevant
+ * learned rules from cluttering the analysis.
+ *
  * @param input - CALM analysis input
  * @param rules - Array of promoted deterministic rules
+ * @param selectedFrameworks - Optional array of active framework names (e.g., ['SOX', 'PCI-DSS'])
  * @returns Array of pre-check results for matching rules
  */
 export function runDeterministicPreChecks(
   input: AnalysisInput,
   rules: DeterministicRule[],
+  selectedFrameworks?: string[],
 ): PreCheckResult[] {
   const results: PreCheckResult[] = [];
 
+  // Filter rules to only those matching selected frameworks
+  const activeFrameworks = selectedFrameworks && selectedFrameworks.length > 0
+    ? new Set(selectedFrameworks)
+    : null;
+
   for (const rule of rules) {
+    // Skip rules for frameworks the user didn't select
+    if (activeFrameworks && !activeFrameworks.has(rule.framework)) {
+      continue;
+    }
+
     const { matches, matchedNodes, matchedRelationships } = matchesTriggers(input, rule.triggers);
 
     if (matches) {
