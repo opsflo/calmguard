@@ -378,6 +378,7 @@ Full documentation is available in [`docs/`](docs/). Run locally with `pnpm docs
 
 | Guide | Description |
 |-------|-------------|
+| [Product Roadmap](docs/docs/roadmap.md) | 12-phase path from hackathon prototype to enterprise compliance platform |
 | [Contributing](docs/docs/contributing.md) | Development setup, branch naming, commit conventions, CI requirements |
 | [Security](docs/docs/security.md) | Threat model, input validation, LLM output safety, responsible AI |
 | [SECURITY.md](SECURITY.md) | Full security policy with AI-specific threat analysis |
@@ -396,19 +397,33 @@ All commits must include a **DCO sign-off** (`git commit -s`).
 
 ## Roadmap — Path to Enterprise
 
-CALMGuard is built with a clear enterprise evolution path. Current hackathon features lay the foundation for production-grade compliance automation:
+CALMGuard is designed as a **platform**, not a point solution. The hackathon demonstrates the core compliance loop; the [full product roadmap](docs/docs/roadmap.md) charts 12 phases from prototype to enterprise-grade continuous compliance platform.
 
-| Area | Current (Hackathon) | Enterprise Roadmap |
-|------|--------------------|--------------------|
-| **Learning Engine** | Client-side pattern extraction, localStorage persistence, deterministic rule promotion at 3+ observations | Server-side learning store (PostgreSQL), auto-append promoted rules to skill files, cross-team pattern sharing, admin approval workflow for rule promotion |
-| **Compliance Skills** | 7 skill files (6 compliance frameworks + 1 DevSecOps pipeline guide) with closed control ID references | Auto-generated skill appendices from learning engine, versioned skill evolution, community-contributed skill marketplace |
-| **Agent Orchestration** | 6 agents in 3 phases, single Gemini provider default | Per-framework subagents (Ranger spawns SOX/PCI/NIST specialists), multi-provider routing (cost vs accuracy), agent performance analytics |
-| **GitOps** | Single-repo PR generation (CI pipeline + compliance remediation) | Multi-repo fleet scanning, scheduled compliance drift detection, PR approval policies, Slack/Teams notifications |
-| **CALM Support** | Multi-version CALM (1.0, 1.1, 1.2) with auto-detection, legacy type mapping, lenient parsing | CALM pattern library matching, bi-directional CALM editing (fix gaps → update architecture), auto-migration suggestions for older versions |
-| **Compliance Frameworks** | SOX, PCI-DSS, NIST-CSF, FINOS-CCC, SOC2 | HIPAA, GDPR, ISO 27001, FedRAMP, custom framework authoring |
-| **Deployment** | Vercel (single-tenant) | Self-hosted (Docker/K8s), multi-tenant SaaS, air-gapped on-prem, SSO/RBAC |
-| **MCP Server** | — | Expose CALMGuard as an MCP (Model Context Protocol) server — any AI agent or IDE can analyze CALM architectures, run compliance checks, and generate pipelines via tool calls. Enables integration with Claude Code, Cursor, VS Code Copilot, and custom agent workflows |
-| **Reporting** | Dashboard + JSON export | PDF/DOCX compliance reports, audit trail with timestamps, executive summary email digests, SOC2 Type II evidence packages |
+**Near-term (Phases 2-5):**
+
+| Phase | Capability | Impact |
+|-------|-----------|--------|
+| Intelligent Pipelines | DAST, mTLS verification, policy-as-code gates derived from CALM signals | Pipelines that are architecture-aware, not templated |
+| Runtime Drift Detection | CALM vs live infrastructure (AWS/Azure/GCP/K8s) comparison | Catch compliance drift in hours, not quarterly audits |
+| Pre-Deployment Validation | CI gate + PR bot that blocks non-compliant changes | Shift-left compliance — fail fast, fix before production |
+| CALMGuard as a Service | MCP server + REST API + CLI + GitHub App | Any tool, agent, or pipeline can invoke compliance checks |
+
+**Mid-term (Phases 6-9):**
+
+| Phase | Capability | Impact |
+|-------|-----------|--------|
+| Flow-Based Risk Modeling | Risk scoring along CALM data flows, cascading risk, blast radius estimation | Risk follows data paths, not just node attributes |
+| Secure IaC Generation | Production-ready Terraform, K8s manifests, Helm charts from CALM | Infrastructure that is compliant by construction |
+| Persistent Intelligence | PostgreSQL backend, cross-team learning, versioned skills | Enterprise-grade learning that survives restarts |
+| Graph Intelligence | GNN-based architecture analysis, vectorized reasoning bank, architecture embeddings | Structural compliance reasoning beyond pattern matching |
+
+**Long-term (Phases 10-12):**
+
+| Phase | Capability | Impact |
+|-------|-----------|--------|
+| Adaptive Pen Testing | CALM-guided penetration testing that evolves with the architecture | Test actual attack paths, not random endpoints |
+| Enterprise Deployment | Air-gapped, multi-tenant, SSO/RBAC, SOC2 Type II evidence | Production-ready for regulated financial institutions |
+| Global Learning Network | Federated compliance intelligence, industry benchmarks, community skills | Cross-industry compliance knowledge that improves for everyone |
 
 ## Team
 
