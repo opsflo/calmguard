@@ -39,11 +39,27 @@ export function GitHubInput() {
   const [filePath, setFilePath] = useState('examples/payment-gateway.calm.json');
   const [isLoading, setIsLoading] = useState(false);
 
+  /**
+   * Extract owner/repo from various input formats:
+   * - owner/repo
+   * - https://github.com/owner/repo
+   * - https://github.com/owner/repo.git
+   * - github.com/owner/repo
+   */
+  const parseRepoSlug = (input: string): [string, string] | null => {
+    const trimmed = input.trim().replace(/\.git$/, '');
+    // Try full URL: https://github.com/owner/repo or github.com/owner/repo
+    const urlMatch = trimmed.match(/(?:https?:\/\/)?github\.com\/([^/]+)\/([^/]+)$/);
+    if (urlMatch) return [urlMatch[1], urlMatch[2]];
+    // Try simple owner/repo
+    const parts = trimmed.split('/');
+    if (parts.length === 2 && parts[0] && parts[1]) return [parts[0], parts[1]];
+    return null;
+  };
+
   const validate = (): string | null => {
-    // repoSlug must contain exactly one '/'
-    const parts = repoSlug.trim().split('/');
-    if (parts.length !== 2 || !parts[0] || !parts[1]) {
-      return 'Repository must be in "owner/repo" format (e.g. finos/architecture-as-code)';
+    if (!parseRepoSlug(repoSlug)) {
+      return 'Repository must be in "owner/repo" format or a GitHub URL (e.g. https://github.com/finos/architecture-as-code)';
     }
     // filePath must end with .json
     if (!filePath.trim().endsWith('.json')) {
@@ -61,7 +77,7 @@ export function GitHubInput() {
       return;
     }
 
-    const [owner, repo] = repoSlug.trim().split('/');
+    const [owner, repo] = parseRepoSlug(repoSlug)!;
     const normalizedPath = filePath.trim();
 
     setIsLoading(true);
