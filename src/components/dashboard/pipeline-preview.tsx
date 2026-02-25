@@ -34,9 +34,20 @@ function normalizeCode(raw: string): string {
   code = code.replace(/^```[\w-]*\n?/gm, '').replace(/\n?```$/gm, '');
   // Replace literal escaped newlines with real newlines
   code = code.replace(/\\n/g, '\n');
+  // Replace literal escaped tabs with real tabs (LLMs sometimes emit \\t)
+  code = code.replace(/\\t/g, '  ');
   // Collapse multiple blank lines into a single blank line
   code = code.replace(/\n{3,}/g, '\n\n');
   return code.trim();
+}
+
+/**
+ * Ensure shiki HTML has newlines between <span class="line"> elements.
+ * Some shiki bundles emit all line spans on a single HTML line, which breaks
+ * <pre> whitespace rendering and the typewriter line-splitting logic.
+ */
+function ensureLineBreaks(html: string): string {
+  return html.replace(/<\/span><span class="line">/g, '</span>\n<span class="line">');
 }
 
 function getRawContent(tab: string, pipelineConfig: PipelineConfig): string {
@@ -149,7 +160,7 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
           .join('\n---\n') || '# No security scanning config generated';
         const infraContent = normalizeCode(pipelineConfig!.infrastructureAsCode.config) || '# No infrastructure config generated';
 
-        const [ghHtml, secHtml, infraHtml] = await Promise.all([
+        const [ghHtmlRaw, secHtmlRaw, infraHtmlRaw] = await Promise.all([
           codeToHtml(ghContent, {
             lang: 'yaml',
             theme: 'github-dark',
@@ -163,6 +174,11 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
             theme: 'github-dark',
           }),
         ]);
+
+        // Ensure newlines between line spans for proper rendering
+        const ghHtml = ensureLineBreaks(ghHtmlRaw);
+        const secHtml = ensureLineBreaks(secHtmlRaw);
+        const infraHtml = ensureLineBreaks(infraHtmlRaw);
 
         if (!cancelled) {
           const htmlMap = { github: ghHtml, security: secHtml, infra: infraHtml };
@@ -422,7 +438,7 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
             </div>
           ) : (
             <div
-              className={`text-xs font-mono overflow-auto ${codeMaxH} [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:bg-transparent [&_code]:leading-relaxed [&_code]:whitespace-pre-wrap`}
+              className={`text-xs font-mono overflow-auto ${codeMaxH} [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:bg-transparent [&_pre]:overflow-x-auto [&_code]:leading-relaxed`}
               dangerouslySetInnerHTML={{ __html: getTabHtml(tab) }}
             />
           )}
