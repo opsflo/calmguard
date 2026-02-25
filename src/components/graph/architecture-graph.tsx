@@ -252,7 +252,7 @@ function ArchitectureGraphInner({ compact = false }: ArchitectureGraphProps) {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
-        style={{ backgroundColor: '#1e293b' }}
+        style={{ '--xy-background-color': '#1e293b', backgroundColor: '#1e293b' } as React.CSSProperties}
       >
         <TouringCamera
           nodes={nodes}
