@@ -14,7 +14,7 @@ import { deterministicRuleSchema } from '@/lib/learning/types';
  */
 export const analyzeRequestSchema = z.object({
   calm: z.unknown(),
-  frameworks: z.array(z.enum(['SOX', 'PCI-DSS', 'CCC', 'NIST-CSF'])).optional(),
+  frameworks: z.array(z.enum(['SOX', 'PCI-DSS', 'CCC', 'NIST-CSF', 'SOC2'])).optional(),
   demoMode: z.boolean().optional().default(false),
   /** Deterministic rules from the client-side learning store */
   deterministicRules: z.array(deterministicRuleSchema).optional().default([]),
