@@ -8,7 +8,7 @@ metadata:
 spec:
   role: |
     Map CALM architecture controls to regulatory compliance frameworks (SOX, PCI-DSS, FINOS CCC,
-    NIST-CSF). Assess compliance status for each applicable requirement based on CALM controls
+    NIST-CSF, SOC2). Assess compliance status for each applicable requirement based on CALM controls
     defined in nodes and relationships. Identify compliance gaps, evaluate control effectiveness,
     and provide remediation recommendations. Generate per-framework compliance scores and produce
     detailed evidence for auditors.
@@ -21,6 +21,7 @@ spec:
     - skills/PCI-DSS.md
     - skills/FINOS-CCC.md
     - skills/NIST-CSF.md
+    - skills/SOC2.md
   inputs:
     - type: parsed-architecture
   outputs:

@@ -14,7 +14,7 @@ import type { AnalysisInput } from '@/lib/calm/extractor';
 export const complianceMappingSchema = z.object({
   frameworkMappings: z.array(
     z.object({
-      framework: z.enum(['SOX', 'PCI-DSS', 'CCC', 'NIST-CSF']),
+      framework: z.enum(['SOX', 'PCI-DSS', 'CCC', 'NIST-CSF', 'SOC2']),
       controlId: z.string(),
       controlName: z.string(),
       calmControlId: z.string().nullable(),
@@ -26,7 +26,7 @@ export const complianceMappingSchema = z.object({
   ),
   frameworkScores: z.array(
     z.object({
-      framework: z.enum(['SOX', 'PCI-DSS', 'CCC', 'NIST-CSF']),
+      framework: z.enum(['SOX', 'PCI-DSS', 'CCC', 'NIST-CSF', 'SOC2']),
       score: z.number().min(0).max(100),
       totalControls: z.number().int().nonnegative(),
       compliantControls: z.number().int().nonnegative(),
@@ -113,7 +113,7 @@ ${skillsContent}
 ${JSON.stringify(input, null, 2)}
 
 **TASK:**
-Map the CALM controls to SOX, PCI-DSS, CCC, and NIST-CSF frameworks.
+Map the CALM controls to SOX, PCI-DSS, CCC, NIST-CSF, and SOC2 frameworks.
 
 For each framework:
 1. Identify relevant controls from the framework
@@ -195,7 +195,7 @@ Provide structured output matching the schema.`;
     emitAgentEvent({
       type: 'completed',
       agent: agentIdentity,
-      message: `Compliance mapping complete: ${result.frameworkMappings.length} mappings, ${result.gaps.length} gaps across 4 frameworks`,
+      message: `Compliance mapping complete: ${result.frameworkMappings.length} mappings, ${result.gaps.length} gaps across 5 frameworks`,
     });
 
     const duration = performance.now() - startTime;
