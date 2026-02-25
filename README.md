@@ -52,7 +52,7 @@ Built for the **DTCC/FINOS Innovate.DTCC AI Hackathon** (Feb 23–27, 2026).
 
 1. **Connect** — Upload a CALM architecture JSON, fetch from GitHub, or use built-in demos
 2. **Pre-Check** — Oracle fires deterministic rules from previously learned patterns (zero-latency, no LLM)
-3. **Analyze** — 4 LLM agents run in parallel to assess compliance, map controls, score risks
+3. **Analyze** — Squad of LLM agents assesses compliance across 5 frameworks, scores risks, generates CI pipelines and cloud infrastructure
 4. **Act** — Generate CI/CD pipelines, remediation PRs, compliance reports — and learn patterns for next time
 
 ## Quick Start
@@ -118,6 +118,7 @@ graph TB
         AA[Scout<br/>Architecture Analyzer]
         CM[Ranger<br/>Compliance Mapper]
         PG[Arsenal<br/>Pipeline Generator]
+        CI[Cloud Infra<br/>Terraform Generator]
     end
 
     subgraph Phase2["Phase 2 — Sequential LLM"]
@@ -145,13 +146,13 @@ graph TB
     Stream --> Store --> UI
     GH --> Parse
     LS --> Oracle
-    Parse --> Oracle --> AA & CM & PG
-    AA & CM & PG --> RS
+    Parse --> Oracle --> AA & CM & PG & CI
+    AA & CM & PG & CI --> RS
     Skills -.-> CM
     PROTO -.-> PG
     DEVSEC -.-> PG
-    AA & CM & PG & RS -.-> Providers
-    AA & CM & PG & RS --> Stream
+    AA & CM & PG & CI & RS -.-> Providers
+    AA & CM & PG & CI & RS --> Stream
     RS --> LS
 ```
 
@@ -305,6 +306,17 @@ CALMGuard connects directly to GitHub repositories for a complete compliance-as-
 - **SHA Tracking** — all PRs track the source file SHA for auditability
 
 Requires a `GITHUB_TOKEN` in `.env.local` for PR generation.
+
+### Remediation in Action
+
+CALMGuard doesn't just report compliance gaps — it fixes them. Here's a real CALM architecture before and after automated remediation:
+
+| | Repository | Description |
+|---|-----------|-------------|
+| **Before** | [`payment-gateway.calm.json`](https://github.com/gjs-opsflo/payment-gateway-calm/blob/main/payment-gateway.calm.json) | Original architecture with compliance gaps — weak protocols, missing controls |
+| **After** | [`payment-gateway.calm.json`](https://github.com/gjs-opsflo/calm-payment-gw03/blob/main/payment-gateway.calm.json) | CALMGuard-remediated — near 100% compliant across all 5 frameworks |
+
+The remediation PR upgrades protocols (JDBC→TLS, HTTP→HTTPS), adds missing security controls (PCI-DSS, NIST-CSF, SOX, SOC2), and preserves all original architecture elements. LLM agents identify the gaps; deterministic code applies the fixes.
 
 ## Demo Architectures
 
