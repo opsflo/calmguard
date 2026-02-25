@@ -228,7 +228,7 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
         console.error('Shiki highlighting failed:', err);
         if (!cancelled) {
           const wrapPlain = (code: string) =>
-            `<pre class="p-4 bg-transparent"><code class="leading-relaxed">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+            `<pre class="p-5 bg-transparent"><code class="leading-relaxed text-slate-200">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
 
           const secContentPlain = pipelineConfig!.securityScanning.tools
             .map((t: { name: string; config: string }) => `# ${t.name}\n${normalizeCode(t.config)}`)
@@ -469,7 +469,7 @@ export function PipelinePreview({ compact = false }: PipelinePreviewProps) {
             </div>
           ) : (
             <div
-              className={`text-xs font-mono overflow-auto ${codeMaxH} [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:bg-transparent [&_pre]:overflow-x-auto [&_code]:leading-relaxed`}
+              className={`text-sm font-mono overflow-auto ${codeMaxH} rounded-lg bg-[#0d1117] border border-slate-700/50 [&_pre]:p-5 [&_pre]:rounded-lg [&_pre]:bg-transparent [&_pre]:overflow-x-auto [&_code]:leading-relaxed [&_.line]:min-h-[1.25em]`}
               dangerouslySetInnerHTML={{ __html: getTabHtml(tab) }}
             />
           )}
