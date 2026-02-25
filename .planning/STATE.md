@@ -44,6 +44,7 @@ v1.2 decisions (resolved during 07-03 execution):
 ### Pending Todos
 
 - [ ] Update README with actual agent names and profiles (scout, ranger, arsenal, sniper) — `.planning/todos/pending/2026-02-25-update-readme-agent-names-profiles.md`
+- [ ] Split GitOps into 3 PR buttons (DevSecOps CI, Compliance Remediation, Cloud Infra) — `.planning/todos/pending/2026-02-25-split-gitops-3-pr-buttons.md`
 
 ### Blockers/Concerns
 
