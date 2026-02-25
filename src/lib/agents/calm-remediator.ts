@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { generateObject } from 'ai';
 import { loadAgentConfig } from './registry';
+import { loadSkillsForAgent } from '@/lib/skills/loader';
 import { getModelForAgent, getDefaultModel } from '@/lib/ai/provider';
 import { emitAgentEvent } from '@/lib/ai/streaming';
 import { type AgentResult, type AgentIdentity } from './types';
@@ -65,6 +66,9 @@ export async function remediateCalm(
     // Load agent configuration
     const config = loadAgentConfig(agentName);
 
+    // Load skills (PROTOCOL-SECURITY knowledge for regulatory grounding)
+    const skillsContent = loadSkillsForAgent(config);
+
     // Construct AgentIdentity from config metadata
     const agentIdentity: AgentIdentity = {
       name: config.metadata.name,
@@ -92,6 +96,9 @@ export async function remediateCalm(
     const prompt = `${config.spec.role}
 
 You are remediating a CALM v1.1 architecture document to address compliance gaps.
+
+**PROTOCOL SECURITY KNOWLEDGE:**
+${skillsContent}
 
 **ORIGINAL CALM DOCUMENT:**
 ${JSON.stringify(originalCalm, null, 2)}

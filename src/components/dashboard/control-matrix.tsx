@@ -125,7 +125,7 @@ export function ControlMatrix() {
 // ─── Inner component (renders after data check) ───────────────────────────────
 
 interface FrameworkMapping {
-  framework: 'SOX' | 'PCI-DSS' | 'CCC' | 'NIST-CSF';
+  framework: 'SOX' | 'PCI-DSS' | 'CCC' | 'NIST-CSF' | 'SOC2';
   controlId: string;
   controlName: string;
   calmControlId: string | null;
