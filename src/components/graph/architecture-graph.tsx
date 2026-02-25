@@ -252,6 +252,7 @@ function ArchitectureGraphInner({ compact = false }: ArchitectureGraphProps) {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
+        style={{ backgroundColor: '#1e293b' }}
       >
         <TouringCamera
           nodes={nodes}
@@ -302,7 +303,7 @@ export const ArchitectureGraph = memo(function ArchitectureGraph({ compact = fal
 
   if (!analysisInput) {
     return (
-      <div className="w-full h-full min-h-[400px] flex items-center justify-center bg-slate-900/50 rounded-lg border border-dashed border-slate-700">
+      <div className="w-full h-full min-h-[400px] flex items-center justify-center bg-slate-800 rounded-lg border border-dashed border-slate-700">
         <div className="text-center">
           <p className="text-slate-400 text-sm">Load an architecture to view graph</p>
           <p className="text-slate-600 text-xs mt-1">Select a demo or upload a CALM JSON file</p>
