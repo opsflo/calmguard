@@ -124,18 +124,16 @@ export async function runAnalysis(
 
       preCheckResults = runDeterministicPreChecks(input, rules, selectedFrameworks);
 
-      // Emit advisory finding events for each rule that fired
-      for (const result of preCheckResults) {
+      // Single summary message instead of per-finding noise
+      if (preCheckResults.length > 0) {
+        const frameworks = [...new Set(preCheckResults.map(r => r.framework))];
         emitAgentEvent({
           type: 'finding',
           agent: oracleIdentity,
-          message: `${result.framework}: ${result.description}`,
+          message: `Injecting ${preCheckResults.length} learned compliance insight${preCheckResults.length === 1 ? '' : 's'} (${frameworks.join(', ')})`,
           severity: 'info',
-          data: { deterministic: true, advisory: true, ...result },
+          data: { deterministic: true, advisory: true, count: preCheckResults.length, frameworks },
         });
-
-        // Stagger findings for visual impact
-        await sleep(400);
       }
     } else {
       emitAgentEvent({
