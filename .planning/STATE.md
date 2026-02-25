@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 
 ## Current Position
 
-Phase: 9 of 11 (Multi-Version CALM) — complete
-Plan: 2 of 2 complete (09-01 normalizer+parser done; 09-02 store+UI done)
-Status: Phase 9 complete. All multi-version CALM support wired end-to-end.
-Last activity: 2026-02-25 — 09-02 executed (store calmVersion, setCalmData call sites, header badge, v1.0 demo)
+Phase: 10 of 11 (GitOps Split) — in progress
+Plan: 2 of 3 complete (10-01 cloud-infra skill+generator done; 10-02 three-button UI + infraPR store done)
+Status: Plan 10-02 complete. GitOpsCard has 3 buttons with concurrency lock. Plan 10-03 extends create-pr API for infra type.
+Last activity: 2026-02-25 — 10-02 executed (PRRecord infra type, infraPR store, GitOpsCard 3-button layout, concurrency lock)
 
-Progress: [████░░░░░░] 40%
+Progress: [████░░░░░░] 45%
 
 ## Performance Metrics
 
@@ -28,6 +28,8 @@ Progress: [████░░░░░░] 40%
 | 08-compliance-intelligence | 02 | 3min | 2 | 5 |
 | 09-multi-version-calm | 01 | 8min | 2 | 7 |
 | 09-multi-version-calm | 02 | 10min | 2 | 9 |
+| 10-gitops-split | 01 | — | 2 | 2 |
+| 10-gitops-split | 02 | 2min | 2 | 3 |
 
 ## Accumulated Context
 
@@ -52,11 +54,14 @@ v1.3 decisions:
 - [Phase 09-multi-version-calm]: Lenient CALM v1.0 mapping: unknown node types to service, unknown rel types to connects — maximizes compatibility with real-world v1.0 documents
 - [Phase 09-multi-version-calm]: setCalmData accepts optional version parameter to avoid breaking all call sites; API boundary consumers cast version string to CalmVersion type
 - [Phase 09-multi-version-calm]: CALM version badge uses neutral slate styling — no warnings for v1.0, consistent with locked CONTEXT.md decision
+- [Phase 10-gitops-split]: Explicit disabled prop on PRSection instead of overloading onGenerate === undefined — avoids conflating "coming soon" with "temporarily disabled during generation"
+- [Phase 10-gitops-split]: isAnyGenerating derived at GitOpsCard level, passed down as disabled — single source of truth for concurrency lock
+- [Phase 10-gitops-split]: Generating branch in PRSection renders unconditionally, ignoring disabled — active spinner never gets locked
 
 ### Pending Todos
 
 - [ ] Update README with actual agent names and profiles (scout, ranger, arsenal, sniper) — `.planning/todos/pending/2026-02-25-update-readme-agent-names-profiles.md`
-- [ ] Split GitOps into 3 PR buttons (DevSecOps CI, Compliance Remediation, Cloud Infra) — `.planning/todos/pending/2026-02-25-split-gitops-3-pr-buttons.md`
+- [x] Split GitOps into 3 PR buttons (DevSecOps CI, Compliance Remediation, Cloud Infra) — completed in 10-02
 
 ### Roadmap Evolution
 
@@ -68,8 +73,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-25 (Phase 9, Plan 2 execution)
-Stopped at: Completed 09-02-PLAN.md — store calmVersion field, all setCalmData call sites, header badge, v1.0 demo. Phase 9 complete.
+Last session: 2026-02-25 (Phase 10, Plan 2 execution)
+Stopped at: Completed 10-02-PLAN.md — PRRecord infra type, infraPR Zustand state, GitOpsCard 3-button layout with concurrency lock.
 
 ---
 
