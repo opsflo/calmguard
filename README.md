@@ -28,25 +28,32 @@ Built for the **DTCC/FINOS Innovate.DTCC AI Hackathon** (Feb 23–27, 2026).
 
 ## Key Features
 
-| CALM Parser | AI Agent Squad | Real-Time Dashboard | Pipeline Generator |
-|:-----------:|:--------------:|:-------------------:|:------------------:|
-| Full CALM 1.1 schema support with Zod validation | 4 specialized agents: Analyzer, Compliance Mapper, Risk Scorer, Pipeline Gen | React Flow architecture graphs with touring camera animation | GitHub Actions, security scanning, IaC configs |
-| Nodes, relationships, flows, interfaces, controls | Multi-provider LLM: Gemini, Claude, GPT, Grok | Live SSE streaming with agent status indicators | SAST, dependency audit, license compliance |
-| Demo architectures included | Parallel Phase 1 + sequential Phase 2 orchestration | Compliance gauges, risk heat maps, exportable reports | Automated from your architecture definition |
+| AI Agent Squad | Compliance Skills | Learning Intelligence | GitOps Integration |
+|:--------------:|:-----------------:|:---------------------:|:------------------:|
+| 6 agents: Scout, Ranger, Arsenal, Sniper, Oracle, HQ | 6 skill files with 100+ KB of regulatory knowledge | Self-learning engine with pattern fingerprinting | Fetch CALM from GitHub, generate PRs |
+| Multi-provider LLM: Gemini, Claude, GPT, Grok | SOX, PCI-DSS, NIST-CSF, FINOS-CCC, SOC2, Protocol Security | Auto-promotes patterns to deterministic rules after 3 observations | DevSecOps CI pipeline and compliance remediation PRs |
+| Parallel Phase 1 + sequential Phase 2 orchestration | Closed Control ID Reference tables prevent LLM hallucination | Phase 0 Oracle fires instant findings before LLM agents start | Full repo-connected workflow with SHA tracking |
+
+| CALM Parser | Real-Time Dashboard | Pipeline Generator |
+|:-----------:|:-------------------:|:------------------:|
+| Full CALM 1.1 schema support with Zod validation | React Flow architecture graphs with touring camera animation | GitHub Actions, security scanning, IaC configs |
+| Nodes, relationships, flows, interfaces, controls | Live SSE streaming with agent status indicators | SAST, dependency audit, license compliance |
+| Demo architectures included | Compliance gauges, risk heat maps, exportable reports | Automated from your architecture definition |
 
 ## How It Works
 
 ```
-┌─────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  1. Upload   │────▶│   2. Analyze      │────▶│    3. Act        │
-│  CALM JSON   │     │   AI Agent Squad  │     │  Pipelines +     │
-│              │     │   scores & maps   │     │  Compliance Report│
-└─────────────┘     └──────────────────┘     └─────────────────┘
+┌─────────────┐     ┌──────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  1. Connect  │────▶│  2. Pre-Check     │────▶│  3. Analyze       │────▶│  4. Act          │
+│  CALM JSON / │     │  Oracle fires     │     │  AI Agent Squad   │     │  PRs, Pipelines, │
+│  GitHub Repo │     │  learned rules    │     │  scores & maps    │     │  Reports, Learn  │
+└─────────────┘     └──────────────────┘     └──────────────────┘     └─────────────────┘
 ```
 
-1. **Upload** a CALM architecture JSON (or use built-in demos: Payment Gateway, Trading Platform)
-2. **Analyze** — four AI agents run in parallel to assess compliance, map controls, score risks
-3. **Act** — get generated CI/CD pipelines, security configs, and a full compliance report
+1. **Connect** — Upload a CALM architecture JSON, fetch from GitHub, or use built-in demos
+2. **Pre-Check** — Oracle fires deterministic rules from previously learned patterns (zero-latency, no LLM)
+3. **Analyze** — 4 LLM agents run in parallel to assess compliance, map controls, score risks
+4. **Act** — Generate CI/CD pipelines, remediation PRs, compliance reports — and learn patterns for next time
 
 ## Quick Start
 
@@ -63,16 +70,19 @@ cd dtcch-2026-opsflow-llc
 pnpm install
 ```
 
-Create a `.env` file:
+Create a `.env.local` file:
 
 ```bash
 # Required: at least one provider
 GOOGLE_GENERATIVE_AI_API_KEY=your-gemini-key
 
-# Optional: additional providers
+# Optional: additional LLM providers
 ANTHROPIC_API_KEY=your-claude-key
 OPENAI_API_KEY=your-openai-key
 XAI_API_KEY=your-grok-key
+
+# Optional: GitHub integration (enables PR generation)
+GITHUB_TOKEN=your-github-token
 ```
 
 ### Run
@@ -91,18 +101,36 @@ graph TB
         UI[Interactive UI]
         SSE[SSE EventSource]
         Store[Zustand Store]
+        LS[Learning Store<br/>localStorage]
     end
 
     subgraph API["Next.js API Routes"]
         Parse[CALM Parser]
         Stream[SSE Stream]
+        GH[GitHub API]
     end
 
-    subgraph Agents["AI Agent Squad"]
-        AA[Architecture Analyzer]
-        CM[Compliance Mapper]
-        PG[Pipeline Generator]
-        RS[Risk Scorer]
+    subgraph Phase0["Phase 0 — Deterministic"]
+        Oracle["Oracle<br/>Learned Rules"]
+    end
+
+    subgraph Phase1["Phase 1 — Parallel LLM"]
+        AA[Scout<br/>Architecture Analyzer]
+        CM[Ranger<br/>Compliance Mapper]
+        PG[Arsenal<br/>Pipeline Generator]
+    end
+
+    subgraph Phase2["Phase 2 — Sequential LLM"]
+        RS[Sniper<br/>Risk Scorer]
+    end
+
+    subgraph Skills["Compliance Skills"]
+        SOX[SOX.md]
+        PCI[PCI-DSS.md]
+        NIST[NIST-CSF.md]
+        CCC[FINOS-CCC.md]
+        SOC2[SOC2.md]
+        PROTO[PROTOCOL-SECURITY.md]
     end
 
     subgraph Providers["LLM Providers"]
@@ -114,10 +142,15 @@ graph TB
 
     UI --> SSE --> Stream
     Stream --> Store --> UI
-    Parse --> AA & CM & PG
+    GH --> Parse
+    LS --> Oracle
+    Parse --> Oracle --> AA & CM & PG
     AA & CM & PG --> RS
+    Skills -.-> CM
+    PROTO -.-> PG
     AA & CM & PG & RS -.-> Providers
     AA & CM & PG & RS --> Stream
+    RS --> LS
 ```
 
 ## Tech Stack
@@ -137,28 +170,67 @@ graph TB
 
 ## Agent System
 
-CALMGuard runs a coordinated squad of AI agents, defined as YAML configurations (`calmguard/v1` API) in [`agents/`](agents/):
+CALMGuard runs a coordinated squad of 6 AI agents with tactical callsigns. LLM agents are defined as YAML configurations (`calmguard/v1` API) in [`agents/`](agents/):
 
-| Agent | Icon | Role | Model | Output |
-|-------|------|------|-------|--------|
-| **Architecture Analyzer** | `network` | Extract structural insights — components, data flows, trust boundaries, security zones, protocol usage, deployment topology | Gemini 2.5-flash (temp 0.2) | Architecture analysis with severity-scored findings |
-| **Compliance Mapper** | `shield-check` | Map CALM controls to SOX, PCI-DSS, FINOS CCC, NIST-CSF. Assess compliance status, identify gaps, generate per-framework scores with auditor evidence | Gemini 2.5-flash (temp 0.2) | Framework mappings, gap analysis, remediation recommendations |
-| **Pipeline Generator** | `git-branch` | Generate production-ready GitHub Actions CI/CD, SAST/DAST scanning configs (Semgrep, CodeQL), Terraform IaC matching CALM deployment topology | Gemini 2.5-flash (temp 0.3) | GitHub Actions YAML, security tool configs, IaC templates |
-| **Risk Scorer** | `gauge` | Aggregate all Phase 1 results into weighted risk assessment — overall score (0-100), per-framework scores, node-level risk heat map, executive summary | Gemini 2.5-flash (temp 0.1) | Weighted risk scores, heat map data, prioritized findings |
-| **Orchestrator** | `brain` | Coordinate multi-agent lifecycle — parallel Phase 1 + sequential Phase 2, event streaming, result aggregation, graceful degradation | Gemini 2.5-flash (temp 0.1) | Aggregated analysis result |
+| Callsign | Agent | Phase | Role | Model |
+|----------|-------|-------|------|-------|
+| **HQ** | Orchestrator | All | Coordinate multi-agent lifecycle — Phase 0 pre-checks, parallel Phase 1, sequential Phase 2, event streaming, result aggregation, graceful degradation | Controller (no LLM) |
+| **Oracle** | Learning Engine | 0 | Fire deterministic rules from previously learned patterns — zero-latency, no LLM calls. Instant compliance findings before any AI agent starts | Deterministic (no LLM) |
+| **Scout** | Architecture Analyzer | 1 | Extract structural insights — components, data flows, trust boundaries, security zones, protocol usage, deployment topology | Gemini 2.5-flash |
+| **Ranger** | Compliance Mapper | 1 | Map CALM controls to SOX, PCI-DSS, FINOS CCC, NIST-CSF, SOC2. Assess compliance status, identify gaps, generate per-framework scores with auditor evidence | Gemini 2.5-flash |
+| **Arsenal** | Pipeline Generator | 1 | Generate production-ready GitHub Actions CI/CD, SAST/DAST scanning configs (Semgrep, CodeQL), Terraform IaC matching CALM deployment topology | Gemini 2.5-flash |
+| **Sniper** | Risk Scorer | 2 | Aggregate all Phase 1 results into weighted risk assessment — overall score (0-100), per-framework scores, node-level risk heat map, executive summary | Gemini 2.5-flash |
 
-**Orchestration:** Phase 1 runs Analyzer + Mapper + Pipeline Gen in parallel (`Promise.allSettled`). Phase 2 runs Risk Scorer sequentially on aggregated results. All agents emit typed SSE events (`started`, `thinking`, `finding`, `completed`) streamed to the dashboard in real-time.
+**Three-phase orchestration:**
 
-**Skills injection:** The Compliance Mapper loads 90+ KB of framework knowledge from [`skills/`](skills/) (SOX.md, PCI-DSS.md, FINOS-CCC.md, NIST-CSF.md) into its prompt context for deep regulatory mapping.
+- **Phase 0 (Oracle):** Deterministic pre-checks — fires learned rules instantly, no LLM latency
+- **Phase 1 (Parallel):** Scout + Ranger + Arsenal run concurrently via `Promise.allSettled`
+- **Phase 2 (Sequential):** Sniper aggregates Phase 0 + Phase 1 results into final risk assessment
 
-## Compliance Frameworks
+All agents emit typed SSE events (`started`, `thinking`, `finding`, `completed`) streamed to the dashboard in real-time.
 
-CALMGuard ships with deep knowledge of four compliance frameworks as [skill files](skills/):
+## Compliance Skills
 
-- **NIST Cybersecurity Framework (CSF)** — 23.4 KB of mappable controls
-- **PCI DSS** — Payment card industry security standards
-- **SOX** — Financial reporting and audit requirements
-- **FINOS Common Cloud Controls (CCC)** — Cloud-native security controls
+CALMGuard's compliance intelligence is powered by **skill files** — markdown documents in [`skills/`](skills/) that inject deep regulatory knowledge into agent prompts. Each skill file contains framework-specific control mappings, CALM field correlations, and **Closed Control ID Reference** tables with `CITE EXACTLY AS SHOWN` instructions to prevent LLM hallucination of control IDs.
+
+| Skill File | Framework | Content | Agent |
+|-----------|-----------|---------|-------|
+| [`SOX.md`](skills/SOX.md) | Sarbanes-Oxley | SOX 404 ITGC controls, COSO framework mappings | Ranger |
+| [`PCI-DSS.md`](skills/PCI-DSS.md) | PCI DSS 4.0 | 19 CALM-relevant requirements (Req 2.2.1–12.6.2), closed ID reference | Ranger |
+| [`NIST-CSF.md`](skills/NIST-CSF.md) | NIST CSF 2.0 | 21 subcategory IDs across all 6 functions (GV, ID, PR, DE, RS, RC) | Ranger |
+| [`FINOS-CCC.md`](skills/FINOS-CCC.md) | FINOS Common Cloud Controls | Cloud-native security controls | Ranger |
+| [`SOC2.md`](skills/SOC2.md) | SOC2 TSC | 21 AICPA Trust Service Criteria (CC6.x, CC7.x, CC8.x, CC9.x) | Ranger |
+| [`PROTOCOL-SECURITY.md`](skills/PROTOCOL-SECURITY.md) | Cross-framework | Protocol upgrade mappings (HTTP→HTTPS, FTP→SFTP, etc.) with PCI-DSS + NIST + SOC2 grounding | Arsenal |
+
+Skills are loaded at runtime via `loadSkillsForAgent()` and injected as knowledge blocks in agent prompts. This gives agents grounded, auditable regulatory knowledge rather than relying on parametric LLM memory.
+
+## Learning Intelligence
+
+CALMGuard includes a **self-learning compliance engine** that gets smarter with every analysis:
+
+1. **Pattern Extraction** — After each analysis, the engine fingerprints recurring compliance patterns from structural triggers (protocols, node types, relationships, missing controls)
+2. **Confidence Tracking** — Each pattern tracks observation count and confidence score across runs
+3. **Auto-Promotion** — When a pattern is observed 3+ times with 75%+ confidence, it's automatically promoted to a **deterministic rule**
+4. **Phase 0 Pre-Checks** — On the next analysis, Oracle fires these deterministic rules instantly (no LLM) before any AI agent starts
+5. **Persistence** — All patterns, rules, and run history persist in `localStorage` across sessions
+
+The Learning Intelligence dashboard panel shows:
+- **Intelligence Score** (0-100) — weighted from pattern coverage, confidence, rule maturity, and run history
+- **Pattern Library** — all discovered compliance patterns sorted by confidence
+- **Learning Curve** — Recharts visualization of intelligence growth over time
+
+> *"Run it once, it learns. Run it three times, it auto-generates deterministic compliance rules. By run 4, Oracle fires instant findings before the LLM even starts."*
+
+## GitOps Integration
+
+CALMGuard connects directly to GitHub repositories for a complete compliance-as-code workflow:
+
+- **Fetch CALM from GitHub** — enter `owner/repo` and file path, CALMGuard fetches and parses the architecture
+- **DevSecOps CI Pipeline PRs** — generate and push GitHub Actions workflows with security scanning
+- **Compliance Remediation PRs** — generate CALM architecture changes that close compliance gaps
+- **SHA Tracking** — all PRs track the source file SHA for auditability
+
+Requires a `GITHUB_TOKEN` in `.env.local` for PR generation.
 
 ## Demo Architectures
 
