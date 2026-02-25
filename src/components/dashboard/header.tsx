@@ -18,6 +18,7 @@ import { AnalyzeButton } from '@/components/dashboard/analyze-button';
 export function Header() {
   const rawCalmData = useAnalysisStore((state) => state.rawCalmData);
   const analysisInput = useAnalysisStore((state) => state.analysisInput);
+  const calmVersion = useAnalysisStore((state) => state.calmVersion);
   const status = useAnalysisStore((state) => state.status);
   const selectedDemoId = useAnalysisStore((state) => state.selectedDemoId);
   const selectedFrameworks = useAnalysisStore((state) => state.selectedFrameworks);
@@ -97,14 +98,24 @@ export function Header() {
           loading={isAnalyzing}
         />
 
-        {/* Parse status badge */}
+        {/* Parse status badges — version + node/relationship counts */}
         {analysisInput && (
-          <Badge
-            variant="secondary"
-            className="bg-slate-800 text-slate-300 hover:bg-slate-700"
-          >
-            Parsed: {nodeCount} nodes, {relationshipCount} relationships
-          </Badge>
+          <>
+            {calmVersion && (
+              <Badge
+                variant="secondary"
+                className="bg-slate-800 text-slate-300 hover:bg-slate-700"
+              >
+                CALM v{calmVersion}
+              </Badge>
+            )}
+            <Badge
+              variant="secondary"
+              className="bg-slate-800 text-slate-300 hover:bg-slate-700"
+            >
+              Parsed: {nodeCount} nodes, {relationshipCount} relationships
+            </Badge>
+          </>
         )}
       </div>
     </header>
