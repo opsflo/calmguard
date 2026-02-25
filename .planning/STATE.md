@@ -11,9 +11,9 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 ## Current Position
 
 Phase: 8 of 11 (Compliance Intelligence) — executing
-Plan: 1 of 4 complete
-Status: Plan 08-01 complete (compliance skill files), Plan 08-02 next
-Last activity: 2026-02-25 — compliance intelligence skill files authored (4 skill files, 61 control IDs)
+Plan: 2 of 4 complete
+Status: Plan 08-02 complete (skill wiring + SOC2 enum extension), Plan 08-03 next
+Last activity: 2026-02-25 — skill wiring: SOC2 as fifth framework in compliance-mapper, PROTOCOL-SECURITY injected into calm-remediator
 
 Progress: [█░░░░░░░░░] 10%
 
@@ -25,6 +25,7 @@ Progress: [█░░░░░░░░░] 10%
 | 07-gitops-pr-generation | 02 | 9min | 2 | 6 |
 | 07-gitops-pr-generation | 03 | 5min | 2 | 5 |
 | 08-compliance-intelligence | 01 | 3min | 3 | 4 |
+| 08-compliance-intelligence | 02 | 3min | 2 | 5 |
 
 ## Accumulated Context
 
@@ -42,6 +43,9 @@ v1.3 decisions:
 - SOC2 CC6/CC7 as highest CALM-signal criteria; CC1-CC5 are organizational (not CALM-observable)
 - PROTOCOL-SECURITY.md cross-framework grounding (PCI-DSS + NIST CSF + SOC2) for maximum rationale authority
 - Closed Control ID Reference tables with "CITE EXACTLY AS SHOWN" instruction to prevent LLM hallucination
+- SOC2 added to both frameworkMappings and frameworkScores enums simultaneously to maintain schema consistency
+- PROTOCOL SECURITY KNOWLEDGE block placed before ORIGINAL CALM DOCUMENT in remediator prompt (mirrors compliance-mapper pattern)
+- control-matrix.tsx local interface updated inline with Zod enum rather than importing from agent
 
 ### Pending Todos
 
@@ -54,8 +58,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-25 (Phase 08 Plan 01 execution)
-Stopped at: Completed 08-01-PLAN.md — compliance skill files (SOC2.md, PROTOCOL-SECURITY.md, PCI-DSS appendix, NIST-CSF appendix)
+Last session: 2026-02-25 (Phase 08 Plan 02 execution)
+Stopped at: Completed 08-02-PLAN.md — skill wiring (SOC2 as fifth framework, PROTOCOL-SECURITY injected into remediator)
 
 ---
 

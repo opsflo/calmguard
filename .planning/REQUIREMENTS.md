@@ -11,7 +11,7 @@
 - [x] **COMP-02**: NIST-CSF skill file includes Function/Category/Subcategory IDs from CSF 2.0 (e.g., GV.OC-01, PR.DS-01) with CALM field mappings
 - [x] **COMP-03**: SOC2 skill file created with AICPA Trust Service Criteria IDs (CC6.1, CC7.2, A1.1) and CALM field mappings
 - [x] **COMP-04**: Protocol security skill file with explicit upgrade mappings (HTTP→HTTPS, FTP→SFTP, LDAP→TLS, TCP→TLS) grounding remediation decisions
-- [ ] **COMP-05**: Agent output includes citable control IDs from skill files, not hallucinated identifiers
+- [x] **COMP-05**: Agent output includes citable control IDs from skill files, not hallucinated identifiers
 
 ### Multi-Version CALM
 
@@ -68,7 +68,7 @@
 | COMP-02 | Phase 8 | Complete |
 | COMP-03 | Phase 8 | Complete |
 | COMP-04 | Phase 8 | Complete |
-| COMP-05 | Phase 8 | Pending |
+| COMP-05 | Phase 8 | Complete |
 | CALM-01 | Phase 9 | Pending |
 | CALM-02 | Phase 9 | Pending |
 | CALM-03 | Phase 9 | Pending |
