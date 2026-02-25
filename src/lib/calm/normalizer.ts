@@ -197,14 +197,19 @@ function normalizeV10Relationship(rawRel: unknown, index: number): Record<string
   }
   rel['relationship-type'] = relType;
 
-  // Convert { from, to } to connects structure
+  // Convert { from, to } to connects structure — but preserve existing connects if already normalized
   if (relType === 'connects') {
-    const fromNode = typeof rawRel['from'] === 'string' ? rawRel['from'] : '';
-    const toNode = typeof rawRel['to'] === 'string' ? rawRel['to'] : '';
-    rel['connects'] = {
-      source: { node: fromNode },
-      destination: { node: toNode },
-    };
+    if (isPlainObject(rawRel['connects'])) {
+      // Already normalized — preserve existing connects structure
+      rel['connects'] = rawRel['connects'];
+    } else {
+      const fromNode = typeof rawRel['from'] === 'string' ? rawRel['from'] : '';
+      const toNode = typeof rawRel['to'] === 'string' ? rawRel['to'] : '';
+      rel['connects'] = {
+        source: { node: fromNode },
+        destination: { node: toNode },
+      };
+    }
   } else {
     // Preserve other fields for non-connects types
     for (const key of Object.keys(rawRel)) {
@@ -231,6 +236,9 @@ function normalizeV10Relationship(rawRel: unknown, index: number): Record<string
  */
 function normalizeV10(raw: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = { ...raw };
+
+  // Strip v1.0-only fields that would re-trigger version detection on subsequent parses
+  delete result['calmSchemaVersion'];
 
   // Normalize nodes
   if (Array.isArray(raw['nodes'])) {

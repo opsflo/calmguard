@@ -182,4 +182,48 @@ describe('normalizeCalmDocument', () => {
     const result = normalizeCalmDocument(doc, '1.0') as { nodes: Array<Record<string, unknown>> };
     expect(result.nodes[0]['node-type']).toBe('service');
   });
+
+  it('strips calmSchemaVersion from normalized v1.0 output to prevent re-detection', () => {
+    const doc = {
+      calmSchemaVersion: '1.0',
+      nodes: [{ name: 'Svc', type: 'microservice', metadata: { description: 'A service' } }],
+      relationships: [],
+    };
+    const result = normalizeCalmDocument(doc, '1.0') as Record<string, unknown>;
+    expect(result).not.toHaveProperty('calmSchemaVersion');
+    // Re-detecting version on normalized output should no longer return v1.0
+    expect(detectCalmVersion(result)).toBe('1.1');
+  });
+
+  it('survives double-normalization: already-normalized v1.0 doc re-detected as v1.0 preserves connects', () => {
+    // Simulates the roundtrip bug: fetch-calm normalizes v1.0 → client stores CalmDocument
+    // (still has calmSchemaVersion) → sends to /api/analyze → parseCalm detects v1.0 again
+    const v10Doc = {
+      calmSchemaVersion: '1.0',
+      nodes: [
+        { name: 'API Gateway', type: 'apigateway', metadata: { description: 'Gateway' } },
+        { name: 'Customer Service', type: 'microservice', metadata: { description: 'Service' } },
+      ],
+      relationships: [{ from: 'API Gateway', to: 'Customer Service', type: 'uses' }],
+    };
+
+    // First normalization (happens in fetch-calm route)
+    const firstPass = normalizeCalmDocument(v10Doc, '1.0') as Record<string, unknown>;
+    const firstRels = (firstPass['relationships'] as Array<Record<string, unknown>>);
+    const firstConnects = firstRels[0]['connects'] as Record<string, unknown>;
+    expect((firstConnects['source'] as Record<string, unknown>)['node']).toBe('API Gateway');
+    expect((firstConnects['destination'] as Record<string, unknown>)['node']).toBe('Customer Service');
+
+    // Second normalization attempt — calmSchemaVersion is stripped, so it detects as v1.1 (pass-through)
+    const secondVersion = detectCalmVersion(firstPass);
+    expect(secondVersion).toBe('1.1'); // Fixed: calmSchemaVersion stripped, no longer re-triggers v1.0
+
+    const secondPass = normalizeCalmDocument(firstPass, secondVersion) as Record<string, unknown>;
+    const secondRels = (secondPass['relationships'] as Array<Record<string, unknown>>);
+    const secondConnects = secondRels[0]['connects'] as Record<string, unknown>;
+
+    // These MUST still be valid after double-normalization
+    expect((secondConnects['source'] as Record<string, unknown>)['node']).toBe('API Gateway');
+    expect((secondConnects['destination'] as Record<string, unknown>)['node']).toBe('Customer Service');
+  });
 });
