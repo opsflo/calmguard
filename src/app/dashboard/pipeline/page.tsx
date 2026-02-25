@@ -1,5 +1,6 @@
 'use client';
 
+import { PipelineStages } from '@/components/dashboard/pipeline-stages';
 import { PipelinePreview } from '@/components/dashboard/pipeline-preview';
 
 export default function PipelinePage() {
@@ -11,6 +12,7 @@ export default function PipelinePage() {
           Generated CI/CD pipeline configurations and security scanning templates
         </p>
       </div>
+      <PipelineStages />
       <PipelinePreview />
     </div>
   );
