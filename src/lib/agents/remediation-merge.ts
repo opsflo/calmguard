@@ -1,5 +1,6 @@
-import type { CalmDocument, CalmNode, CalmRelationship } from '@/lib/calm/types';
+import type { CalmDocument, CalmNode, CalmRelationship, Protocol } from '@/lib/calm/types';
 import type { ControlDefinition } from '@/lib/calm/types';
+import type { CalmRemediationOutput } from './calm-remediator';
 
 /**
  * Merge controls: start with original, overlay new controls from remediation.
@@ -137,4 +138,108 @@ export function mergeRemediatedCalm(
     // Preserve flows from original (LLM shouldn't touch these)
     flows: original.flows,
   };
+}
+
+/**
+ * Protocol security strength ordering.
+ * Higher index = more secure. Used to prevent protocol downgrades.
+ */
+const PROTOCOL_STRENGTH: Record<string, number> = {
+  HTTP: 0,
+  FTP: 0,
+  TCP: 1,
+  LDAP: 1,
+  JDBC: 1,
+  AMQP: 2,
+  WebSocket: 2,
+  SocketIO: 2,
+  SFTP: 3,
+  HTTPS: 4,
+  TLS: 4,
+  mTLS: 5,
+};
+
+/**
+ * Apply structured changes from the LLM's changes[] array to the original CALM document.
+ *
+ * LLMs reliably identify compliance gaps (the changes[] array is accurate) but fail
+ * to embed 30+ new control objects into a large JSON document. This function uses
+ * the changes as deterministic instructions to programmatically patch the original.
+ *
+ * For each change:
+ * - control-added: Adds a control entry to the target node/relationship
+ * - protocol-upgrade: Upgrades the protocol on the target relationship (never downgrades)
+ *
+ * @param original - The original unmodified CALM document
+ * @param changes - The structured changes array from the LLM
+ * @returns A new CALM document with all changes applied
+ */
+export function applyChangesToCalm(
+  original: CalmDocument,
+  changes: CalmRemediationOutput['changes'],
+): CalmDocument {
+  // Deep clone to avoid mutation
+  const doc: CalmDocument = JSON.parse(JSON.stringify(original));
+
+  // Build lookup maps for fast access
+  const nodeMap = new Map<string, CalmNode>();
+  for (const node of doc.nodes) {
+    nodeMap.set(node['unique-id'], node);
+  }
+
+  const relMap = new Map<string, CalmRelationship>();
+  for (const rel of doc.relationships) {
+    relMap.set(rel['unique-id'], rel);
+  }
+
+  for (const change of changes) {
+    const { nodeOrRelationshipId, changeType } = change;
+
+    if (changeType === 'control-added') {
+      // The 'after' field contains the control key (e.g. 'pci-dss-req-8-4-2-mfa')
+      // The 'rationale' serves as the control description
+      const controlKey = change.after;
+      const controlDef: ControlDefinition = {
+        description: change.rationale,
+      };
+
+      // Try node first, then relationship, then top-level
+      const node = nodeMap.get(nodeOrRelationshipId);
+      if (node) {
+        if (!node.controls) node.controls = {};
+        if (!(controlKey in node.controls)) {
+          node.controls[controlKey] = controlDef;
+        }
+        continue;
+      }
+
+      const rel = relMap.get(nodeOrRelationshipId);
+      if (rel) {
+        if (!rel.controls) rel.controls = {};
+        if (!(controlKey in rel.controls)) {
+          rel.controls[controlKey] = controlDef;
+        }
+        continue;
+      }
+
+      // Fallback: add to top-level controls (e.g. 'remediatedCalm' or unknown ids)
+      if (!doc.controls) doc.controls = {};
+      if (!(controlKey in doc.controls)) {
+        doc.controls[controlKey] = controlDef;
+      }
+    } else if (changeType === 'protocol-upgrade') {
+      const rel = relMap.get(nodeOrRelationshipId);
+      if (!rel || !rel.protocol) continue;
+
+      const currentStrength = PROTOCOL_STRENGTH[rel.protocol] ?? 0;
+      const newStrength = PROTOCOL_STRENGTH[change.after] ?? 0;
+
+      // Only upgrade, never downgrade
+      if (newStrength > currentStrength) {
+        rel.protocol = change.after as Protocol;
+      }
+    }
+  }
+
+  return doc;
 }

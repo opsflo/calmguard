@@ -5,7 +5,7 @@ import { getHeadSha, createBranch, commitMultipleFiles, createPR, ensureLabel, a
 import type { PipelineConfig } from '@/lib/agents/pipeline-generator';
 import type { CloudInfraConfig } from '@/lib/agents/cloud-infra-generator';
 import { remediateCalm } from '@/lib/agents/calm-remediator';
-import { mergeRemediatedCalm } from '@/lib/agents/remediation-merge';
+import { applyChangesToCalm } from '@/lib/agents/remediation-merge';
 
 // Prevent Next.js from caching this route
 export const dynamic = 'force-dynamic';
@@ -339,10 +339,12 @@ export async function POST(req: Request): Promise<Response> {
             throw new Error(remediationResult.error ?? 'Remediation agent failed with unknown error.');
           }
 
-          const { remediatedCalm: rawRemediatedCalm, changes, summary } = remediationResult.data;
+          const { changes, summary } = remediationResult.data;
 
-          // Merge LLM output with original — LLMs strip existing controls
-          const remediatedCalm = mergeRemediatedCalm(calmDocument, rawRemediatedCalm);
+          // Apply changes programmatically — LLMs identify gaps accurately in
+          // the changes[] array but fail to embed 30+ controls into the JSON document.
+          // We use the structured changes as deterministic patch instructions.
+          const remediatedCalm = applyChangesToCalm(calmDocument, changes);
 
           // Step 2: Get HEAD SHA
           emit({ type: 'step', step: 'Getting HEAD SHA...' });
