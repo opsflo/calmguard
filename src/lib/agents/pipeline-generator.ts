@@ -19,7 +19,7 @@ export const pipelineConfigSchema = z.object({
   securityScanning: z.object({
     tools: z.array(
       z.object({
-        name: z.enum(['semgrep', 'codeql', 'trivy', 'npm-audit']),
+        name: z.enum(['semgrep', 'codeql', 'trivy', 'npm-audit', 'gitleaks', 'syft']),
         description: z.string(),
         config: z.string().describe('Multi-line tool configuration. MUST use literal newline characters (\\n) to separate lines.'),
       })
@@ -106,25 +106,31 @@ ${JSON.stringify(input, null, 2)}
 **TASK:**
 Generate a concise, compliance-first DevSecOps CI pipeline:
 
-1. **GitHub Actions Workflow** (30-50 lines max):
+1. **GitHub Actions Workflow** (40-60 lines max):
    - Triggers: push and pull_request to main
-   - Jobs: lint → test → security-scan → build
-   - Security scan step is the compliance-critical gate
+   - DevSecOps stages: code-quality → sast → secret-detection → sca → sbom → build
+   - Security stages run in parallel after code-quality
+   - Build depends on all security stages passing (compliance gate)
+   - Use real tools: semgrep for SAST, gitleaks for secrets, trivy for SCA, syft for SBOM
+   - Add comments mapping each stage to compliance rationale (e.g. "# PCI-DSS: detect secrets")
    - DO NOT include deployment, staging, production, Docker, or Kubernetes steps
 
-2. **Security Scanning** (pick 2 most relevant tools):
-   - Configure based on the architecture's node types and protocols
+2. **Security Scanning** (2-3 tools based on CALM signals):
+   - Semgrep: SAST rules mapped to architecture (SQL injection for DB nodes, XSS for webclient)
+   - Trivy or npm-audit: SCA/dependency scanning for service nodes
+   - Gitleaks: secret detection (always relevant)
+   - Syft: SBOM generation for audit trail (if compliance controls present)
    - Keep each tool config to 10-20 lines
-   - Focus on compliance-relevant checks (protocol security, dependency vulnerabilities)
 
 3. **Infrastructure as Code** (20-40 lines of Terraform):
-   - Provider block + 1-2 key security resources (VPC, security groups)
-   - Security group rules should map to CALM protocol requirements
-   - Keep it representative, not exhaustive
+   - Security group rules derived from CALM protocol requirements
+   - HTTPS relationships → allow 443, deny 80
+   - Database connections → restrict to service CIDR
+   - Keep representative, not exhaustive
 
 4. **Recommendations** (3-4 max):
-   - Each tied to a specific compliance finding from the architecture
-   - Actionable and specific, not generic
+   - Each referencing a CALM signal AND a compliance framework
+   - Actionable as a pipeline stage or config change
 
 **CRITICAL FORMATTING RULE:**
 All YAML and HCL config strings MUST use real newline characters (\\n in JSON).
