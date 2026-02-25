@@ -236,9 +236,10 @@ export function useAgentStream() {
         if (retryCountRef.current < 3) {
           retryCountRef.current += 1;
           const backoffMs = 1000 * 2 ** retryCountRef.current;
-          // nosemgrep: javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
           console.warn(
-            `[useAgentStream] Network error, retrying in ${backoffMs}ms (attempt ${retryCountRef.current}/3)`,
+            '[useAgentStream] Network error, retrying in %dms (attempt %d/3)',
+            backoffMs,
+            retryCountRef.current,
             error,
           );
           await new Promise<void>((resolve) => setTimeout(resolve, backoffMs));
