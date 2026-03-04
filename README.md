@@ -26,11 +26,6 @@ CALMGuard is a **CALM-native continuous compliance DevSecOps platform**. Describ
 
 Built for the **DTCC/FINOS Innovate.DTCC AI Hackathon** (Feb 23–27, 2026).
 
-[![Watch the demo](https://img.youtube.com/vi/0FB_n6fAWX0/maxresdefault.jpg)](https://youtu.be/0FB_n6fAWX0)
-
-### [Watch the demo on YouTube](https://youtu.be/0FB_n6fAWX0)
-
-[Access the Presentation ->](https://github.com/finos-labs/dtcch-2026-opsflow-llc/blob/main/CALMGuard_Presentation_v4.0.pdf)
 
 ## Key Features
 
@@ -60,6 +55,13 @@ Built for the **DTCC/FINOS Innovate.DTCC AI Hackathon** (Feb 23–27, 2026).
 2. **Pre-Check** — Oracle fires deterministic rules from previously learned patterns (zero-latency, no LLM)
 3. **Analyze** — Squad of LLM agents assesses compliance across 5 frameworks, scores risks, generates CI pipelines and cloud infrastructure
 4. **Act** — Generate CI/CD pipelines, remediation PRs, compliance reports — and learn patterns for next time
+
+[![Watch the demo](https://img.youtube.com/vi/0FB_n6fAWX0/maxresdefault.jpg)](https://youtu.be/0FB_n6fAWX0)
+
+### [Watch the demo on YouTube](https://youtu.be/0FB_n6fAWX0)
+
+[Access the Presentation ->](https://github.com/finos-labs/dtcch-2026-opsflow-llc/blob/main/CALMGuard_Presentation_v4.0.pdf)
+
 
 ## Quick Start
 
