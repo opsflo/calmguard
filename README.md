@@ -26,6 +26,12 @@ CALMGuard is a **CALM-native continuous compliance DevSecOps platform**. Describ
 
 Built for the **DTCC/FINOS Innovate.DTCC AI Hackathon** (Feb 23–27, 2026).
 
+[![Watch the demo](https://img.youtube.com/vi/0FB_n6fAWX0/maxresdefault.jpg)](https://youtu.be/0FB_n6fAWX0)
+
+### [Watch the demo on YouTube](https://youtu.be/0FB_n6fAWX0)
+
+[Access the Presentation ->](https://github.com/finos-labs/dtcch-2026-opsflow-llc/blob/main/CALMGuard_Presentation_v4.0.pdf)
+
 ## Key Features
 
 | AI Agent Squad | Compliance Skills | Learning Intelligence | GitOps Integration |
