@@ -1,3 +1,16 @@
+---
+gsd_state_version: 1.0
+milestone: v1.3
+milestone_name: milestone
+status: unknown
+last_updated: "2026-03-06T05:40:02.796Z"
+progress:
+  total_phases: 6
+  completed_phases: 4
+  total_plans: 14
+  completed_plans: 12
+---
+
 # Project State
 
 ## Project Reference
@@ -31,6 +44,7 @@ Progress: [██████████] 100%
 | 10-gitops-split | 01 | 4min | 2 | 7 |
 | 10-gitops-split | 02 | 2min | 2 | 3 |
 | 10-gitops-split | 03 | 4min | 2 | 2 |
+| 10.1-finos-contribution-readiness | 04 | 4min | 2 | 10 |
 
 ## Accumulated Context
 
@@ -64,6 +78,8 @@ v1.3 decisions:
 - [Phase 10-gitops-split]: Label failures non-blocking: ensureLabel() ignores 422, addLabelToPR() logs warn but never throws — PR creation always succeeds even if label API fails
 - [Phase 10-gitops-split]: IaC exclusively in Cloud Infra PR: buildPipelineFiles() now contains only GitHub Actions workflow and security scanning configs — no terraform/main.tf, no cloudformation/template.yaml
 - [Phase 10-gitops-split]: Three-PR GitOps split complete with distinct branch names (devsecops-ci, compliance-remediation, cloud-infra), content separation, and auto-labeling
+- [Phase 10.1-finos-contribution-readiness]: 6 ADRs in MADR format documenting key technology choices (YAML agent config, Zod, localStorage, Promise.allSettled, multi-provider LLM, Markdown skills) for FINOS reviewer
+- [Phase 10.1-finos-contribution-readiness]: REVIEWING.md 8-step ordered reading path scopes reviewer to 4,100 lines of core logic, excluding 4,800 lines of generated shadcn/ui boilerplate
 
 ### Pending Todos
 
@@ -81,8 +97,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-25 (Phase 10, Plan 3 execution)
-Stopped at: Completed 10-03-PLAN.md — create-pr route extended with infra type, branch renames (devsecops-ci, compliance-remediation, cloud-infra), LABEL_MAP auto-labeling, IaC removed from pipeline, buildInfraFiles/buildInfraPRBody added.
+Last session: 2026-03-06 (Phase 10.1, Plan 4 execution)
+Stopped at: Completed 10.1-04-PLAN.md — 6 ADRs (MADR format) in docs/docs/adrs/, REVIEWING.md (ordered 8-step reading path for Eddie), docs/docs/reviewing.md (Docusaurus mirror), DEPENDENCIES.md (32 production deps with supply-chain rationale), docs/sidebars.ts updated with ADRs category.
 
 ---
 
