@@ -15,10 +15,10 @@ const config: Config = {
   },
 
   url: 'https://finos-labs.github.io',
-  baseUrl: '/dtcch-2026-opsflow-llc/',
+  baseUrl: '/calmguard/',
 
   organizationName: 'finos-labs',
-  projectName: 'dtcch-2026-opsflow-llc',
+  projectName: 'calmguard',
 
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
@@ -70,7 +70,7 @@ const config: Config = {
           label: 'Documentation',
         },
         {
-          href: 'https://github.com/finos-labs/dtcch-2026-opsflow-llc',
+          href: 'https://github.com/finos-labs/calmguard',
           label: 'GitHub',
           position: 'right',
         },
@@ -118,7 +118,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/finos-labs/dtcch-2026-opsflow-llc',
+              href: 'https://github.com/finos-labs/calmguard',
             },
           ],
         },
