@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FindingsTable > renders empty state snapshot 1`] = `
+<div>
+  <div
+    class="rounded-xl border text-card-foreground shadow bg-slate-800 border-slate-700"
+  >
+    <div
+      class="p-6 flex items-center justify-center h-48"
+    >
+      <p
+        class="text-sm text-slate-500"
+      >
+        Run analysis to view findings
+      </p>
+    </div>
+  </div>
+</div>
+`;

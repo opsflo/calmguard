@@ -1,0 +1,140 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ComplianceCard > renders empty/idle state snapshot 1`] = `
+<div>
+  <div
+    class="rounded-xl border text-card-foreground shadow bg-slate-800 border-slate-700"
+  >
+    <div
+      class="p-6"
+    >
+      <h3
+        class="text-sm font-medium text-slate-400 mb-4"
+      >
+        Compliance Score
+      </h3>
+      <div
+        class="flex justify-center mb-6"
+      >
+        <svg
+          aria-label="No compliance data yet"
+          height="128"
+          viewBox="0 0 128 128"
+          width="128"
+        >
+          <circle
+            class="text-slate-700"
+            cx="64"
+            cy="64"
+            fill="none"
+            r="56"
+            stroke="currentColor"
+            stroke-dasharray="4 4"
+            stroke-width="8"
+          />
+          <text
+            dominant-baseline="middle"
+            fill="#64748b"
+            font-size="10"
+            text-anchor="middle"
+            x="64"
+            y="58"
+          >
+            Run analysis
+          </text>
+          <text
+            dominant-baseline="middle"
+            fill="#64748b"
+            font-size="10"
+            text-anchor="middle"
+            x="64"
+            y="74"
+          >
+            to see score
+          </text>
+        </svg>
+      </div>
+      <div
+        class="space-y-3"
+      >
+        <div>
+          <div
+            class="flex justify-between mb-1"
+          >
+            <span
+              class="text-sm text-slate-500"
+            >
+              SOX
+            </span>
+            <span
+              class="text-sm text-slate-600"
+            >
+              —
+            </span>
+          </div>
+          <div
+            class="h-1.5 rounded-full bg-slate-700/50"
+          />
+        </div>
+        <div>
+          <div
+            class="flex justify-between mb-1"
+          >
+            <span
+              class="text-sm text-slate-500"
+            >
+              PCI-DSS
+            </span>
+            <span
+              class="text-sm text-slate-600"
+            >
+              —
+            </span>
+          </div>
+          <div
+            class="h-1.5 rounded-full bg-slate-700/50"
+          />
+        </div>
+        <div>
+          <div
+            class="flex justify-between mb-1"
+          >
+            <span
+              class="text-sm text-slate-500"
+            >
+              NIST-CSF
+            </span>
+            <span
+              class="text-sm text-slate-600"
+            >
+              —
+            </span>
+          </div>
+          <div
+            class="h-1.5 rounded-full bg-slate-700/50"
+          />
+        </div>
+        <div>
+          <div
+            class="flex justify-between mb-1"
+          >
+            <span
+              class="text-sm text-slate-500"
+            >
+              FINOS-CCC
+            </span>
+            <span
+              class="text-sm text-slate-600"
+            >
+              —
+            </span>
+          </div>
+          <div
+            class="h-1.5 rounded-full bg-slate-700/50"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
