@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import dagre from '@dagrejs/dagre';
 import { Position, type Node, type Edge } from '@xyflow/react';
 

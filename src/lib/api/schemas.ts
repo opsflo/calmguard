@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { z } from 'zod';
 import { agentEventTypeSchema, agentIdentitySchema, severitySchema } from '@/lib/agents/types';
 import { analysisResultSchema } from '@/lib/agents/orchestrator';

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 /**
  * API Route Contract Tests: POST /api/calm/parse
  *

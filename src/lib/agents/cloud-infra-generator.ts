@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { z } from 'zod';
 import { generateObject } from 'ai';
 import { loadAgentConfig } from './registry';

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright 2026 FINOS -->
+
 # SOX (Sarbanes-Oxley Act) Compliance Knowledge
 
 ## Framework Overview

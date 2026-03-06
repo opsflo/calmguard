@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { describe, it, expect } from 'vitest';
 import { parseCalm, parseCalmFromString } from '@/lib/calm/parser';
 import type { CalmDocument } from '@/lib/calm/types';

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import type { AnalysisInput } from '@/lib/calm/extractor';
 import type { DeterministicRule, PreCheckResult } from './types';
 

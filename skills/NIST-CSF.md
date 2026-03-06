@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright 2026 FINOS -->
+
 # NIST Cybersecurity Framework (CSF) 2.0 Compliance Knowledge
 
 ## Framework Overview

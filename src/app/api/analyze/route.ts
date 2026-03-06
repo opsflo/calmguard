@@ -1,10 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { type NextRequest } from 'next/server';
 import { parseCalm } from '@/lib/calm/parser';
 import { extractAnalysisInput } from '@/lib/calm/extractor';
 import { agentEventEmitter } from '@/lib/ai/streaming';
 import { runAnalysis } from '@/lib/agents/orchestrator';
 import { analyzeRequestSchema } from '@/lib/api/schemas';
-import '@/lib/github/globals';
+import { createSession, setSessionData, cleanupExpiredSessions } from '@/lib/session-store';
 
 // Prevent Next.js from caching this route — required for SSE
 export const dynamic = 'force-dynamic';
@@ -85,18 +88,25 @@ export async function POST(req: NextRequest): Promise<Response> {
         }
       });
 
+      // Create a unique session for this analysis run
+      const sessionId = crypto.randomUUID();
+      createSession(sessionId);
+      cleanupExpiredSessions(); // TTL cleanup on each new analysis
+
       try {
         // Run the full 4-agent orchestration — events stream as they happen
         const result = await runAnalysis(analysisInput, selectedFrameworks, demoMode, deterministicRules, learningContext);
 
-        // Store pipeline result and full analysis state for PR generation routes
-        globalThis.__lastPipelineResult = result.pipeline;
-        globalThis.__lastCloudInfraResult = result.cloudInfra;
-        globalThis.__lastAnalysisResult = result;
-        globalThis.__lastCalmDocument = parseResult.data;
+        // Store analysis results in session store (keyed by sessionId UUID)
+        setSessionData(sessionId, {
+          pipeline: result.pipeline,
+          cloudInfra: result.cloudInfra,
+          analysisResult: result,
+          calmDocument: parseResult.data,
+        });
 
-        // Send terminal done event
-        const doneEvent = JSON.stringify({ type: 'done', result });
+        // Send terminal done event — sessionId included so client can use it for create-pr
+        const doneEvent = JSON.stringify({ type: 'done', result, sessionId });
         controller.enqueue(encoder.encode(`data: ${doneEvent}\n\n`));
       } catch (error) {
         const errorMessage =

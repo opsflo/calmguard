@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 export { generateFingerprint } from './fingerprint';
 export { extractPatterns } from './extractor';
 export { runDeterministicPreChecks } from './pre-check';

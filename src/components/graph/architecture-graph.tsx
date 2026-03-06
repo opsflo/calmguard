@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 'use client';
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';

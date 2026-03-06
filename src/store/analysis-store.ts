@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { create } from 'zustand';
 import type { CalmDocument } from '@/lib/calm/types';
 import type { AnalysisInput } from '@/lib/calm/extractor';

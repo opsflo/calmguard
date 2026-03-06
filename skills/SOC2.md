@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright 2026 FINOS -->
+
 # SOC2 (System and Organization Controls 2) Compliance Knowledge
 
 ## Framework Overview

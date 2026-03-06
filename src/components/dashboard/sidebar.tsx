@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 'use client';
 
 import { usePathname } from 'next/navigation';

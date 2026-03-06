@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { AgentConfig } from '../agents/types';

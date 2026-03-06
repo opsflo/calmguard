@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { type NextRequest } from 'next/server';
 import { parseCalm } from '@/lib/calm/parser';
 import { extractAnalysisInput } from '@/lib/calm/extractor';

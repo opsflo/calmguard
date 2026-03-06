@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import type { PipelineConfig } from '@/lib/agents/pipeline-generator';
 import type { AnalysisResult } from '@/lib/agents/orchestrator';
 import type { CalmDocument } from '@/lib/calm/types';

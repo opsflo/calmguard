@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { calmDocumentSchema, type CalmDocument } from './types';
 import { detectCalmVersion, normalizeCalmDocument, type CalmVersion } from './normalizer';
 import type { ZodError } from 'zod';

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useLearningStore } from '@/lib/learning/store';
 import type { AnalysisResult } from '@/lib/agents/orchestrator';

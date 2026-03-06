@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import type { AnalysisResult } from '@/lib/agents/orchestrator';
 import type { AnalysisInput } from '@/lib/calm/extractor';
 

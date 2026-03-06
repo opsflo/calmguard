@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import type { ComplianceMapping } from '@/lib/agents/compliance-mapper';
 import type { RiskAssessment } from '@/lib/agents/risk-scorer';
 import type { AnalysisInput } from '@/lib/calm/extractor';

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { describe, it, expect } from 'vitest';
 import { generateFingerprint } from '@/lib/learning/fingerprint';
 import type { PatternTriggers } from '@/lib/learning/types';

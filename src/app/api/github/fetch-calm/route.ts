@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import { NextResponse } from 'next/server';
 import { githubFetch } from '@/lib/github/client';
 import {

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright 2026 FINOS -->
+
 # PCI-DSS (Payment Card Industry Data Security Standard) Compliance Knowledge
 
 ## Framework Overview

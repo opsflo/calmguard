@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import type { CalmDocument, CalmNode, CalmRelationship, Protocol } from '@/lib/calm/types';
 import type { ControlDefinition } from '@/lib/calm/types';
 import type { CalmRemediationOutput } from './calm-remediator';

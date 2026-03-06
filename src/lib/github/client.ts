@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 FINOS
+
 import https from 'node:https';
 
 const GITHUB_API = 'https://api.github.com';
