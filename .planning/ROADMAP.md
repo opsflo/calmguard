@@ -77,6 +77,19 @@ Plans:
   5. Clicking any PR button disables all three buttons until generation completes (prevents concurrent PR corruption)
 **Plans**: TBD
 
+### Phase 10.1: finos-contribution-readiness (INSERTED)
+
+**Goal:** Close 7 FINOS maintainability audit gaps (scored 82/100) before giving Eddie repo access — SPDX headers, session store refactor, CONTRIBUTING.md expansion, React component tests, 6 ADRs, REVIEWING.md, DEPENDENCIES.md
+**Requirements**: FINOS-01, FINOS-02, FINOS-03, FINOS-04, FINOS-05, FINOS-06, FINOS-07
+**Depends on:** Phase 10
+**Plans:** 4 plans
+
+Plans:
+- [ ] 10.1-01-PLAN.md — SPDX Apache 2.0 license headers on all 127 source files (bash script)
+- [ ] 10.1-02-PLAN.md — Replace globalThis analysis vars with UUID-keyed session store
+- [ ] 10.1-03-PLAN.md — CONTRIBUTING.md "Extending CALMGuard" section + React component snapshot tests
+- [ ] 10.1-04-PLAN.md — 6 ADRs (MADR format) + REVIEWING.md + DEPENDENCIES.md (Eddie reviewer package)
+
 ### Phase 11: CI Integration & Documentation
 **Goal**: Users can integrate continuous compliance checking into their own repos via a generated GitHub Action, and understand the agent system through documentation
 **Depends on**: Phase 10 (headless API route needs stable PipelineConfig type; CI workflow generator extends Phase 10 pipeline generator)
@@ -98,6 +111,7 @@ Phases 8 and 9 run in parallel (Day 1). Phase 10 follows (Day 2 AM). Phase 11 fo
 | 9. Multi-Version CALM | 2/2 | Complete   | 2026-02-25 | - |
 | 10. GitOps Split | 3/3 | Complete    | 2026-02-25 | - |
 | 11. Documentation | v1.3 | 0/0 | Complete (DOCS-01 pre-satisfied) | 2026-02-25 |
+| 10.1. FINOS Contribution Readiness | 0/4 | Planned | 2026-03-06 | - |
 
 ---
 
