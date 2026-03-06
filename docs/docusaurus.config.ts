@@ -14,10 +14,10 @@ const config: Config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  url: 'https://finos-labs.github.io',
+  url: 'https://opsflo.github.io',
   baseUrl: '/calmguard/',
 
-  organizationName: 'finos-labs',
+  organizationName: 'opsflo',
   projectName: 'calmguard',
 
   onBrokenLinks: 'warn',
@@ -70,7 +70,7 @@ const config: Config = {
           label: 'Documentation',
         },
         {
-          href: 'https://github.com/finos-labs/calmguard',
+          href: 'https://github.com/opsflo/calmguard',
           label: 'GitHub',
           position: 'right',
         },
@@ -118,7 +118,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/finos-labs/calmguard',
+              href: 'https://github.com/opsflo/calmguard',
             },
           ],
         },
