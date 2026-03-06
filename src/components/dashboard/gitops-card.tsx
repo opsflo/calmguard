@@ -3,6 +3,7 @@
 
 'use client';
 
+import { toast } from 'sonner';
 import { useAnalysisStore } from '@/store/analysis-store';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -142,6 +143,7 @@ function PRSection({ record, label, description, icon, onGenerate, disabled }: P
  */
 export function GitOpsCard() {
   const githubRepo = useAnalysisStore((s) => s.githubRepo);
+  const sessionId = useAnalysisStore((s) => s.sessionId);
   const pipelinePR = useAnalysisStore((s) => s.pipelinePR);
   const remediationPR = useAnalysisStore((s) => s.remediationPR);
   const infraPR = useAnalysisStore((s) => s.infraPR);
@@ -208,6 +210,10 @@ export function GitOpsCard() {
   };
 
   const handleGeneratePipelinePR = async () => {
+    if (!sessionId) {
+      toast.error('Run an analysis first before creating a PR.');
+      return;
+    }
     setPipelinePR({ status: 'generating', step: 'Starting...' });
 
     try {
@@ -221,6 +227,7 @@ export function GitOpsCard() {
           filePath: githubRepo.filePath,
           fileSha: githubRepo.fileSha,
           defaultBranch: githubRepo.defaultBranch,
+          sessionId,
         }),
       });
 
@@ -236,6 +243,10 @@ export function GitOpsCard() {
 
   const handleGenerateRemediationPR = async () => {
     if (!githubRepo) return;
+    if (!sessionId) {
+      toast.error('Run an analysis first before creating a PR.');
+      return;
+    }
     setRemediationPR({ status: 'generating', step: 'Starting...' });
 
     try {
@@ -249,6 +260,7 @@ export function GitOpsCard() {
           filePath: githubRepo.filePath,
           fileSha: githubRepo.fileSha,
           defaultBranch: githubRepo.defaultBranch,
+          sessionId,
         }),
       });
 
@@ -263,6 +275,10 @@ export function GitOpsCard() {
   };
 
   const handleGenerateInfraPR = async () => {
+    if (!sessionId) {
+      toast.error('Run an analysis first before creating a PR.');
+      return;
+    }
     setInfraPR({ status: 'generating', step: 'Starting...' });
 
     try {
@@ -276,6 +292,7 @@ export function GitOpsCard() {
           filePath: githubRepo.filePath,
           fileSha: githubRepo.fileSha,
           defaultBranch: githubRepo.defaultBranch,
+          sessionId,
         }),
       });
 

@@ -265,9 +265,6 @@ export async function runAnalysis(
       });
     }
 
-    // Store cloud infra result globally for PR route access
-    globalThis.__lastCloudInfraResult = cloudInfra;
-
     // ========================================================================
     // PHASE 2: Sequential execution (Risk Scorer requires Phase 1 results)
     // ========================================================================

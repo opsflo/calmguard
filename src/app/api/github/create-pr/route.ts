@@ -2,7 +2,7 @@
 // Copyright 2026 FINOS
 
 import { z } from 'zod';
-import '@/lib/github/globals';
+import { getSessionData, deleteSession } from '@/lib/session-store';
 import { githubFetch } from '@/lib/github/client';
 import { getHeadSha, createBranch, commitMultipleFiles, createPR, ensureLabel, addLabelToPR } from '@/lib/github/operations';
 import type { PipelineConfig } from '@/lib/agents/pipeline-generator';
@@ -36,6 +36,7 @@ const createPRRequestSchema = z.object({
   filePath: z.string(),       // original CALM file path (for remediation)
   fileSha: z.string(),        // current SHA of CALM file (for remediation)
   defaultBranch: z.string(),  // base branch for PR
+  sessionId: z.string(),      // UUID from POST /api/analyze done event
 });
 
 /**
@@ -216,9 +217,18 @@ export async function POST(req: Request): Promise<Response> {
     );
   }
 
-  const { type, owner, repo, filePath, fileSha, defaultBranch } = bodyResult.data;
+  const { type, owner, repo, filePath, fileSha, defaultBranch, sessionId } = bodyResult.data;
 
-  // 2. Require GITHUB_TOKEN for write operations
+  // 2. Resolve analysis results from session store
+  const session = getSessionData(sessionId);
+  if (!session) {
+    return Response.json(
+      { error: 'Session not found. Run analysis first, then create PR.' },
+      { status: 404 },
+    );
+  }
+
+  // 3. Require GITHUB_TOKEN for write operations
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
     return Response.json(
@@ -271,7 +281,7 @@ export async function POST(req: Request): Promise<Response> {
           // Step 3: Commit pipeline artifacts (CI workflow + security configs only, no IaC)
           emit({ type: 'step', step: 'Committing pipeline artifacts...' });
 
-          const pipeline = globalThis.__lastPipelineResult;
+          const pipeline = session.pipeline;
           if (!pipeline) {
             throw new Error(
               'Pipeline analysis results not available. Run analysis first.',
@@ -308,6 +318,8 @@ export async function POST(req: Request): Promise<Response> {
           await addLabelToPR(owner, repo, pipelinePrNumber, [pipelineLabel.name], token);
 
           // Emit done — client uses this to update PR card state
+          // Delete session after successful PR creation
+          deleteSession(sessionId);
           emit({
             type: 'done',
             prUrl: pipelinePrUrl,
@@ -325,8 +337,8 @@ export async function POST(req: Request): Promise<Response> {
           // Step 1: Run CALM remediation agent
           emit({ type: 'step', step: 'Running CALM remediation agent...' });
 
-          const analysisResult = globalThis.__lastAnalysisResult;
-          const calmDocument = globalThis.__lastCalmDocument;
+          const analysisResult = session.analysisResult;
+          const calmDocument = session.calmDocument;
 
           if (!analysisResult || !calmDocument) {
             throw new Error('Analysis results not available. Run analysis first.');
@@ -458,6 +470,8 @@ export async function POST(req: Request): Promise<Response> {
           await ensureLabel(owner, repo, remediationLabel.name, remediationLabel.color, remediationLabel.description, token);
           await addLabelToPR(owner, repo, remediationPrNumber, [remediationLabel.name], token);
 
+          // Delete session after successful PR creation
+          deleteSession(sessionId);
           emit({
             type: 'done',
             prUrl: remediationPrUrl,
@@ -497,7 +511,7 @@ export async function POST(req: Request): Promise<Response> {
           // Step 3: Commit Terraform modules
           emit({ type: 'step', step: 'Committing infrastructure modules...' });
 
-          const infra = globalThis.__lastCloudInfraResult;
+          const infra = session.cloudInfra;
           if (!infra) {
             throw new Error(
               'Cloud infrastructure analysis not available. Run analysis first.',
@@ -533,6 +547,8 @@ export async function POST(req: Request): Promise<Response> {
           await ensureLabel(owner, repo, infraLabel.name, infraLabel.color, infraLabel.description, token);
           await addLabelToPR(owner, repo, infraPrNumber, [infraLabel.name], token);
 
+          // Delete session after successful PR creation
+          deleteSession(sessionId);
           emit({
             type: 'done',
             prUrl: infraPrUrl,

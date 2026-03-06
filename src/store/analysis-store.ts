@@ -23,6 +23,9 @@ interface AnalysisState {
   activeAgents: string[];
   selectedFrameworks: string[];
 
+  // Session ID from POST /api/analyze done event — used for create-pr calls
+  sessionId: string | null;
+
   // Demo mode flag — set by "Run Demo" CTA on landing page
   demoMode: boolean;
 
@@ -66,6 +69,7 @@ interface AnalysisState {
   setPipelinePR: (pr: Partial<PRRecord>) => void;
   setRemediationPR: (pr: Partial<PRRecord>) => void;
   setInfraPR: (pr: Partial<PRRecord>) => void;
+  setSessionId: (id: string) => void;
   reset: () => void;
 }
 
@@ -78,6 +82,7 @@ const initialState = {
   agentEvents: [] as AgentEvent[],
   activeAgents: [] as string[],
   selectedFrameworks: ['SOX', 'PCI-DSS', 'NIST-CSF', 'CCC', 'SOC2'] as string[],
+  sessionId: null as string | null,
   demoMode: false,
   status: 'idle' as AnalysisStatus,
   error: null,
@@ -202,6 +207,8 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
     set((state) => ({
       infraPR: { ...state.infraPR, ...pr },
     })),
+
+  setSessionId: (id) => set({ sessionId: id }),
 
   reset: () => set(initialState),
 }));

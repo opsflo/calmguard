@@ -36,7 +36,7 @@ export function useAgentStream() {
   const abortRef = useRef<AbortController | null>(null);
   const retryCountRef = useRef<number>(0);
 
-  const { addAgentEvent, setAnalysisResult, startAnalysis, setStatus } =
+  const { addAgentEvent, setAnalysisResult, startAnalysis, setStatus, setSessionId } =
     useAnalysisStore();
 
   const startStream = useCallback(
@@ -117,10 +117,15 @@ export function useAgentStream() {
               const parsed = JSON.parse(jsonString) as Record<string, unknown>;
 
               if (parsed.type === 'done') {
-                // Final event — contains AnalysisResult
+                // Final event — contains AnalysisResult and sessionId
                 const result = parsed.result as Parameters<typeof setAnalysisResult>[0];
                 setAnalysisResult(result);
                 setStreamStatus('complete');
+
+                // Store sessionId in Zustand for subsequent create-pr calls
+                if (typeof parsed.sessionId === 'string') {
+                  setSessionId(parsed.sessionId);
+                }
 
                 // ── Oracle Post-Analysis Learning ──────────────────
                 // Record analysis in learning store and emit visible
@@ -260,7 +265,7 @@ export function useAgentStream() {
       }
     },
     // Stable deps: store actions are stable references from Zustand
-    [addAgentEvent, setAnalysisResult, startAnalysis, setStatus],
+    [addAgentEvent, setAnalysisResult, startAnalysis, setStatus, setSessionId],
   );
 
   const abort = useCallback(() => {
