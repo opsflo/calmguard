@@ -73,6 +73,7 @@ v1.3 decisions:
 ### Roadmap Evolution
 
 - Phase 8.1 inserted after Phase 8: Compliance Learning Engine (URGENT) — already implemented and merged from separate branch (23 files, 2,355 lines, 64 tests). Needs verification only.
+- Phase 10.1 inserted after Phase 10: FINOS Contribution Readiness (URGENT) — FINOS maintainability audit scored 82/100; 7 items required before giving Eddie repo access: SPDX license headers, session store refactor, CONTRIBUTING.md expansion, React component tests, 6 ADRs, REVIEWING.md, DEPENDENCIES.md.
 
 ### Blockers/Concerns
 
